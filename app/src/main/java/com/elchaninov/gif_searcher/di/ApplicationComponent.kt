@@ -10,7 +10,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         MapperModule::class,
-        RetrofitModule::class
+        RetrofitModule::class,
+        RepositoryModule::class
     ]
 )
 interface ApplicationComponent {
