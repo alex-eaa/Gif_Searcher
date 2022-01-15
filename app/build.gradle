@@ -24,6 +24,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    buildTypes.each {
+        def localProperties = new Properties()
+        localProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+        it.buildConfigField "String", "GIPHY_API_KEY", "${localProperties['giphyApiKey']}"
+    }
     buildFeatures {
         viewBinding true
     }
