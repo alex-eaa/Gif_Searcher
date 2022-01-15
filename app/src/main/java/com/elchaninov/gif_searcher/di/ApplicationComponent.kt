@@ -9,6 +9,7 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
+        MapperModule::class
     ]
 )
 interface ApplicationComponent {
