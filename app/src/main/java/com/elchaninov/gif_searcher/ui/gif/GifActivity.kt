@@ -18,9 +18,9 @@ class GifActivity : AppCompatActivity() {
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val gif: Gif? = intent.getParcelableExtra("EXTRA_GIF")
+        val gif: Gif? = intent.getParcelableExtra(EXTRA_GIF)
 
-        gif?.let{
+        gif?.let {
             Glide
                 .with(this)
                 .asGif()
@@ -30,5 +30,9 @@ class GifActivity : AppCompatActivity() {
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .into(binding.gifView)
         }
+    }
+
+    companion object {
+        const val EXTRA_GIF = "EXTRA_GIF"
     }
 }

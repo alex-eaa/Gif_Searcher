@@ -1,5 +1,6 @@
 package com.elchaninov.gif_searcher
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,6 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.data.Gif
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
+import com.elchaninov.gif_searcher.ui.gif.GifActivity
+import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.main.GifAdapter
 import com.elchaninov.gif_searcher.ui.main.MainViewModel
 
@@ -36,7 +39,10 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         viewModel.gifs.observe(this, { gifs ->
             gifAdapter.data = gifs
         })
-        viewModel.searchGifs()
+
+        if (savedInstanceState == null) {
+            viewModel.searchGifs()
+        }
 
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
         binding.recyclerView.adapter = gifAdapter
@@ -64,6 +70,8 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(gif: Gif) {
-        TODO("Not yet implemented")
+        val intent = Intent(this, GifActivity::class.java)
+        intent.putExtra(EXTRA_GIF, gif)
+        startActivity(intent)
     }
 }
