@@ -35,7 +35,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:layout_margin="8dp"
-                android:background="@color/white"
                 android:textColor="@color/design_default_color_error"
                 tools:text="Ошибка 404" />
 

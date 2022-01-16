@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
@@ -31,9 +30,8 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     }
 
     private lateinit var gifAdapter: GifAdapter
-    private var isLinearLayoutManager = false
+    private var isLinearLayoutManager = true
     private var searchView: SearchView? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +40,31 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         initToolbar()
         initRecyclerView()
 
-        viewModel.gifs.observe(this, { gifs ->
-            gifAdapter.data = gifs
+        viewModel.appState.observe(this, { appState ->
+            renderData(appState)
         })
 
-        viewModel.appState.observe(this, { appState ->
-            when (appState){
-                is AppState.Loading -> Log.d("qqq", "Loading")
-                is AppState.Error -> Log.d("qqq", "Error: ${appState.message}")
+        if (savedInstanceState == null) viewModel.fetchGifs()
+    }
+
+    private fun renderData(appState: AppState) {
+        when (appState) {
+            is AppState.Success -> {
+                gifAdapter.data = appState.data
+                binding.progressContainer.progress.hide()
+                binding.errorContainer.error.hide()
             }
-        })
+            is AppState.Loading -> {
+                binding.errorContainer.error.hide()
+                binding.progressContainer.progress.show()
+            }
+            is AppState.Error -> {
+                binding.errorContainer.errorMsg.text = appState.message
+                binding.errorContainer.tryAgainBtn.setOnClickListener { viewModel.tryAgain() }
+                binding.errorContainer.error.show()
+                binding.progressContainer.progress.hide()
+            }
+        }
     }
 
     private fun initRecyclerView() {
@@ -59,7 +72,9 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
         binding.recyclerView.adapter = gifAdapter
 
-        viewModel.gifs.value?.let { gifAdapter.data = it }
+        viewModel.appState.value?.let { appState ->
+            if (appState is AppState.Success) gifAdapter.data = appState.data
+        }
     }
 
     private fun initToolbar() {
@@ -82,7 +97,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
                     if (!query.isNullOrBlank()) {
-                        viewModel.searchGifs(query)
+                        viewModel.fetchGifs(query)
                     }
                     return true
                 }
@@ -107,7 +122,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
             }
             android.R.id.home -> {
                 searchView?.onActionViewCollapsed()
-                viewModel.searchGifsTrending()
+                viewModel.fetchGifs()
                 true
             }
             else -> super.onOptionsItemSelected(item)
