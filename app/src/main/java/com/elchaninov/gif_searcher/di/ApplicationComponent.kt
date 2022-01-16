@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
 import android.content.Context
-import com.elchaninov.gif_searcher.ui.main.MainViewModel
+import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton

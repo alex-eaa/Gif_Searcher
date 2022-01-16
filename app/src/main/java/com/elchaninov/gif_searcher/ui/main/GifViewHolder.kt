@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.ui.main
 
-import android.view.ViewGroup
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -24,8 +23,8 @@ class GifViewHolder(itemView: View) :
             Glide
                 .with(it)
                 .asGif()
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_background)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.drawable.ic_baseline_broken_image_24)
                 .load(gif.urlPreview)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .into(imageView)

@@ -1,10 +1,9 @@
-package com.elchaninov.gif_searcher.ui.main
+package com.elchaninov.gif_searcher.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.elchaninov.gif_searcher.data.GiphyGifRepository
-import com.elchaninov.gif_searcher.viewModel.AppState
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
