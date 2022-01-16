@@ -42,10 +42,6 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         viewModel.gifs.observe(this, { gifs ->
             gifAdapter.data = gifs
         })
-
-        if (savedInstanceState == null) {
-            viewModel.searchGifs("top")
-        }
     }
 
     private fun initRecyclerView() {

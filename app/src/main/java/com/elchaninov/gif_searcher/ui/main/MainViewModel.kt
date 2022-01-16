@@ -14,7 +14,11 @@ class MainViewModel : ViewModel() {
     @Inject
     lateinit var giphyGifRepository: GiphyGifRepository
 
-    private var _gifs: MutableLiveData<List<Gif>> = MutableLiveData()
+    private val _gifs: MutableLiveData<List<Gif>> by lazy {
+        MutableLiveData<List<Gif>>().also {
+            searchGifsTrending()
+        }
+    }
     val gifs: LiveData<List<Gif>> get() = _gifs
 
     fun searchGifs(query: String) {
@@ -23,6 +27,16 @@ class MainViewModel : ViewModel() {
                 Log.d("qqq", "getGifs: ${it}")
                 it
             }
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                _gifs.postValue(it)
+            }, {
+
+            })
+    }
+
+    fun searchGifsTrending() {
+        giphyGifRepository.getGifsTrending()
             .subscribeOn(Schedulers.io())
             .subscribe({
                 _gifs.postValue(it)

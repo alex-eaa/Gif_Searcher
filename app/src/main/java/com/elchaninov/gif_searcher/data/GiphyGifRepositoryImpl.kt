@@ -15,4 +15,9 @@ class GiphyGifRepositoryImpl
         .flatMap {
             Single.just(mapper.map(it))
         }
+
+    override fun getGifsTrending(): Single<List<Gif>> = giphyApi.fetchGifsTrending()
+        .flatMap {
+            Single.just(mapper.map(it))
+        }
 }

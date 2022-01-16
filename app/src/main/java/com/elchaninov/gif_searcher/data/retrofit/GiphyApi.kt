@@ -16,4 +16,11 @@ interface GiphyApi {
         @Query("rating") rating: String = "g",
         @Query("offset") lang: String = "en",
     ): Single<GifDto>
+
+    @GET("/v1/gifs/trending")
+    fun fetchGifsTrending(
+        @Query("api_key") api_key: String = BuildConfig.GIPHY_API_KEY,
+        @Query("limit") limit: Int = 25,
+        @Query("offset") offset: Int = 0,
+    ): Single<GifDto>
 }
