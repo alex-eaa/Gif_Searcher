@@ -13,6 +13,8 @@ class MainViewModel : ViewModel() {
     @Inject
     lateinit var giphyGifRepository: GiphyGifRepository
 
+    var isLinearLayoutManager = true
+
     private val _appState: MutableLiveData<AppState> = MutableLiveData<AppState>()
     val appState: LiveData<AppState> get() = _appState
 

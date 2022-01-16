@@ -29,14 +29,18 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         }
     }
 
+    private lateinit var settings: Settings
     private lateinit var gifAdapter: GifAdapter
-    private var isLinearLayoutManager = true
     private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        settings = Settings(this)
+        viewModel.isLinearLayoutManager = settings.isLinearLayoutManager
+
         initToolbar()
         initRecyclerView()
 
@@ -68,8 +72,8 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     }
 
     private fun initRecyclerView() {
-        gifAdapter = GifAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
-        binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
+        gifAdapter = GifAdapter(getItemLayoutForInflate(viewModel.isLinearLayoutManager), this)
+        binding.recyclerView.layoutManager = getLayoutManager(viewModel.isLinearLayoutManager)
         binding.recyclerView.adapter = gifAdapter
 
         viewModel.appState.value?.let { appState ->
@@ -82,7 +86,6 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         supportActionBar?.setDisplayShowTitleEnabled(true)
         supportActionBar?.title = "В тренде"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-//        supportActionBar?.setHomeButtonEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -105,7 +108,6 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
                 override fun onQueryTextChange(newText: String?): Boolean {
                     return true
                 }
-
             })
         }
 
@@ -115,7 +117,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_change_layout -> {
-                isLinearLayoutManager = !isLinearLayoutManager
+                viewModel.isLinearLayoutManager = !viewModel.isLinearLayoutManager
                 item.setIcon(getIconForChangeLayoutItemMenu())
                 initRecyclerView()
                 true
@@ -130,7 +132,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
-        if (isLinearLayoutManager) R.drawable.ic_baseline_view_agenda_24
+        if (viewModel.isLinearLayoutManager) R.drawable.ic_baseline_view_agenda_24
         else R.drawable.ic_baseline_grid_view_24
 
     private fun getItemLayoutForInflate(isLinearLayoutManager: Boolean): Int =
@@ -149,14 +151,19 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) SPAN_COUNT_LANDSCAPE
         else SPAN_COUNT_PORTRAIT
 
-    companion object {
-        const val SPAN_COUNT_PORTRAIT = 3
-        const val SPAN_COUNT_LANDSCAPE = 5
+    override fun onStop() {
+        super.onStop()
+        settings.isLinearLayoutManager = viewModel.isLinearLayoutManager
     }
 
     override fun onItemClick(gif: Gif) {
         val intent = Intent(this, GifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)
+    }
+
+    companion object {
+        const val SPAN_COUNT_PORTRAIT = 3
+        const val SPAN_COUNT_LANDSCAPE = 5
     }
 }
