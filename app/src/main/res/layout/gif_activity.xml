@@ -15,6 +15,10 @@
         tools:src="@tools:sample/avatars" />
 
     <include
+        android:id="@+id/progress_container"
+        layout="@layout/progress_content" />
+
+    <include
         android:id="@+id/error_container"
         layout="@layout/error_content" />
 </FrameLayout>
