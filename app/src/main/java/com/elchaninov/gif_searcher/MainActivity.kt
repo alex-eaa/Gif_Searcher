@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
     private lateinit var gifAdapter: GifAdapter
     private var isLinearLayoutManager = false
+    private var searchView: SearchView? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,17 +55,20 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
     private fun initToolbar() {
         setSupportActionBar(binding.topAppBar)
-        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.title = "В тренде"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//        supportActionBar?.setHomeButtonEnabled(true)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_home_24)
 
         menu?.let {
             it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
 
-            val searchView: SearchView? =
-                menu.findItem(R.id.action_search).actionView as SearchView?
+            searchView = menu.findItem(R.id.action_search).actionView as SearchView?
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     if (!query.isNullOrBlank()) {
@@ -84,12 +88,20 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return if (item.itemId == R.id.action_change_layout) {
-            isLinearLayoutManager = !isLinearLayoutManager
-            item.setIcon(getIconForChangeLayoutItemMenu())
-            initRecyclerView()
-            true
-        } else super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_change_layout -> {
+                isLinearLayoutManager = !isLinearLayoutManager
+                item.setIcon(getIconForChangeLayoutItemMenu())
+                initRecyclerView()
+                true
+            }
+            android.R.id.home -> {
+                searchView?.onActionViewCollapsed()
+                viewModel.searchGifsTrending()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
