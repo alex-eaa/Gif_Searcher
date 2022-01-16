@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.widget.SearchView
@@ -17,6 +18,7 @@ import com.elchaninov.gif_searcher.ui.gif.GifActivity
 import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.main.GifAdapter
 import com.elchaninov.gif_searcher.ui.main.MainViewModel
+import com.elchaninov.gif_searcher.viewModel.AppState
 
 class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
@@ -42,6 +44,13 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
         viewModel.gifs.observe(this, { gifs ->
             gifAdapter.data = gifs
+        })
+
+        viewModel.appState.observe(this, { appState ->
+            when (appState){
+                is AppState.Loading -> Log.d("qqq", "Loading")
+                is AppState.Error -> Log.d("qqq", "Error: ${appState.message}")
+            }
         })
     }
 
