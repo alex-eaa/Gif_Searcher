@@ -1,6 +1,6 @@
 package com.elchaninov.gif_searcher.ui.main
 
-import android.util.Log
+import android.view.ViewGroup
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
@@ -14,7 +14,7 @@ import com.elchaninov.gif_searcher.data.Gif
 class GifViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun bind(gif: Gif) {
+    fun bind(gif: Gif, onItemClickListener: GifAdapter.OnItemClickListener) {
         val imageView: ImageView? = itemView.findViewById(R.id.image_view)
         val imageTitle: TextView? = itemView.findViewById(R.id.image_title)
 
@@ -29,6 +29,10 @@ class GifViewHolder(itemView: View) :
                 .load(gif.urlPreview)
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .into(imageView)
+        }
+
+        itemView.rootView.setOnClickListener {
+            onItemClickListener.onItemClick(gif)
         }
     }
 }

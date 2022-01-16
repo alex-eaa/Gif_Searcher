@@ -7,11 +7,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
+import com.elchaninov.gif_searcher.data.Gif
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.ui.main.GifAdapter
 import com.elchaninov.gif_searcher.ui.main.MainViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
     private lateinit var binding: MainActivityBinding
 
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        gifAdapter = GifAdapter(getItemLayoutForInflate(isLinearLayoutManager))
+        gifAdapter = GifAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
 
         viewModel.gifs.observe(this, { gifs ->
             gifAdapter.data = gifs
@@ -60,5 +61,9 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val SPAN_COUNT_PORTRAIT = 3
         const val SPAN_COUNT_LANDSCAPE = 5
+    }
+
+    override fun onItemClick(gif: Gif) {
+        TODO("Not yet implemented")
     }
 }
