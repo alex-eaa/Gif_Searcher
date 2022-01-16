@@ -27,4 +27,13 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:itemCount="17"
         tools:listitem="@layout/item_gif" />
+
+    <include
+        android:id="@+id/progress_container"
+        layout="@layout/progress_content" />
+
+    <include
+        android:id="@+id/error_container"
+        layout="@layout/error_content" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
