@@ -11,7 +11,7 @@ class GiphyGifRepositoryImpl
     private val mapper: MapGifDtoToGif
 ) : GiphyGifRepository {
 
-    override fun getGifs(): Single<List<Gif>> = giphyApi.fetchGifs()
+    override fun getGifs(query: String): Single<List<Gif>> = giphyApi.fetchGifs(q = query)
         .flatMap {
             Single.just(mapper.map(it))
         }

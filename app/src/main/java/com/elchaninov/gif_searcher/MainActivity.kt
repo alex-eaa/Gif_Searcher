@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         })
 
         if (savedInstanceState == null) {
-            viewModel.searchGifs()
+            viewModel.searchGifs("top")
         }
     }
 
@@ -65,6 +66,22 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
         menu?.let {
             it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
+
+            val searchView: SearchView? =
+                menu.findItem(R.id.action_search).actionView as SearchView?
+            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+                    if (!query.isNullOrBlank()) {
+                        viewModel.searchGifs(query)
+                    }
+                    return true
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+                    return true
+                }
+
+            })
         }
 
         return super.onCreateOptionsMenu(menu)

@@ -17,8 +17,8 @@ class MainViewModel : ViewModel() {
     private var _gifs: MutableLiveData<List<Gif>> = MutableLiveData()
     val gifs: LiveData<List<Gif>> get() = _gifs
 
-    fun searchGifs() {
-        giphyGifRepository.getGifs()
+    fun searchGifs(query: String) {
+        giphyGifRepository.getGifs(query)
             .map {
                 Log.d("qqq", "getGifs: ${it}")
                 it

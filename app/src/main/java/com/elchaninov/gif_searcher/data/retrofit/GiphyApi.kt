@@ -10,7 +10,7 @@ interface GiphyApi {
     @GET("/v1/gifs/search")
     fun fetchGifs(
         @Query("api_key") api_key: String = BuildConfig.GIPHY_API_KEY,
-        @Query("q") q: String = "mini",
+        @Query("q") q: String = "",
         @Query("limit") limit: Int = 25,
         @Query("offset") offset: Int = 0,
         @Query("rating") rating: String = "g",
