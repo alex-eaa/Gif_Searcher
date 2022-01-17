@@ -15,6 +15,8 @@ class GifsRxPagingSource @Inject constructor(
     private val mapGifDtoToGif: MapGifDtoToGif
 ) : RxPagingSource<Int, Gif>() {
 
+    var query: String? = null
+
     override fun getRefreshKey(state: PagingState<Int, Gif>): Int? {
         return null
     }
@@ -22,10 +24,18 @@ class GifsRxPagingSource @Inject constructor(
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, Gif>> {
         val position = params.key ?: 0
 
-        return giphyApi.fetchGifsTrending(offset = position)
-            .subscribeOn(Schedulers.io())
-            .map { toLoadResult(it) }
-            .onErrorReturn { LoadResult.Error(it) }
+        return if (query.isNullOrBlank()) {
+            giphyApi.fetchGifsTrending(offset = position)
+                .subscribeOn(Schedulers.io())
+                .map { toLoadResult(it) }
+                .onErrorReturn { LoadResult.Error(it) }
+        } else {
+            giphyApi.fetchGifs(offset = position, q = query!!)
+                .subscribeOn(Schedulers.io())
+                .map { toLoadResult(it) }
+                .onErrorReturn { LoadResult.Error(it) }
+        }
+
     }
 
     private fun toLoadResult(gifDto: GifDto): LoadResult<Int, Gif> {

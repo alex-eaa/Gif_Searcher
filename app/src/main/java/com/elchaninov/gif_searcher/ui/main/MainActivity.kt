@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     }
 
     private fun initRecyclerView(isLinearLayoutManager: Boolean) {
-//        gifAdapter = GifAdapter(getItemLayoutForInflate(viewModel.isLinearLayoutManager), this)
         adapter = GifsRxAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
         binding.recyclerView.adapter = adapter
@@ -76,9 +75,9 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    if (!query.isNullOrBlank()) {
-                        viewModel.fetchGifs(query)
-                    }
+                    mDisposable.add(viewModel.getFavoritesGifs(query).subscribe {
+                        adapter.submitData(lifecycle, it)
+                    })
                     return true
                 }
 
@@ -101,7 +100,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             }
             android.R.id.home -> {
                 searchView?.onActionViewCollapsed()
-                viewModel.fetchGifs()
+//                viewModel.fetchGifs()
                 true
             }
             else -> super.onOptionsItemSelected(item)

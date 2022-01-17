@@ -8,14 +8,11 @@ import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
 import com.elchaninov.gif_searcher.data.Gif
-import com.elchaninov.gif_searcher.data.GiphyGifRepository
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
 
 class MainViewModel constructor(
-    private val giphyGifRepository: GiphyGifRepository,
     private val settings: Settings,
     private val getGifsRxRepository: GetGifsRxRepository
 ) : ViewModel() {
@@ -25,56 +22,56 @@ class MainViewModel constructor(
     private var disposables = CompositeDisposable()
     private var queryTryAgain: String? = null
 
-    fun getFavoritesGifs(): Flowable<PagingData<Gif>> {
-        return getGifsRxRepository
-            .getGifs()
+    fun getFavoritesGifs(query: String? = null): Flowable<PagingData<Gif>> {
+        queryTryAgain = query
+        return getGifsRxRepository.getGifs(query)
             .cachedIn(viewModelScope)
     }
 
-    fun fetchGifs(query: String? = null) {
-        queryTryAgain = query
-        if (query.isNullOrBlank()) searchGifsTrending()
-        else searchGifs(query)
-    }
-
-    fun tryAgain() {
-        fetchGifs(queryTryAgain)
-    }
+//    fun fetchGifs(query: String? = null) {
+//        queryTryAgain = query
+//        if (query.isNullOrBlank()) searchGifsTrending()
+//        else searchGifs(query)
+//    }
+//
+//    fun tryAgain() {
+//        fetchGifs(queryTryAgain)
+//    }
 
     fun changeLinearLayoutManager() {
         isLinearLayoutManager = !isLinearLayoutManager
         settings.isLinearLayoutManager = isLinearLayoutManager
     }
 
-    private fun searchGifs(query: String) {
-        disposables.add(
-            giphyGifRepository.getGifs(query)
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-//                    _appState.postValue(AppState.Loading)
-                }
-                .subscribe({
-//                    _appState.postValue(AppState.Success(it))
-                }, {
-//                    _appState.postValue(AppState.Error(it.message.toString()))
-                })
-        )
-    }
+//    private fun searchGifs(query: String) {
+//        disposables.add(
+//            giphyGifRepository.getGifs(query)
+//                .subscribeOn(Schedulers.io())
+//                .doOnSubscribe {
+////                    _appState.postValue(AppState.Loading)
+//                }
+//                .subscribe({
+////                    _appState.postValue(AppState.Success(it))
+//                }, {
+////                    _appState.postValue(AppState.Error(it.message.toString()))
+//                })
+//        )
+//    }
 
-    private fun searchGifsTrending() {
-        disposables.add(
-            giphyGifRepository.getGifsTrending()
-                .subscribeOn(Schedulers.io())
-                .doOnSubscribe {
-//                    _appState.postValue(AppState.Loading)
-                }
-                .subscribe({
-//                    _appState.postValue(AppState.Success(it))
-                }, {
-//                    _appState.postValue(AppState.Error(it.message.toString()))
-                })
-        )
-    }
+//    private fun searchGifsTrending() {
+//        disposables.add(
+//            giphyGifRepository.getGifsTrending()
+//                .subscribeOn(Schedulers.io())
+//                .doOnSubscribe {
+////                    _appState.postValue(AppState.Loading)
+//                }
+//                .subscribe({
+////                    _appState.postValue(AppState.Success(it))
+//                }, {
+////                    _appState.postValue(AppState.Error(it.message.toString()))
+//                })
+//        )
+//    }
 
     override fun onCleared() {
         disposables.dispose()
@@ -82,14 +79,13 @@ class MainViewModel constructor(
     }
 
     class Factory @Inject constructor(
-        private val giphyGifRepository: GiphyGifRepository,
         private val settings: Settings,
         private val getGifsRxRepository: GetGifsRxRepository,
     ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                return MainViewModel(giphyGifRepository, settings, getGifsRxRepository) as T
+                return MainViewModel(settings, getGifsRxRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }

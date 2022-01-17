@@ -12,7 +12,9 @@ class GetGifsRxRepositoryImpl @Inject constructor(
     private val pagingSource: GifsRxPagingSource
 ) : GetGifsRxRepository {
 
-    override fun getGifs(): Flowable<PagingData<Gif>> {
+    override fun getGifs(query: String?): Flowable<PagingData<Gif>> {
+        pagingSource.query = query
+
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
