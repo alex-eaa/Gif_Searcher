@@ -11,16 +11,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.elchaninov.gif_searcher.*
+import com.elchaninov.gif_searcher.App
+import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.data.Gif
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
+import com.elchaninov.gif_searcher.hideKeyboard
 import com.elchaninov.gif_searcher.ui.gif.GifActivity
 import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.viewModel.AppState
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity(), OnItemClickListener {
 
     private lateinit var binding: MainActivityBinding
 
@@ -31,8 +33,8 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         ViewModelProvider(this, factory).get(MainViewModel::class.java)
     }
 
-    private lateinit var settings: Settings
-    private lateinit var gifAdapter: GifAdapter
+    private val mDisposable = CompositeDisposable()
+    private lateinit var adapter: GifsRxAdapter
     private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,53 +43,25 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        settings = Settings(this)
-        viewModel.isLinearLayoutManager = settings.isLinearLayoutManager
-
         initToolbar()
-        initRecyclerView()
+        initRecyclerView(viewModel.isLinearLayoutManager)
+    }
 
-        viewModel.appState.observe(this, { appState ->
-            renderData(appState)
+    private fun initRecyclerView(isLinearLayoutManager: Boolean) {
+//        gifAdapter = GifAdapter(getItemLayoutForInflate(viewModel.isLinearLayoutManager), this)
+        adapter = GifsRxAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
+        binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
+        binding.recyclerView.adapter = adapter
+
+        mDisposable.add(viewModel.getFavoritesGifs().subscribe {
+            adapter.submitData(lifecycle, it)
         })
-
-        if (savedInstanceState == null) viewModel.fetchGifs()
-    }
-
-    private fun renderData(appState: AppState) {
-        when (appState) {
-            is AppState.Success -> {
-                gifAdapter.data = appState.data
-                binding.progressContainer.progress.hide()
-                binding.errorContainer.error.hide()
-            }
-            is AppState.Loading -> {
-                binding.errorContainer.error.hide()
-                binding.progressContainer.progress.show()
-            }
-            is AppState.Error -> {
-                binding.errorContainer.errorMsg.text = appState.message
-                binding.errorContainer.tryAgainBtn.setOnClickListener { viewModel.tryAgain() }
-                binding.errorContainer.error.show()
-                binding.progressContainer.progress.hide()
-            }
-        }
-    }
-
-    private fun initRecyclerView() {
-        gifAdapter = GifAdapter(getItemLayoutForInflate(viewModel.isLinearLayoutManager), this)
-        binding.recyclerView.layoutManager = getLayoutManager(viewModel.isLinearLayoutManager)
-        binding.recyclerView.adapter = gifAdapter
-
-        viewModel.appState.value?.let { appState ->
-            if (appState is AppState.Success) gifAdapter.data = appState.data
-        }
     }
 
     private fun initToolbar() {
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.setDisplayShowTitleEnabled(true)
-        supportActionBar?.title = "В тренде"
+        supportActionBar?.title = "Топ"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
@@ -120,9 +94,9 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_change_layout -> {
-                viewModel.isLinearLayoutManager = !viewModel.isLinearLayoutManager
+                viewModel.changeLinearLayoutManager()
+                initRecyclerView(viewModel.isLinearLayoutManager)
                 item.setIcon(getIconForChangeLayoutItemMenu())
-                initRecyclerView()
                 true
             }
             android.R.id.home -> {
@@ -154,9 +128,9 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) SPAN_COUNT_LANDSCAPE
         else SPAN_COUNT_PORTRAIT
 
-    override fun onStop() {
-        super.onStop()
-        settings.isLinearLayoutManager = viewModel.isLinearLayoutManager
+    override fun onDestroy() {
+        mDisposable.dispose()
+        super.onDestroy()
     }
 
     override fun onItemClick(gif: Gif) {

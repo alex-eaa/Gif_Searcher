@@ -1,11 +1,15 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.Settings
+import com.elchaninov.gif_searcher.data.GetGifsRxRepository
+import com.elchaninov.gif_searcher.data.Gif
 import com.elchaninov.gif_searcher.data.GiphyGifRepository
+import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import javax.inject.Inject
@@ -13,15 +17,19 @@ import javax.inject.Inject
 class MainViewModel constructor(
     private val giphyGifRepository: GiphyGifRepository,
     private val settings: Settings,
+    private val getGifsRxRepository: GetGifsRxRepository
 ) : ViewModel() {
 
     var isLinearLayoutManager = settings.isLinearLayoutManager
 
-    private val _appState: MutableLiveData<AppState> = MutableLiveData<AppState>()
-    val appState: LiveData<AppState> get() = _appState
-
     private var disposables = CompositeDisposable()
     private var queryTryAgain: String? = null
+
+    fun getFavoritesGifs(): Flowable<PagingData<Gif>> {
+        return getGifsRxRepository
+            .getGifs()
+            .cachedIn(viewModelScope)
+    }
 
     fun fetchGifs(query: String? = null) {
         queryTryAgain = query
@@ -33,17 +41,22 @@ class MainViewModel constructor(
         fetchGifs(queryTryAgain)
     }
 
+    fun changeLinearLayoutManager() {
+        isLinearLayoutManager = !isLinearLayoutManager
+        settings.isLinearLayoutManager = isLinearLayoutManager
+    }
+
     private fun searchGifs(query: String) {
         disposables.add(
             giphyGifRepository.getGifs(query)
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
-                    _appState.postValue(AppState.Loading)
+//                    _appState.postValue(AppState.Loading)
                 }
                 .subscribe({
-                    _appState.postValue(AppState.Success(it))
+//                    _appState.postValue(AppState.Success(it))
                 }, {
-                    _appState.postValue(AppState.Error(it.message.toString()))
+//                    _appState.postValue(AppState.Error(it.message.toString()))
                 })
         )
     }
@@ -53,31 +66,30 @@ class MainViewModel constructor(
             giphyGifRepository.getGifsTrending()
                 .subscribeOn(Schedulers.io())
                 .doOnSubscribe {
-                    _appState.postValue(AppState.Loading)
+//                    _appState.postValue(AppState.Loading)
                 }
                 .subscribe({
-                    _appState.postValue(AppState.Success(it))
+//                    _appState.postValue(AppState.Success(it))
                 }, {
-                    _appState.postValue(AppState.Error(it.message.toString()))
+//                    _appState.postValue(AppState.Error(it.message.toString()))
                 })
         )
     }
 
     override fun onCleared() {
-        super.onCleared()
-        settings.isLinearLayoutManager = isLinearLayoutManager
         disposables.dispose()
+        super.onCleared()
     }
-
 
     class Factory @Inject constructor(
         private val giphyGifRepository: GiphyGifRepository,
         private val settings: Settings,
+        private val getGifsRxRepository: GetGifsRxRepository,
     ) : ViewModelProvider.Factory {
 
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                return MainViewModel(giphyGifRepository, settings) as T
+                return MainViewModel(giphyGifRepository, settings, getGifsRxRepository) as T
             }
             throw IllegalArgumentException("Unknown ViewModel class")
         }
