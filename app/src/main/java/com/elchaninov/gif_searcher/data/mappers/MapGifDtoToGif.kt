@@ -9,6 +9,7 @@ class MapGifDtoToGif @Inject constructor() {
     fun map(gifDto: GifDto): List<Gif> {
         return gifDto.data.map {
             Gif(
+                id = it.id,
                 type = it.type,
                 title = it.title,
                 urlPreview = it.images.previewGif.url,
