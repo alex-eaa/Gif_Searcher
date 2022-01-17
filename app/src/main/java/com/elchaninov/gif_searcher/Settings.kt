@@ -2,10 +2,11 @@ package com.elchaninov.gif_searcher
 
 import android.content.Context
 import android.content.SharedPreferences
+import javax.inject.Inject
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-class Settings(context: Context) {
+class Settings @Inject constructor(context: Context) {
 
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

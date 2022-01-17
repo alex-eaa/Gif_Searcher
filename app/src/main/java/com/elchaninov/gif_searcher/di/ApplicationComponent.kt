@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
 import android.content.Context
-import com.elchaninov.gif_searcher.viewModel.MainViewModel
+import com.elchaninov.gif_searcher.ui.main.MainActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -9,7 +9,6 @@ import javax.inject.Singleton
 @Singleton
 @Component(
     modules = [
-        MapperModule::class,
         RetrofitModule::class,
         RepositoryModule::class
     ]
@@ -24,5 +23,5 @@ interface ApplicationComponent {
         fun build(): ApplicationComponent
     }
 
-    fun inject(mainViewModel: MainViewModel)
+    fun inject(mainActivity: MainActivity)
 }

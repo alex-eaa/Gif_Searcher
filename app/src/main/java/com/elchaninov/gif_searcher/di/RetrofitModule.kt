@@ -16,11 +16,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitModule {
 
     @Provides
-    fun provideGson(): Gson = GsonBuilder().create()
-
-    @Provides
     @Reusable
-    fun provideGiphyApi(gson: Gson): GiphyApi =
+    fun provideGiphyApi(): GiphyApi =
         Retrofit.Builder()
             .baseUrl("https://api.giphy.com")
             .client(
@@ -33,7 +30,7 @@ class RetrofitModule {
                     .build()
             )
             .addCallAdapterFactory(RxJava3CallAdapterFactory.createSynchronous())
-            .addConverterFactory(GsonConverterFactory.create(gson))
+            .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
             .create(GiphyApi::class.java)
 }

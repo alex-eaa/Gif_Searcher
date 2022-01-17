@@ -18,15 +18,17 @@ import com.elchaninov.gif_searcher.ui.gif.GifActivity
 import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.AppState
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
+import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
 
     private lateinit var binding: MainActivityBinding
 
+    @Inject
+    lateinit var factory: MainViewModel.Factory
+
     private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this).get(MainViewModel::class.java).also {
-            App.instance.component.inject(it)
-        }
+        ViewModelProvider(this, factory).get(MainViewModel::class.java)
     }
 
     private lateinit var settings: Settings
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity(), GifAdapter.OnItemClickListener {
     private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.instance.component.inject(this)
         super.onCreate(savedInstanceState)
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
