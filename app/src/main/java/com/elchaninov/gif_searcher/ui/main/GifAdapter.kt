@@ -31,8 +31,4 @@ class GifAdapter(
     override fun getItemCount(): Int {
         return data.size
     }
-
-    interface OnItemClickListener {
-        fun onItemClick(gif: Gif)
-    }
 }

@@ -13,7 +13,7 @@ import com.elchaninov.gif_searcher.data.Gif
 class GifViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
 
-    fun bind(gif: Gif, onItemClickListener: GifAdapter.OnItemClickListener) {
+    fun bind(gif: Gif, onItemClickListener: OnItemClickListener) {
         val imageView: ImageView? = itemView.findViewById(R.id.image_view)
         val imageTitle: TextView? = itemView.findViewById(R.id.image_title)
 
