@@ -10,7 +10,8 @@ import javax.inject.Singleton
 @Component(
     modules = [
         RetrofitModule::class,
-        RepositoryModule::class
+        RepositoryModule::class,
+        GetGifsRxRepositoryModule::class,
     ]
 )
 interface ApplicationComponent {
