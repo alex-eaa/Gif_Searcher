@@ -1,7 +1,6 @@
 package com.elchaninov.gif_searcher.di
 
 import com.elchaninov.gif_searcher.data.retrofit.GiphyApi
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides

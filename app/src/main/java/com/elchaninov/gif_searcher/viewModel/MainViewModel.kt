@@ -8,7 +8,7 @@ import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
 import com.elchaninov.gif_searcher.data.Gif
-import io.reactivex.rxjava3.core.Flowable
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -20,9 +20,9 @@ class MainViewModel constructor(
     var isLinearLayoutManager = settings.isLinearLayoutManager
     private var disposables = CompositeDisposable()
     private var stableQuestion: String? = null
-    private var pagingData: Flowable<PagingData<Gif>>? = null
+    private var pagingData: Observable<PagingData<Gif>>? = null
 
-    fun getGifs(query: String?): Flowable<PagingData<Gif>> {
+    fun getGifs(query: String?): Observable<PagingData<Gif>> {
         if (query != stableQuestion) {
             stableQuestion = query
             return updateValuePagingData()
@@ -32,7 +32,7 @@ class MainViewModel constructor(
         }
     }
 
-    private fun updateValuePagingData(): Flowable<PagingData<Gif>> =
+    private fun updateValuePagingData(): Observable<PagingData<Gif>> =
         getGifsRxRepository.getGifs(stableQuestion)
             .cachedIn(viewModelScope)
             .also {
