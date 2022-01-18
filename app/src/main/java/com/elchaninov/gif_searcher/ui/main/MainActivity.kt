@@ -8,6 +8,8 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
+import androidx.paging.CombinedLoadStates
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -18,6 +20,7 @@ import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.hideKeyboard
 import com.elchaninov.gif_searcher.ui.gif.GifActivity
 import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
+import com.elchaninov.gif_searcher.ui.main.LoadState.GifsLoadStateAdapter
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -52,7 +55,12 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
         binding.recyclerView.adapter = adapter
 
-        mDisposable.add(viewModel.getFavoritesGifs().subscribe {
+        binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
+            header = GifsLoadStateAdapter { adapter.retry() },
+            footer = GifsLoadStateAdapter { adapter.retry() }
+        )
+
+        mDisposable.add(viewModel.pagingData.subscribe {
             adapter.submitData(lifecycle, it)
         })
     }
