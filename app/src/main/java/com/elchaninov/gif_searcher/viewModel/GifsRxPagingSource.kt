@@ -44,10 +44,12 @@ class GifsRxPagingSource @Inject constructor(
         val offset = gifDto.pagination.offset
         return LoadResult.Page(
             data = mapGifDtoToGif.map(gifDto),
-            prevKey = if (offset == 0) null else offset - count,
-            nextKey = if (offset == totalCount) null else offset + count
+            prevKey = if (offset <= 0) null else offset - PAGE_SIZE,
+            nextKey = if (offset + count >= totalCount) null else offset + PAGE_SIZE
         )
     }
 
-
+    companion object {
+        const val PAGE_SIZE = 20
+    }
 }
