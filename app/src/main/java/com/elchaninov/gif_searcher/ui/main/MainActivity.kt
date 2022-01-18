@@ -79,15 +79,16 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
                 binding.progressContainer.progress.hide()
 
                 val error = when {
-                    loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
-                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
                     loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
                     else -> null
                 }
                 error?.let {
                     binding.errorContainer.errorMsg.text = it.error.message
                     binding.errorContainer.error.show()
-                    binding.errorContainer.tryAgainBtn.setOnClickListener { adapter.retry() }
+                    binding.errorContainer.tryAgainBtn.setOnClickListener {
+                        adapter.retry()
+                        binding.errorContainer.error.hide()
+                    }
                 }
             }
         }
