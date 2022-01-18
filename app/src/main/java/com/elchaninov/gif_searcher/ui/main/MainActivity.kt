@@ -13,11 +13,9 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.elchaninov.gif_searcher.App
-import com.elchaninov.gif_searcher.R
+import com.elchaninov.gif_searcher.*
 import com.elchaninov.gif_searcher.data.Gif
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
-import com.elchaninov.gif_searcher.hideKeyboard
 import com.elchaninov.gif_searcher.ui.gif.GifActivity
 import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.main.LoadState.GifsLoadStateAdapter
@@ -47,12 +45,14 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         setContentView(binding.root)
 
         initToolbar()
-        initRecyclerView(viewModel.isLinearLayoutManager)
+        initRecyclerView()
     }
 
-    private fun initRecyclerView(isLinearLayoutManager: Boolean) {
+    private fun initRecyclerView() {
+        val isLinearLayoutManager = viewModel.isLinearLayoutManager
         adapter = GifsRxAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
+
         binding.recyclerView.adapter = adapter
 
         binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
@@ -60,9 +60,37 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             footer = GifsLoadStateAdapter { adapter.retry() }
         )
 
-        mDisposable.add(viewModel.pagingData.subscribe {
+        mDisposable.add(viewModel.getGifs().subscribe {
             adapter.submitData(lifecycle, it)
         })
+
+        adapter.addLoadStateListener { combinedLoadStates ->
+            processingPreloadStates(combinedLoadStates)
+        }
+    }
+
+    private fun processingPreloadStates(loadState: CombinedLoadStates) {
+        when (loadState.refresh) {
+            is LoadState.Loading -> {
+                binding.errorContainer.error.hide()
+                binding.progressContainer.progress.show()
+            }
+            else -> {
+                binding.progressContainer.progress.hide()
+
+                val error = when {
+                    loadState.prepend is LoadState.Error -> loadState.prepend as LoadState.Error
+                    loadState.append is LoadState.Error -> loadState.append as LoadState.Error
+                    loadState.refresh is LoadState.Error -> loadState.refresh as LoadState.Error
+                    else -> null
+                }
+                error?.let {
+                    binding.errorContainer.errorMsg.text = it.error.message
+                    binding.errorContainer.error.show()
+                    binding.errorContainer.tryAgainBtn.setOnClickListener { adapter.retry() }
+                }
+            }
+        }
     }
 
     private fun initToolbar() {
@@ -83,9 +111,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    mDisposable.add(viewModel.getFavoritesGifs(query).subscribe {
-                        adapter.submitData(lifecycle, it)
-                    })
+                    adapter.retry()
                     return true
                 }
 
@@ -102,7 +128,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
         return when (item.itemId) {
             R.id.action_change_layout -> {
                 viewModel.changeLinearLayoutManager()
-                initRecyclerView(viewModel.isLinearLayoutManager)
+                initRecyclerView()
                 item.setIcon(getIconForChangeLayoutItemMenu())
                 true
             }

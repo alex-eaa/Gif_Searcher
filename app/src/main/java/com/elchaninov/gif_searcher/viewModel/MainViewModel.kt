@@ -22,56 +22,22 @@ class MainViewModel constructor(
     private var disposables = CompositeDisposable()
     private var queryTryAgain: String? = null
 
-    fun getFavoritesGifs(query: String? = null): Flowable<PagingData<Gif>> {
-        queryTryAgain = query
-        return getGifsRxRepository.getGifs(query)
-            .cachedIn(viewModelScope)
-    }
+    private var pagingData: Flowable<PagingData<Gif>>? = null
 
-//    fun fetchGifs(query: String? = null) {
-//        queryTryAgain = query
-//        if (query.isNullOrBlank()) searchGifsTrending()
-//        else searchGifs(query)
-//    }
-//
-//    fun tryAgain() {
-//        fetchGifs(queryTryAgain)
-//    }
+    fun getGifs(query: String? = null): Flowable<PagingData<Gif>> {
+        queryTryAgain = query
+        pagingData?.let { return it }
+        val newPagingData = getGifsRxRepository.getGifs(query)
+            .cachedIn(viewModelScope)
+
+        pagingData = newPagingData
+        return newPagingData
+    }
 
     fun changeLinearLayoutManager() {
         isLinearLayoutManager = !isLinearLayoutManager
         settings.isLinearLayoutManager = isLinearLayoutManager
     }
-
-//    private fun searchGifs(query: String) {
-//        disposables.add(
-//            giphyGifRepository.getGifs(query)
-//                .subscribeOn(Schedulers.io())
-//                .doOnSubscribe {
-////                    _appState.postValue(AppState.Loading)
-//                }
-//                .subscribe({
-////                    _appState.postValue(AppState.Success(it))
-//                }, {
-////                    _appState.postValue(AppState.Error(it.message.toString()))
-//                })
-//        )
-//    }
-
-//    private fun searchGifsTrending() {
-//        disposables.add(
-//            giphyGifRepository.getGifsTrending()
-//                .subscribeOn(Schedulers.io())
-//                .doOnSubscribe {
-////                    _appState.postValue(AppState.Loading)
-//                }
-//                .subscribe({
-////                    _appState.postValue(AppState.Success(it))
-//                }, {
-////                    _appState.postValue(AppState.Error(it.message.toString()))
-//                })
-//        )
-//    }
 
     override fun onCleared() {
         disposables.dispose()
