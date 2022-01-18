@@ -18,21 +18,26 @@ class MainViewModel constructor(
 ) : ViewModel() {
 
     var isLinearLayoutManager = settings.isLinearLayoutManager
-
     private var disposables = CompositeDisposable()
-    private var queryTryAgain: String? = null
-
+    private var stableQuestion: String? = null
     private var pagingData: Flowable<PagingData<Gif>>? = null
 
-    fun getGifs(query: String? = null): Flowable<PagingData<Gif>> {
-        queryTryAgain = query
-        pagingData?.let { return it }
-        val newPagingData = getGifsRxRepository.getGifs(query)
-            .cachedIn(viewModelScope)
-
-        pagingData = newPagingData
-        return newPagingData
+    fun getGifs(query: String?): Flowable<PagingData<Gif>> {
+        if (query != stableQuestion) {
+            stableQuestion = query
+            return updateValuePagingData()
+        } else {
+            pagingData?.let { return it }
+            return updateValuePagingData()
+        }
     }
+
+    private fun updateValuePagingData(): Flowable<PagingData<Gif>> =
+        getGifsRxRepository.getGifs(stableQuestion)
+            .cachedIn(viewModelScope)
+            .also {
+                pagingData = it
+            }
 
     fun changeLinearLayoutManager() {
         isLinearLayoutManager = !isLinearLayoutManager

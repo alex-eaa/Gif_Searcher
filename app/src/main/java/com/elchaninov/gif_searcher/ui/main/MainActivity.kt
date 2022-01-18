@@ -60,13 +60,18 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             footer = GifsLoadStateAdapter { adapter.retry() }
         )
 
-        mDisposable.add(viewModel.getGifs().subscribe {
-            adapter.submitData(lifecycle, it)
-        })
+        adapterSubmitData(null)
 
         adapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
+    }
+
+
+    private fun adapterSubmitData(query: String?) {
+        mDisposable.add(viewModel.getGifs(query).subscribe {
+            adapter.submitData(lifecycle, it)
+        })
     }
 
     private fun processingPreloadStates(loadState: CombinedLoadStates) {
@@ -112,7 +117,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    adapter.retry()
+                    adapterSubmitData(query)
                     return true
                 }
 
@@ -135,7 +140,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             }
             android.R.id.home -> {
                 searchView?.onActionViewCollapsed()
-//                viewModel.fetchGifs()
+                adapterSubmitData(null)
                 true
             }
             else -> super.onOptionsItemSelected(item)
