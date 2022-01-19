@@ -3,6 +3,7 @@ package com.elchaninov.gif_searcher.ui
 import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.google.android.material.snackbar.Snackbar
 
 fun View.hideKeyboard(): Boolean = try {
     val inputMethodManager =
@@ -18,4 +19,17 @@ fun View.show() {
 
 fun View.hide() {
     this.visibility = View.GONE
+}
+
+fun View.showSnackbar(
+    text: String = "Ошибка",
+    actionText: String = "Повторить",
+    action: (View) -> Unit,
+    length: Int = Snackbar.LENGTH_INDEFINITE,
+) {
+
+    Snackbar.make(this, text, length)
+        .setAction(actionText) { action(this) }
+        .show()
+
 }

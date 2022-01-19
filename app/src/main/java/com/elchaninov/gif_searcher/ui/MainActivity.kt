@@ -76,7 +76,6 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     private fun processingPreloadStates(loadState: CombinedLoadStates) {
         when (loadState.refresh) {
             is LoadState.Loading -> {
-                binding.errorContainer.error.hide()
                 binding.progressContainer.progress.show()
             }
             else -> {
@@ -87,15 +86,17 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
                     else -> null
                 }
                 error?.let {
-                    binding.errorContainer.errorMsg.text = it.error.message
-                    binding.errorContainer.error.show()
-                    binding.errorContainer.tryAgainBtn.setOnClickListener {
-                        adapter.retry()
-                        binding.errorContainer.error.hide()
-                    }
+                    showError()
                 }
             }
         }
+    }
+
+    private fun showError() {
+        binding.root.showSnackbar(
+            text = "Не удалось загрузить список изображений",
+            action = { adapter.retry() }
+        )
     }
 
     private fun initToolbar() {
