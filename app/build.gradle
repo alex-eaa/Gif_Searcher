@@ -26,7 +26,7 @@ android {
     }
     buildTypes.each {
         def localProperties = new Properties()
-        localProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+        localProperties.load(new FileInputStream(rootProject.file("apikey.properties")))
         it.buildConfigField "String", "GIPHY_API_KEY", "${localProperties['giphyApiKey']}"
     }
     buildFeatures {

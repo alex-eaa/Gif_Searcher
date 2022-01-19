@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.data
+package com.elchaninov.gif_searcher.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

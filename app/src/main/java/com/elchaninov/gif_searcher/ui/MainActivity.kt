@@ -1,10 +1,11 @@
-package com.elchaninov.gif_searcher.ui.main
+package com.elchaninov.gif_searcher.ui
 
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
@@ -14,16 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.*
-import com.elchaninov.gif_searcher.data.Gif
+import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
-import com.elchaninov.gif_searcher.ui.gif.GifActivity
-import com.elchaninov.gif_searcher.ui.gif.GifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.ui.main.LoadState.GifsLoadStateAdapter
+import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), OnItemClickListener {
+class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     private lateinit var binding: MainActivityBinding
 
@@ -114,6 +113,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
             it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
 
             searchView = menu.findItem(R.id.action_search).actionView as SearchView?
+            searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity(), OnItemClickListener {
     }
 
     override fun onItemClick(gif: Gif) {
-        val intent = Intent(this, GifActivity::class.java)
+        val intent = Intent(this, ShowingGifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)
     }

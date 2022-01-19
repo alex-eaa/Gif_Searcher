@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.gif
+package com.elchaninov.gif_searcher.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,13 +10,11 @@ import com.bumptech.glide.load.resource.gif.GifDrawable
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.data.Gif
+import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
-import com.elchaninov.gif_searcher.hide
-import com.elchaninov.gif_searcher.show
 
 
-class GifActivity : AppCompatActivity() {
+class ShowingGifActivity : AppCompatActivity() {
 
     private lateinit var binding: GifActivityBinding
 

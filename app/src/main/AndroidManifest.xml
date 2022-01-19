@@ -13,13 +13,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Gif_Searcher">
         <activity
-            android:name=".ui.gif.GifActivity"
+            android:name=".ui.ShowingGifActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Gif_Searcher.Fullscreen"/>
 
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

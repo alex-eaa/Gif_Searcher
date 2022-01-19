@@ -1,13 +1,13 @@
 package com.elchaninov.gif_searcher.data.mappers
 
-import com.elchaninov.gif_searcher.data.Gif
-import com.elchaninov.gif_searcher.data.retrofit.GifDto
+import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.data.api.GiphyGifsResponse
 import javax.inject.Inject
 
 class MapGifDtoToGif @Inject constructor() {
 
-    fun map(gifDto: GifDto): List<Gif> {
-        return gifDto.data.map {
+    fun map(giphyGifsResponse: GiphyGifsResponse): List<Gif> {
+        return giphyGifsResponse.data.map {
             Gif(
                 id = it.id,
                 type = it.type,

@@ -1,6 +1,6 @@
 package com.elchaninov.gif_searcher.di
 
-import com.elchaninov.gif_searcher.data.retrofit.GiphyApi
+import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -16,7 +16,7 @@ class RetrofitModule {
 
     @Provides
     @Reusable
-    fun provideGiphyApi(): GiphyApi =
+    fun provideGiphyApi(): GiphyGifsApi =
         Retrofit.Builder()
             .baseUrl("https://api.giphy.com")
             .client(
@@ -31,5 +31,5 @@ class RetrofitModule {
             .addCallAdapterFactory(RxJava3CallAdapterFactory.createSynchronous())
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
             .build()
-            .create(GiphyApi::class.java)
+            .create(GiphyGifsApi::class.java)
 }

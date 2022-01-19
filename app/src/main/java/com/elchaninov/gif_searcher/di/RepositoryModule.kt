@@ -1,8 +1,8 @@
 package com.elchaninov.gif_searcher.di
 
-import com.elchaninov.gif_searcher.data.GiphyGifRepository
-import com.elchaninov.gif_searcher.data.GiphyGifRepositoryImpl
-import com.elchaninov.gif_searcher.data.retrofit.GiphyApi
+import com.elchaninov.gif_searcher.data.GiphyGifsRepository
+import com.elchaninov.gif_searcher.data.GiphyGifsRepositoryImpl
+import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
 import dagger.Module
 import dagger.Provides
 
@@ -11,8 +11,8 @@ class RepositoryModule {
 
     @Provides
     fun provideGiphyGifRepository(
-        giphyApi: GiphyApi,
-    ): GiphyGifRepository {
-        return GiphyGifRepositoryImpl(giphyApi)
+        giphyGifsApi: GiphyGifsApi,
+    ): GiphyGifsRepository {
+        return GiphyGifsRepositoryImpl(giphyGifsApi)
     }
 }

@@ -1,8 +1,8 @@
-package com.elchaninov.gif_searcher.data.retrofit
+package com.elchaninov.gif_searcher.data.api
 
 import com.google.gson.annotations.SerializedName
 
-data class GifDto(
+data class GiphyGifsResponse(
     @SerializedName("data")
     val data: List<DataDto>,
     @SerializedName("pagination")

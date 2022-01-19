@@ -7,7 +7,7 @@ import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
-import com.elchaninov.gif_searcher.data.Gif
+import com.elchaninov.gif_searcher.model.Gif
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
@@ -18,7 +18,6 @@ class MainViewModel constructor(
 ) : ViewModel() {
 
     var isLinearLayoutManager = settings.isLinearLayoutManager
-    private var disposables = CompositeDisposable()
     private var stableQuestion: String? = null
     private var pagingData: Observable<PagingData<Gif>>? = null
 
@@ -42,11 +41,6 @@ class MainViewModel constructor(
     fun changeLinearLayoutManager() {
         isLinearLayoutManager = !isLinearLayoutManager
         settings.isLinearLayoutManager = isLinearLayoutManager
-    }
-
-    override fun onCleared() {
-        disposables.dispose()
-        super.onCleared()
     }
 
     class Factory @Inject constructor(

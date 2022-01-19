@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.main.LoadState
+package com.elchaninov.gif_searcher.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -4,8 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.observable
-import com.elchaninov.gif_searcher.viewModel.GifsRxPagingSource
-import com.elchaninov.gif_searcher.viewModel.GifsRxPagingSource.Companion.PAGE_SIZE
+import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.data.GifsRxPagingSource.Companion.PAGE_SIZE
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 

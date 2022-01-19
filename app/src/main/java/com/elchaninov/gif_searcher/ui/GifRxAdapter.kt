@@ -1,10 +1,10 @@
-package com.elchaninov.gif_searcher.ui.main
+package com.elchaninov.gif_searcher.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import com.elchaninov.gif_searcher.data.Gif
+import com.elchaninov.gif_searcher.model.Gif
 
 class GifsRxAdapter(
     var itemLayoutForInflate: Int,
@@ -34,5 +34,9 @@ class GifsRxAdapter(
                 return oldItem == newItem
             }
         }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(gif: Gif)
     }
 }
