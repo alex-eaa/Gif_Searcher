@@ -1,8 +1,6 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.Settings
@@ -20,16 +18,21 @@ class MainViewModel constructor(
     private var savedSearchQuery: SearchQuery = SearchQuery.Top
     private var pagingData: Observable<PagingData<Gif>>? = null
 
-    fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>> {
-        if (searchQuery is SearchQuery.Empty) pagingData?.let { return it }
+    private val _pagingDataLiveData: MutableLiveData<Observable<PagingData<Gif>>> =
+        MutableLiveData()
+    val pagingDataLiveData: LiveData<Observable<PagingData<Gif>>> get() = _pagingDataLiveData
+
+    init {
+        _pagingDataLiveData.postValue(updateValuePagingData())
+    }
+
+    fun changeSearchQuery(searchQuery: SearchQuery) {
+        if (searchQuery is SearchQuery.Empty) return
 
         if (savedSearchQuery != searchQuery) {
             savedSearchQuery = searchQuery
-            return updateValuePagingData()
+            _pagingDataLiveData.postValue(updateValuePagingData())
         }
-
-        pagingData?.let { return it }
-        return updateValuePagingData()
     }
 
     private fun updateValuePagingData(): Observable<PagingData<Gif>> =

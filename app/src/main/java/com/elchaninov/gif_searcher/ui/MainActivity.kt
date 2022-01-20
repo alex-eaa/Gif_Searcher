@@ -47,9 +47,6 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
         initToolbar()
         initRecyclerView()
-
-        if (savedInstanceState == null) adapterSubmitData(SearchQuery.Top)
-        else adapterSubmitData(SearchQuery.Empty)
     }
 
     private fun initRecyclerView() {
@@ -65,12 +62,11 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         adapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
-    }
 
-    private fun adapterSubmitData(searchQuery: SearchQuery) {
-        mDisposable.add(viewModel.getGifs(searchQuery).subscribe {
-            adapter.submitData(lifecycle, it)
-        })
+        viewModel.pagingDataLiveData.observe(this) { observable ->
+            mDisposable.add(
+                observable.subscribe { adapter.submitData(lifecycle, it) })
+        }
     }
 
     private fun processingPreloadStates(loadState: CombinedLoadStates) {
@@ -118,7 +114,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    query?.let { query -> adapterSubmitData(SearchQuery.Search(query)) }
+                    query?.let { viewModel.changeSearchQuery(SearchQuery.Search(it)) }
                     return true
                 }
 
@@ -136,13 +132,12 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             R.id.action_change_layout -> {
                 viewModel.changeLinearLayoutManager()
                 initRecyclerView()
-                adapterSubmitData(SearchQuery.Empty)
                 item.setIcon(getIconForChangeLayoutItemMenu())
                 true
             }
             android.R.id.home -> {
                 searchView?.onActionViewCollapsed()
-                adapterSubmitData(SearchQuery.Top)
+                viewModel.changeSearchQuery(SearchQuery.Top)
                 true
             }
             else -> super.onOptionsItemSelected(item)
