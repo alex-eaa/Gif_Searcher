@@ -26,8 +26,8 @@ class GetGifsRxRepositoryImpl @Inject constructor(
     private fun getPageConfig(): PagingConfig = PagingConfig(
         pageSize = PAGE_SIZE,
         enablePlaceholders = false,
-        maxSize = PAGE_SIZE + 4 * PAGE_SIZE,
-        prefetchDistance = PAGE_SIZE * 2,
-        initialLoadSize = PAGE_SIZE * 2
+//        maxSize = PAGE_SIZE + 4 * PAGE_SIZE,
+        prefetchDistance = PAGE_SIZE * 3,
+        initialLoadSize = PAGE_SIZE * 3
     )
 }

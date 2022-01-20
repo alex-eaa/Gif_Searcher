@@ -19,7 +19,10 @@ class GifsRxPagingSource @AssistedInject constructor(
 ) : RxPagingSource<Int, Gif>() {
 
     override fun getRefreshKey(state: PagingState<Int, Gif>): Int? {
-        return null
+        return state.anchorPosition?.let { anchorPosition ->
+            val anchorPage = state.closestPageToPosition(anchorPosition)
+            anchorPage?.prevKey?.plus(1) ?: anchorPage?.nextKey?.minus(1)
+        }
     }
 
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, Gif>> {
@@ -53,7 +56,7 @@ class GifsRxPagingSource @AssistedInject constructor(
     }
 
     companion object {
-        const val PAGE_SIZE = 20
+        const val PAGE_SIZE = 30
     }
 
     @AssistedFactory
