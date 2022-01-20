@@ -7,6 +7,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate.*
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.CombinedLoadStates
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
+import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
@@ -27,6 +29,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     private lateinit var binding: MainActivityBinding
+
+    @Inject
+    lateinit var settings: Settings
 
     @Inject
     lateinit var factory: MainViewModel.Factory
@@ -41,6 +46,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.instance.component.inject(this)
+        setTheme()
         super.onCreate(savedInstanceState)
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -110,7 +116,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_home_24)
 
         menu?.let {
-            it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
+            setIconsItemsMenu(it)
 
             searchView = it.findItem(R.id.action_search).actionView as SearchView?
             searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
@@ -130,7 +136,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             })
         }
 
-        return super.onCreateOptionsMenu(menu)
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -147,7 +153,41 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
                 supportActionBar?.title = getString(R.string.top)
                 true
             }
-            else -> super.onOptionsItemSelected(item)
+            R.id.action_theme_day_night -> {
+                searchView?.onActionViewCollapsed()
+                viewModel.changeSearchQuery(SearchQuery.Top)
+                supportActionBar?.title = getString(R.string.top)
+                true
+            }
+            R.id.theme_dark -> {
+                settings.isDarkTheme = Theme.DARK.value
+                this.recreate()
+                true
+            }
+            R.id.theme_light -> {
+                settings.isDarkTheme = Theme.LIGHT.value
+                this.recreate()
+                true
+            }
+            R.id.theme_auto -> {
+                settings.isDarkTheme = Theme.AUTO.value
+                this.recreate()
+                true
+            }
+            else -> true
+        }
+    }
+
+    private fun setIconsItemsMenu(menu: Menu?) {
+        menu?.let {
+            it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
+
+            when (settings.isDarkTheme) {
+                Theme.DARK.value -> it.findItem(R.id.theme_dark).setChecked(true)
+                Theme.LIGHT.value -> it.findItem(R.id.theme_light).setChecked(true)
+                Theme.AUTO.value -> it.findItem(R.id.theme_auto).setChecked(true)
+                else -> {}
+            }
         }
     }
 
@@ -180,6 +220,15 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         val intent = Intent(this, ShowingGifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)
+    }
+
+    private fun setTheme() {
+        when (settings.isDarkTheme) {
+            Theme.DARK.value -> setDefaultNightMode(MODE_NIGHT_YES)
+            Theme.LIGHT.value -> setDefaultNightMode(MODE_NIGHT_NO)
+            Theme.AUTO.value -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
+            else -> {}
+        }
     }
 
     companion object {

@@ -16,5 +16,9 @@
 <!--    ITEMS MENU-->
     <string name="item_menu_change_view">Вид</string>
     <string name="item_menu_search">Поиск</string>
+    <string name="item_menu_theme">Тема</string>
+    <string name="item_menu_light">Светлая</string>
+    <string name="item_menu_dark">Темная</string>
+    <string name="item_menu_auto">Авто</string>
 
 </resources>

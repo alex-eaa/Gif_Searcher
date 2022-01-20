@@ -8,11 +8,34 @@
         android:orderInCategory="1"
         android:title="@string/item_menu_search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_change_layout"
         android:orderInCategory="2"
         android:title="@string/item_menu_change_view"
         app:showAsAction="ifRoom"
         tools:icon="@drawable/ic_baseline_dashboard_24" />
+    <item
+        android:id="@+id/action_theme_day_night"
+        android:orderInCategory="3"
+        android:title="@string/item_menu_theme"
+        app:showAsAction="collapseActionView"
+        tools:icon="@drawable/ic_baseline_dashboard_24">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/theme_light"
+                    android:title="@string/item_menu_light"
+                    app:showAsAction="ifRoom|withText" />
+                <item
+                    android:id="@+id/theme_dark"
+                    android:title="@string/item_menu_dark"
+                    app:showAsAction="always|withText" />
+                <item
+                    android:id="@+id/theme_auto"
+                    android:title="@string/item_menu_auto"
+                    app:showAsAction="always|withText" />
+            </group>
+        </menu>
+    </item>
 </menu>
