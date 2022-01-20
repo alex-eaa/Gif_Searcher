@@ -23,7 +23,6 @@ import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
@@ -40,7 +39,6 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         ViewModelProvider(this, factory)[MainViewModel::class.java]
     }
 
-    private val disposable = CompositeDisposable()
     private lateinit var gifsAdapter: GifsRxAdapter
     private var searchView: SearchView? = null
 
@@ -57,18 +55,17 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     private fun initRecyclerView() {
         gifsAdapter =
-            GifsRxAdapter(getItemLayoutForInflate(viewModel.isLinearLayoutManager), this)
+            GifsRxAdapter(getItemLayoutForInflate(settings.isLinearLayoutManager), this)
         gifsAdapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
 
         viewModel.pagingDataLiveData.observe(this) { observable ->
-            disposable.add(
-                observable.subscribe { gifsAdapter.submitData(lifecycle, it) })
+            gifsAdapter.submitData(lifecycle, observable)
         }
 
         binding.recyclerView.apply {
-            layoutManager = getLayoutManager(viewModel.isLinearLayoutManager)
+            layoutManager = getLayoutManager(settings.isLinearLayoutManager)
             adapter = gifsAdapter
             adapter = gifsAdapter.withLoadStateHeaderAndFooter(
                 header = GifsLoadStateAdapter { gifsAdapter.retry() },
@@ -142,18 +139,12 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_change_layout -> {
-                viewModel.changeLinearLayoutManager()
+                settings.isLinearLayoutManager = !settings.isLinearLayoutManager
                 initRecyclerView()
                 item.setIcon(getIconForChangeLayoutItemMenu())
                 true
             }
             android.R.id.home -> {
-                searchView?.onActionViewCollapsed()
-                viewModel.changeSearchQuery(SearchQuery.Top)
-                supportActionBar?.title = getString(R.string.top)
-                true
-            }
-            R.id.action_theme_day_night -> {
                 searchView?.onActionViewCollapsed()
                 viewModel.changeSearchQuery(SearchQuery.Top)
                 supportActionBar?.title = getString(R.string.top)
@@ -192,7 +183,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
-        if (viewModel.isLinearLayoutManager) R.drawable.ic_baseline_dashboard_24
+        if (settings.isLinearLayoutManager) R.drawable.ic_baseline_dashboard_24
         else R.drawable.ic_baseline_view_agenda_24
 
     private fun getItemLayoutForInflate(isLinearLayoutManager: Boolean): Int =
@@ -210,11 +201,6 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     private fun getSpanCount(): Int =
         if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) SPAN_COUNT_LANDSCAPE
         else SPAN_COUNT_PORTRAIT
-
-    override fun onDestroy() {
-        disposable.dispose()
-        super.onDestroy()
-    }
 
     override fun onItemClick(gif: Gif) {
         val intent = Intent(this, ShowingGifActivity::class.java)
