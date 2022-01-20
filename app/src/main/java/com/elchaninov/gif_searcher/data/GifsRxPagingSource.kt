@@ -2,7 +2,7 @@ package com.elchaninov.gif_searcher.data
 
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
-import com.elchaninov.gif_searcher.data.api.GiphyGifsResponse
+import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
 import com.elchaninov.gif_searcher.data.mappers.MapGifDtoToGif
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
@@ -32,7 +32,7 @@ class GifsRxPagingSource @AssistedInject constructor(
                     .map { toLoadResult(it) }
                     .onErrorReturn { LoadResult.Error(it) }
             }
-            else -> {
+            is SearchQuery.Top -> {
                 giphyGifsRepository.getGifsTrending(offset = position)
                     .subscribeOn(Schedulers.io())
                     .map { toLoadResult(it) }
@@ -41,12 +41,12 @@ class GifsRxPagingSource @AssistedInject constructor(
         }
     }
 
-    private fun toLoadResult(giphyGifsResponse: GiphyGifsResponse): LoadResult<Int, Gif> {
-        val totalCount = giphyGifsResponse.pagination.totalCount
-        val count = giphyGifsResponse.pagination.count
-        val offset = giphyGifsResponse.pagination.offset
+    private fun toLoadResult(giphyGifsResponseDto: GiphyGifsResponseDto): LoadResult<Int, Gif> {
+        val totalCount = giphyGifsResponseDto.pagination.totalCount
+        val count = giphyGifsResponseDto.pagination.count
+        val offset = giphyGifsResponseDto.pagination.offset
         return LoadResult.Page(
-            data = mapGifDtoToGif.map(giphyGifsResponse),
+            data = mapGifDtoToGif.map(giphyGifsResponseDto),
             prevKey = if (offset <= 0) null else offset - PAGE_SIZE,
             nextKey = if (offset + count >= totalCount) null else offset + PAGE_SIZE
         )

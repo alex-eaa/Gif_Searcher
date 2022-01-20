@@ -16,12 +16,12 @@ interface GiphyGifsApi {
         @Query("offset") offset: Int,
         @Query("rating") rating: String = "g",
         @Query("offset") lang: String = "en",
-    ): Single<GiphyGifsResponse>
+    ): Single<GiphyGifsResponseDto>
 
     @GET("/v1/gifs/trending")
     fun fetchGifsTrending(
         @Query("api_key") api_key: String = BuildConfig.GIPHY_API_KEY,
         @Query("limit") limit: Int = PAGE_SIZE,
         @Query("offset") offset: Int,
-    ): Single<GiphyGifsResponse>
+    ): Single<GiphyGifsResponseDto>
 }

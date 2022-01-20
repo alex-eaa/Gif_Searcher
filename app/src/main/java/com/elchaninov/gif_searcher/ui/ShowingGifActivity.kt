@@ -31,31 +31,6 @@ class ShowingGifActivity : AppCompatActivity() {
     private val mDisposable = CompositeDisposable()
     private var gif: Gif? = null
 
-    private val requestListener: RequestListener<GifDrawable> =
-        object : RequestListener<GifDrawable> {
-            override fun onLoadFailed(
-                e: GlideException?, model: Any?,
-                target: Target<GifDrawable>?,
-                isFirstResource: Boolean,
-            ): Boolean {
-                binding.progressContainer.progress.hide()
-                showError()
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: GifDrawable?,
-                model: Any?,
-                target: Target<GifDrawable>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean,
-            ): Boolean {
-                binding.progressContainer.progress.hide()
-                binding.fab.show()
-                return false
-            }
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
@@ -84,6 +59,31 @@ class ShowingGifActivity : AppCompatActivity() {
                 .into(binding.gifView)
         }
     }
+
+    private val requestListener: RequestListener<GifDrawable> =
+        object : RequestListener<GifDrawable> {
+            override fun onLoadFailed(
+                e: GlideException?, model: Any?,
+                target: Target<GifDrawable>?,
+                isFirstResource: Boolean,
+            ): Boolean {
+                binding.progressContainer.progress.hide()
+                showError()
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: GifDrawable?,
+                model: Any?,
+                target: Target<GifDrawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean,
+            ): Boolean {
+                binding.progressContainer.progress.hide()
+                binding.fab.show()
+                return false
+            }
+        }
 
     private fun shareGif() {
         startSavingGifToCache()
@@ -141,7 +141,8 @@ class ShowingGifActivity : AppCompatActivity() {
     private fun showError() {
         gif?.let {
             binding.root.showSnackbar(
-                text = "Не удалось загрузить изображение",
+                text = getString(R.string.error_message_2),
+                actionText = getString(R.string.button_try_again),
                 action = { renderGif() }
             )
         }

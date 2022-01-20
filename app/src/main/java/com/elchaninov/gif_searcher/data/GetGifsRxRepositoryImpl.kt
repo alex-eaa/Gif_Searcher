@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class GetGifsRxRepositoryImpl @Inject constructor(
     private val factory: GifsRxPagingSource.Factory
-        ) : GetGifsRxRepository {
+) : GetGifsRxRepository {
 
     override fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>> {
         val pagingSource = factory.create(searchQuery)

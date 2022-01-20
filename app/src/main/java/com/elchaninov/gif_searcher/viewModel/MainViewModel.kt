@@ -16,7 +16,6 @@ class MainViewModel constructor(
 
     var isLinearLayoutManager = settings.isLinearLayoutManager
     private var savedSearchQuery: SearchQuery = SearchQuery.Top
-    private var pagingData: Observable<PagingData<Gif>>? = null
 
     private val _pagingDataLiveData: MutableLiveData<Observable<PagingData<Gif>>> =
         MutableLiveData()
@@ -27,25 +26,23 @@ class MainViewModel constructor(
     }
 
     fun changeSearchQuery(searchQuery: SearchQuery) {
-        if (searchQuery is SearchQuery.Empty) return
-
         if (savedSearchQuery != searchQuery) {
             savedSearchQuery = searchQuery
-            _pagingDataLiveData.postValue(updateValuePagingData())
+            updateValuePagingData()
         }
+    }
+
+    fun changeLinearLayoutManager() {
+        isLinearLayoutManager = !isLinearLayoutManager
+        settings.isLinearLayoutManager = isLinearLayoutManager
     }
 
     private fun updateValuePagingData(): Observable<PagingData<Gif>> =
         getGifsRxRepository.getGifs(savedSearchQuery)
             .cachedIn(viewModelScope)
             .also {
-                pagingData = it
+                _pagingDataLiveData.postValue(it)
             }
-
-    fun changeLinearLayoutManager() {
-        isLinearLayoutManager = !isLinearLayoutManager
-        settings.isLinearLayoutManager = isLinearLayoutManager
-    }
 
     class Factory @Inject constructor(
         private val settings: Settings,

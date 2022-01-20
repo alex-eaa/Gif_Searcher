@@ -22,8 +22,8 @@ fun View.hide() {
 }
 
 fun View.showSnackbar(
-    text: String = "Ошибка",
-    actionText: String = "Повторить",
+    text: String = "Error",
+    actionText: String = "Try Again",
     action: (View) -> Unit,
     length: Int = Snackbar.LENGTH_INDEFINITE,
 ) {
