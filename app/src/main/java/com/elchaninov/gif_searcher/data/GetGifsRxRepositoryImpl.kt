@@ -4,17 +4,18 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.observable
-import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.data.GifsRxPagingSource.Companion.PAGE_SIZE
+import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class GetGifsRxRepositoryImpl @Inject constructor(
-    private val pagingSource: GifsRxPagingSource
-) : GetGifsRxRepository {
+    private val factory: GifsRxPagingSource.Factory
+        ) : GetGifsRxRepository {
 
-    override fun getGifs(query: String?): Observable<PagingData<Gif>> {
-        pagingSource.query = query
+    override fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>> {
+        val pagingSource = factory.create(searchQuery)
 
         return Pager(
             config = getPageConfig(),
@@ -29,8 +30,4 @@ class GetGifsRxRepositoryImpl @Inject constructor(
         prefetchDistance = PAGE_SIZE * 2,
         initialLoadSize = PAGE_SIZE * 2
     )
-
-    private fun getDefaultPageConfig(): PagingConfig =
-        PagingConfig(pageSize = PAGE_SIZE, enablePlaceholders = false)
-
 }

@@ -14,11 +14,13 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.elchaninov.gif_searcher.*
-import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.App
+import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
+import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
+import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
@@ -45,30 +47,28 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
         initToolbar()
         initRecyclerView()
+
+        if (savedInstanceState == null) adapterSubmitData(SearchQuery.Top)
+        else adapterSubmitData(SearchQuery.Empty)
     }
 
     private fun initRecyclerView() {
         val isLinearLayoutManager = viewModel.isLinearLayoutManager
         adapter = GifsRxAdapter(getItemLayoutForInflate(isLinearLayoutManager), this)
         binding.recyclerView.layoutManager = getLayoutManager(isLinearLayoutManager)
-
         binding.recyclerView.adapter = adapter
-
         binding.recyclerView.adapter = adapter.withLoadStateHeaderAndFooter(
             header = GifsLoadStateAdapter { adapter.retry() },
             footer = GifsLoadStateAdapter { adapter.retry() }
         )
-
-        adapterSubmitData(null)
 
         adapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
     }
 
-
-    private fun adapterSubmitData(query: String?) {
-        mDisposable.add(viewModel.getGifs(query).subscribe {
+    private fun adapterSubmitData(searchQuery: SearchQuery) {
+        mDisposable.add(viewModel.getGifs(searchQuery).subscribe {
             adapter.submitData(lifecycle, it)
         })
     }
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         menuInflater.inflate(R.menu.top_app_bar, menu)
         binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_home_24)
 
-        menu?.let {
+        menu?.let { it ->
             it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
 
             searchView = menu.findItem(R.id.action_search).actionView as SearchView?
@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    adapterSubmitData(query)
+                    query?.let { query -> adapterSubmitData(SearchQuery.Search(query)) }
                     return true
                 }
 
@@ -136,12 +136,13 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             R.id.action_change_layout -> {
                 viewModel.changeLinearLayoutManager()
                 initRecyclerView()
+                adapterSubmitData(SearchQuery.Empty)
                 item.setIcon(getIconForChangeLayoutItemMenu())
                 true
             }
             android.R.id.home -> {
                 searchView?.onActionViewCollapsed()
-                adapterSubmitData(null)
+                adapterSubmitData(SearchQuery.Top)
                 true
             }
             else -> super.onOptionsItemSelected(item)

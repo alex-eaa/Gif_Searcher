@@ -2,19 +2,21 @@ package com.elchaninov.gif_searcher.data
 
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
-import com.elchaninov.gif_searcher.model.Gif
-import com.elchaninov.gif_searcher.data.mappers.MapGifDtoToGif
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponse
+import com.elchaninov.gif_searcher.data.mappers.MapGifDtoToGif
+import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.viewModel.SearchQuery
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import javax.inject.Inject
 
-class GifsRxPagingSource @Inject constructor(
+class GifsRxPagingSource @AssistedInject constructor(
+    @Assisted private val searchQuery: SearchQuery,
     private val giphyGifsRepository: GiphyGifsRepository,
     private val mapGifDtoToGif: MapGifDtoToGif,
 ) : RxPagingSource<Int, Gif>() {
-
-    var query: String? = null
 
     override fun getRefreshKey(state: PagingState<Int, Gif>): Int? {
         return null
@@ -23,10 +25,20 @@ class GifsRxPagingSource @Inject constructor(
     override fun loadSingle(params: LoadParams<Int>): Single<LoadResult<Int, Gif>> {
         val position = params.key ?: 0
 
-        return giphyGifsRepository.getGifs(query = query, offset = position)
-            .subscribeOn(Schedulers.io())
-            .map { toLoadResult(it) }
-            .onErrorReturn { LoadResult.Error(it) }
+        return when (searchQuery) {
+            is SearchQuery.Search -> {
+                giphyGifsRepository.getGifs(query = searchQuery.query, offset = position)
+                    .subscribeOn(Schedulers.io())
+                    .map { toLoadResult(it) }
+                    .onErrorReturn { LoadResult.Error(it) }
+            }
+            else -> {
+                giphyGifsRepository.getGifsTrending(offset = position)
+                    .subscribeOn(Schedulers.io())
+                    .map { toLoadResult(it) }
+                    .onErrorReturn { LoadResult.Error(it) }
+            }
+        }
     }
 
     private fun toLoadResult(giphyGifsResponse: GiphyGifsResponse): LoadResult<Int, Gif> {
@@ -42,5 +54,10 @@ class GifsRxPagingSource @Inject constructor(
 
     companion object {
         const val PAGE_SIZE = 20
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(@Assisted searchQuery: SearchQuery): GifsRxPagingSource
     }
 }

@@ -9,30 +9,31 @@ import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
 import com.elchaninov.gif_searcher.model.Gif
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 
 class MainViewModel constructor(
     private val settings: Settings,
-    private val getGifsRxRepository: GetGifsRxRepository
+    private val getGifsRxRepository: GetGifsRxRepository,
 ) : ViewModel() {
 
     var isLinearLayoutManager = settings.isLinearLayoutManager
-    private var stableQuestion: String? = null
+    private var savedSearchQuery: SearchQuery = SearchQuery.Top
     private var pagingData: Observable<PagingData<Gif>>? = null
 
-    fun getGifs(query: String?): Observable<PagingData<Gif>> {
-        if (query != stableQuestion) {
-            stableQuestion = query
-            return updateValuePagingData()
-        } else {
-            pagingData?.let { return it }
+    fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>> {
+        if (searchQuery is SearchQuery.Empty) pagingData?.let { return it }
+
+        if (savedSearchQuery != searchQuery) {
+            savedSearchQuery = searchQuery
             return updateValuePagingData()
         }
+
+        pagingData?.let { return it }
+        return updateValuePagingData()
     }
 
     private fun updateValuePagingData(): Observable<PagingData<Gif>> =
-        getGifsRxRepository.getGifs(stableQuestion)
+        getGifsRxRepository.getGifs(savedSearchQuery)
             .cachedIn(viewModelScope)
             .also {
                 pagingData = it

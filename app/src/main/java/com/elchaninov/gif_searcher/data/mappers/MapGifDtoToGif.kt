@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.data.mappers
 
-import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponse
+import com.elchaninov.gif_searcher.model.Gif
 import javax.inject.Inject
 
 class MapGifDtoToGif @Inject constructor() {

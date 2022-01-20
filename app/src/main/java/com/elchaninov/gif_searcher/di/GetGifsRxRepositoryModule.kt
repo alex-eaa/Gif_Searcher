@@ -11,8 +11,8 @@ class GetGifsRxRepositoryModule {
 
     @Provides
     fun provideGetGIfsRxRepository(
-        pagingSource: GifsRxPagingSource
+        getGifsRxPagingSourceFactory: GifsRxPagingSource.Factory
     ): GetGifsRxRepository {
-        return GetGifsRxRepositoryImpl(pagingSource)
+        return GetGifsRxRepositoryImpl(getGifsRxPagingSourceFactory)
     }
 }
