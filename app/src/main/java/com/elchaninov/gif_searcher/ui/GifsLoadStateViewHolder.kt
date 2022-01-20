@@ -18,9 +18,6 @@ class GifsLoadStateViewHolder(
     }
 
     fun bind(loadState: LoadState) {
-        if (loadState is LoadState.Error) {
-            binding.loadStateErrorMessage.text = loadState.error.localizedMessage
-        }
         binding.loadStateProgress.isVisible = loadState is LoadState.Loading
         binding.loadStateRetry.isVisible = loadState is LoadState.Error
         binding.loadStateErrorMessage.isVisible = loadState is LoadState.Error

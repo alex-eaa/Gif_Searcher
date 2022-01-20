@@ -3,10 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="4dp"
-    android:layout_marginVertical="2dp"
     android:gravity="center_vertical"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingVertical="@dimen/item_list_paddingVertical"
+    android:paddingHorizontal="@dimen/item_list_paddingHorizontal"
+    tools:background="@color/purple_200">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/image_view"
@@ -22,9 +23,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="@dimen/title_marginStar"
         android:layout_weight="2"
-        android:text="title jahsdjhas asdhasgd asdkjhakjsd"
-        android:textSize="18sp" />
+        android:textSize="@dimen/gif_title_text_size"
+        tools:text="Описание картинки. Описание" />
 
 </androidx.appcompat.widget.LinearLayoutCompat>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="margin_fab">20dp</dimen>
+    <dimen name="gif_title_text_size">18sp</dimen>
+    <dimen name="progress_bar_size">150dp</dimen>
+    <dimen name="item_list_paddingVertical">4dp</dimen>
+    <dimen name="item_list_paddingHorizontal">10dp</dimen>
+    <dimen name="title_marginStar">10dp</dimen>
+    <dimen name="small_progress_size">60dp</dimen>
+</resources>

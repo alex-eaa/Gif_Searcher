@@ -152,8 +152,8 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
-        if (viewModel.isLinearLayoutManager) R.drawable.ic_baseline_view_agenda_24
-        else R.drawable.ic_baseline_grid_view_24
+        if (viewModel.isLinearLayoutManager) R.drawable.ic_baseline_dashboard_24
+        else R.drawable.ic_baseline_view_agenda_24
 
     private fun getItemLayoutForInflate(isLinearLayoutManager: Boolean): Int =
         when (isLinearLayoutManager) {
