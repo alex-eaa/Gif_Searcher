@@ -13,7 +13,8 @@ class MapGifDtoToGif @Inject constructor() {
                 type = it.type,
                 title = it.title,
                 urlPreview = it.images.previewGif.url,
-                urlView = it.images.original.url
+                urlView = it.images.original.url,
+                size = it.images.original.size
             )
         }
     }

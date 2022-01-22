@@ -22,6 +22,7 @@ data class ImagesDto(
 
 data class OriginalDto(
     val url: String?,
+    val size: Long,
 )
 
 data class PreviewGifDto(

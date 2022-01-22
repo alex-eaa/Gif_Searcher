@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_fab"
         android:contentDescription="@string/fab_share"
+        android:visibility="gone"
         app:backgroundTint="?colorSecondary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

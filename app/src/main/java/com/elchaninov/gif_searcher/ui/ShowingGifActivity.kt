@@ -1,34 +1,29 @@
 package com.elchaninov.gif_searcher.ui
 
+import android.content.ClipData
 import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider.getUriForFile
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.gif.GifDrawable
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.schedulers.Schedulers
+import com.elchaninov.gif_searcher.viewModel.CachingState
+import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import java.io.File
-import java.io.FileOutputStream
-import java.net.URL
-
 
 class ShowingGifActivity : AppCompatActivity() {
 
+    private val viewModel: ShowingGifViewModel by lazy {
+        ViewModelProvider(this)[ShowingGifViewModel::class.java]
+    }
+
     private lateinit var binding: GifActivityBinding
-    private val mDisposable = CompositeDisposable()
     private var gif: Gif? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,124 +33,70 @@ class ShowingGifActivity : AppCompatActivity() {
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
 
-        binding.fab.setOnClickListener { shareGif() }
-        binding.fab.hide()
+        fetchGif()
 
-        renderGif()
+        viewModel.fileLiveData.observe(this) { cachingState ->
+            when (cachingState) {
+                is CachingState.Success -> {
+                    renderGif(cachingState.file)
+                    binding.progressContainer.progress.hide()
+                    binding.fab.show()
+                    binding.fab.setOnClickListener { shareGif(cachingState.file) }
+                }
+                is CachingState.Failure -> {
+                    binding.progressContainer.progress.hide()
+                    showError()
+                }
+            }
+        }
     }
 
-    private fun renderGif() {
-        gif?.let { gif ->
+    private fun fetchGif() {
+        gif?.let {
             binding.progressContainer.progress.show()
-
-            Glide
-                .with(this)
-                .asGif()
-                .placeholder(R.drawable.ic_baseline_image_24)
-                .error(R.drawable.ic_baseline_broken_image_24)
-                .load(gif.urlView)
-                .addListener(requestListener)
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
-                .into(binding.gifView)
+            viewModel.fileCaching(it, getSharedFileInstance(it))
         }
     }
 
-    private val requestListener: RequestListener<GifDrawable> =
-        object : RequestListener<GifDrawable> {
-            override fun onLoadFailed(
-                e: GlideException?, model: Any?,
-                target: Target<GifDrawable>?,
-                isFirstResource: Boolean,
-            ): Boolean {
-                binding.progressContainer.progress.hide()
-                showError()
-                return false
-            }
+    private fun renderGif(file: File) {
+        Glide
+            .with(this)
+            .asGif()
+            .load(file)
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .into(binding.gifView)
+    }
 
-            override fun onResourceReady(
-                resource: GifDrawable?,
-                model: Any?,
-                target: Target<GifDrawable>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean,
-            ): Boolean {
-                binding.progressContainer.progress.hide()
-                binding.fab.show()
-                return false
-            }
-        }
-
-    private fun shareGif() {
-        startSavingGifToCache()
-
-        val contentUri: Uri =
-            getUriForFile(this, PROVIDER_AUTHORITIES, getSharedFile())
+    private fun shareGif(file: File) {
+        val contentUri: Uri = getUriForFile(this, PROVIDER_AUTHORITIES, file)
 
         val shareIntent: Intent = Intent().apply {
-            flags = Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_STREAM, contentUri)
             type = INTENT_TYPE
+            clipData = ClipData.newRawUri("", contentUri)
         }
 
         val chooser = Intent.createChooser(shareIntent, null)
-        chooser.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
         startActivity(chooser)
     }
 
-    private fun startSavingGifToCache() {
-        gif?.let { gif ->
-            mDisposable.add(createRxSavingGif(gif)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({},
-                    {
-                        showError()
-                    }
-                )
-            )
-        }
-    }
-
-    private fun createRxSavingGif(gif: Gif): Single<File> {
-        return Single.create { emitter ->
-            try {
-                val file = getSharedFile()
-                URL(gif.urlView).openStream().use { input ->
-                    FileOutputStream(file).use { output ->
-                        input.copyTo(output)
-                    }
-                }
-                emitter.onSuccess(file)
-            } catch (e: Exception) {
-                emitter.onError(e)
-            }
-        }
-    }
-
-    private fun getSharedFile(): File {
+    private fun getSharedFileInstance(gif: Gif): File {
         val imagePath: File = ContextWrapper(this).cacheDir
-        return File(imagePath, NAME_SHARING_FILE)
+        return File(imagePath, gif.id + ".gif")
     }
 
     private fun showError() {
-        gif?.let {
-            binding.root.showSnackbar(
-                text = getString(R.string.error_message_2),
-                actionText = getString(R.string.button_try_again),
-                action = { renderGif() }
-            )
-        }
-    }
-
-    override fun onDestroy() {
-        mDisposable.dispose()
-        super.onDestroy()
+        binding.root.showSnackbar(
+            text = getString(R.string.error_message_2),
+            actionText = getString(R.string.button_try_again),
+            action = { fetchGif() }
+        )
     }
 
     companion object {
         const val EXTRA_GIF = "EXTRA_GIF"
-        const val NAME_SHARING_FILE = "sharedImage.gif"
         const val PROVIDER_AUTHORITIES = "com.elchaninov.gif_searcher.fileProvider"
         const val INTENT_TYPE = "image/gif"
     }
