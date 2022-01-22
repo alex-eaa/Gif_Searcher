@@ -12,6 +12,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -20,6 +21,8 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.ui.Enum.Layout
+import com.elchaninov.gif_searcher.ui.Enum.Theme
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
@@ -31,7 +34,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     lateinit var settings: Settings
 
     @Inject
-    lateinit var factory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: MainViewModel
 
     private lateinit var binding: MainActivityBinding
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         App.instance.component.inject(this)
         setTheme()
         super.onCreate(savedInstanceState)
-        viewModel = factory.create(MainViewModel::class.java)
+        viewModel = viewModelFactory.create(MainViewModel::class.java)
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -53,22 +56,21 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     private fun initRecyclerView() {
         gifsAdapter =
-            GifsRxAdapter(getItemLayoutForInflate(settings.isLinearLayoutManager), this)
+            GifsRxAdapter(getItemLayoutForInflate(), this)
         gifsAdapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
 
-        viewModel.pagingDataLiveData.observe(this) { observable ->
-            gifsAdapter.submitData(lifecycle, observable)
-        }
-
         binding.recyclerView.apply {
-            layoutManager = getLayoutManager(settings.isLinearLayoutManager)
+            layoutManager = getMyLayoutManager()
             adapter = gifsAdapter
             adapter = gifsAdapter.withLoadStateHeaderAndFooter(
                 header = GifsLoadStateAdapter { gifsAdapter.retry() },
                 footer = GifsLoadStateAdapter { gifsAdapter.retry() }
             )
+        }
+        viewModel.pagingDataLiveData.observe(this) { observable ->
+            gifsAdapter.submitData(lifecycle, observable)
         }
     }
 
@@ -108,7 +110,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
-        binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_home_24)
+        binding.topAppBar.setNavigationIcon(R.drawable.ic_sharp_grade_24)
 
         menu?.let { it ->
             setIconsItemsMenu(it)
@@ -137,15 +139,14 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_change_layout -> {
-                settings.isLinearLayoutManager = !settings.isLinearLayoutManager
-                item.setIcon(getIconForChangeLayoutItemMenu())
-
-                val childCount = binding.recyclerView.childCount
-                val scrollToPosition = if (gifsAdapter.direction) gifsAdapter.lastPosition
-                else gifsAdapter.lastPosition - childCount
-
+                when (settings.layoutManager) {
+                    Layout.LINEAR -> settings.layoutManager = Layout.STAGGERED
+                    Layout.STAGGERED -> settings.layoutManager = Layout.GRID
+                    else -> settings.layoutManager = Layout.LINEAR
+                }
                 initRecyclerView()
-                binding.recyclerView.scrollToPosition(scrollToPosition)
+                this.recreate()
+                item.setIcon(getIconForChangeLayoutItemMenu())
                 true
             }
             android.R.id.home -> {
@@ -155,17 +156,17 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
                 true
             }
             R.id.theme_dark -> {
-                settings.isDarkTheme = Theme.DARK.value
+                settings.nightTheme = Theme.DARK
                 this.recreate()
                 true
             }
             R.id.theme_light -> {
-                settings.isDarkTheme = Theme.LIGHT.value
+                settings.nightTheme = Theme.LIGHT
                 this.recreate()
                 true
             }
             R.id.theme_auto -> {
-                settings.isDarkTheme = Theme.AUTO.value
+                settings.nightTheme = Theme.AUTO
                 this.recreate()
                 true
             }
@@ -176,29 +177,33 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     private fun setIconsItemsMenu(menu: Menu) {
         menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
 
-        when (settings.isDarkTheme) {
-            Theme.DARK.value -> menu.findItem(R.id.theme_dark).isChecked = true
-            Theme.LIGHT.value -> menu.findItem(R.id.theme_light).isChecked = true
-            Theme.AUTO.value -> menu.findItem(R.id.theme_auto).isChecked = true
-            else -> {}
+        when (settings.nightTheme) {
+            Theme.DARK -> menu.findItem(R.id.theme_dark).isChecked = true
+            Theme.LIGHT -> menu.findItem(R.id.theme_light).isChecked = true
+            else -> menu.findItem(R.id.theme_auto).isChecked = true
         }
-
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
-        if (settings.isLinearLayoutManager) R.drawable.ic_baseline_dashboard_24
-        else R.drawable.ic_baseline_view_agenda_24
-
-    private fun getItemLayoutForInflate(isLinearLayoutManager: Boolean): Int =
-        when (isLinearLayoutManager) {
-            true -> R.layout.item_line_gif
-            false -> R.layout.item_gif
+        when (settings.layoutManager) {
+            Layout.LINEAR -> R.drawable.ic_baseline_dashboard_24
+            Layout.GRID -> R.drawable.ic_baseline_view_agenda_24
+            else -> R.drawable.ic_sharp_grid_view_24
         }
 
-    private fun getLayoutManager(isLinearLayoutManager: Boolean): RecyclerView.LayoutManager =
-        when (isLinearLayoutManager) {
-            true -> LinearLayoutManager(this)
-            false -> StaggeredGridLayoutManager(getSpanCount(), StaggeredGridLayoutManager.VERTICAL)
+    private fun getItemLayoutForInflate(): Int = when (settings.layoutManager) {
+        Layout.GRID, Layout.STAGGERED -> R.layout.item_gif
+        else -> R.layout.item_line_gif
+    }
+
+    private fun getMyLayoutManager(): RecyclerView.LayoutManager =
+        when (settings.layoutManager) {
+            Layout.LINEAR -> LinearLayoutManager(this)
+            Layout.GRID -> GridLayoutManager(this, getSpanCount())
+            else -> StaggeredGridLayoutManager(
+                getSpanCount(),
+                StaggeredGridLayoutManager.VERTICAL
+            )
         }
 
     private fun getSpanCount(): Int =
@@ -212,11 +217,10 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
     }
 
     private fun setTheme() {
-        when (settings.isDarkTheme) {
-            Theme.DARK.value -> setDefaultNightMode(MODE_NIGHT_YES)
-            Theme.LIGHT.value -> setDefaultNightMode(MODE_NIGHT_NO)
-            Theme.AUTO.value -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
-            else -> {}
+        when (settings.nightTheme) {
+            Theme.DARK -> setDefaultNightMode(MODE_NIGHT_YES)
+            Theme.LIGHT -> setDefaultNightMode(MODE_NIGHT_NO)
+            else -> setDefaultNightMode(MODE_NIGHT_FOLLOW_SYSTEM)
         }
     }
 

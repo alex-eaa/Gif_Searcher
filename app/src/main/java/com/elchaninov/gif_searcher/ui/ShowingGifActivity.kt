@@ -22,7 +22,7 @@ import javax.inject.Inject
 class ShowingGifActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var factory: ViewModelProvider.Factory
+    lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: ShowingGifViewModel
 
     private lateinit var binding: GifActivityBinding
@@ -33,7 +33,7 @@ class ShowingGifActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = factory.create(ShowingGifViewModel::class.java)
+        viewModel = viewModelFactory.create(ShowingGifViewModel::class.java)
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
 

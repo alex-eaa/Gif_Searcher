@@ -2,7 +2,8 @@ package com.elchaninov.gif_searcher
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.elchaninov.gif_searcher.ui.Theme
+import com.elchaninov.gif_searcher.ui.Enum.Layout
+import com.elchaninov.gif_searcher.ui.Enum.Theme
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.properties.ReadWriteProperty
@@ -14,43 +15,50 @@ class Settings @Inject constructor(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
-    var isLinearLayoutManager by prefs.boolean()
-    var isDarkTheme by prefs.string(
-        defaultValue = Theme.AUTO.value
+    var layoutManager by prefs.layout(
+        defaultValue = Layout.STAGGERED
     )
 
-     private fun SharedPreferences.boolean(
-        defaultValue: Boolean = false,
+    var nightTheme by prefs.theme(
+        defaultValue = Theme.AUTO
+    )
+
+    private fun SharedPreferences.theme(
+        defaultValue: Theme,
         key: (KProperty<*>) -> String = KProperty<*>::name
-    ): ReadWriteProperty<Any, Boolean> =
-        object : ReadWriteProperty<Any, Boolean> {
+    ): ReadWriteProperty<Any, Theme?> =
+        object : ReadWriteProperty<Any, Theme?> {
             override fun getValue(
                 thisRef: Any,
                 property: KProperty<*>
-            ) = getBoolean(key(property), defaultValue)
+            ) = if (getString(key(property), defaultValue.name) != null) {
+                Theme.fromName(getString(key(property), defaultValue.name))
+            } else defaultValue
 
             override fun setValue(
                 thisRef: Any,
                 property: KProperty<*>,
-                value: Boolean
-            ) = edit().putBoolean(key(property), value).apply()
+                value: Theme?
+            ) = edit().putString(key(property), value?.name).apply()
         }
 
-    private fun SharedPreferences.string(
-        defaultValue: String? = null,
+    private fun SharedPreferences.layout(
+        defaultValue: Layout,
         key: (KProperty<*>) -> String = KProperty<*>::name
-    ): ReadWriteProperty<Any, String?> =
-        object : ReadWriteProperty<Any, String?> {
+    ): ReadWriteProperty<Any, Layout?> =
+        object : ReadWriteProperty<Any, Layout?> {
             override fun getValue(
                 thisRef: Any,
                 property: KProperty<*>
-            ) = getString(key(property), defaultValue)
+            ) = if (getString(key(property), defaultValue.name) != null) {
+                Layout.fromName(getString(key(property), defaultValue.name))
+            } else defaultValue
 
             override fun setValue(
                 thisRef: Any,
                 property: KProperty<*>,
-                value: String?
-            ) = edit().putString(key(property), value).apply()
+                value: Layout?
+            ) = edit().putString(key(property), value?.name).apply()
         }
 
     companion object {
