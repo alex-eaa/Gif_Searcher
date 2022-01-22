@@ -11,23 +11,21 @@ import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class GetGifsRxRepositoryImpl @Inject constructor(
-    private val factory: GifsRxPagingSource.Factory
+    private val factory: GifsRxPagingSource.Factory,
+    private val pagingConfig: PagingConfig
 ) : GetGifsRxRepository {
 
     override fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>> {
         val pagingSource = factory.create(searchQuery)
 
         return Pager(
-            config = getPageConfig(),
+            config = pagingConfig,
             pagingSourceFactory = { pagingSource }
         ).observable
     }
 
-    private fun getPageConfig(): PagingConfig = PagingConfig(
-        pageSize = PAGE_SIZE,
-        enablePlaceholders = false,
-//        maxSize = PAGE_SIZE + 4 * PAGE_SIZE,
-        prefetchDistance = PAGE_SIZE * 3,
-        initialLoadSize = PAGE_SIZE * 3
-    )
+//    private fun getPageConfig(): PagingConfig = PagingConfig(
+//        pageSize = PAGE_SIZE,
+//        enablePlaceholders = false,
+//    )
 }

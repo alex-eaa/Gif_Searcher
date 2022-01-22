@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
-import com.elchaninov.gif_searcher.data.GiphyGifsRepository
-import com.elchaninov.gif_searcher.data.GiphyGifsRepositoryImpl
+import androidx.paging.PagingConfig
+import com.elchaninov.gif_searcher.data.*
 import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
 import dagger.Module
 import dagger.Provides
@@ -14,5 +14,13 @@ class RepositoryModule {
         giphyGifsApi: GiphyGifsApi,
     ): GiphyGifsRepository {
         return GiphyGifsRepositoryImpl(giphyGifsApi)
+    }
+
+    @Provides
+    fun provideGetGIfsRxRepository(
+        getGifsRxPagingSourceFactory: GifsRxPagingSource.Factory,
+        pagingConfig: PagingConfig
+    ): GetGifsRxRepository {
+        return GetGifsRxRepositoryImpl(getGifsRxPagingSourceFactory, pagingConfig)
     }
 }

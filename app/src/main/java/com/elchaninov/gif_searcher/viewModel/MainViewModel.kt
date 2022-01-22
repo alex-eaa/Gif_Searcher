@@ -42,6 +42,11 @@ class MainViewModel constructor(
         )
     }
 
+    override fun onCleared() {
+        disposable.dispose()
+        super.onCleared()
+    }
+
     class Factory @Inject constructor(
         private val getGifsRxRepository: GetGifsRxRepository,
     ) : ViewModelProvider.Factory {

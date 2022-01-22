@@ -21,11 +21,11 @@ class RetrofitModule {
             .baseUrl("https://api.giphy.com")
             .client(
                 OkHttpClient.Builder()
-                    .addNetworkInterceptor(
-                        HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        }
-                    )
+//                    .addNetworkInterceptor(
+//                        HttpLoggingInterceptor().apply {
+//                            level = HttpLoggingInterceptor.Level.BODY
+//                        }
+//                    )
                     .build()
             )
             .addCallAdapterFactory(RxJava3CallAdapterFactory.createSynchronous())

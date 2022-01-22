@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         menuInflater.inflate(R.menu.top_app_bar, menu)
         binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_home_24)
 
-        menu?.let {
+        menu?.let { it ->
             setIconsItemsMenu(it)
 
             searchView = it.findItem(R.id.action_search).actionView as SearchView?
@@ -120,9 +120,9 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
             searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     searchView?.hideKeyboard()
-                    query?.let {
-                        viewModel.changeSearchQuery(SearchQuery.Search(it))
-                        supportActionBar?.title = it
+                    query?.let { queryString ->
+                        viewModel.changeSearchQuery(SearchQuery.Search(queryString))
+                        supportActionBar?.title = queryString
                     }
                     return true
                 }
@@ -175,17 +175,16 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         }
     }
 
-    private fun setIconsItemsMenu(menu: Menu?) {
-        menu?.let {
-            it.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
+    private fun setIconsItemsMenu(menu: Menu) {
+        menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
 
-            when (settings.isDarkTheme) {
-                Theme.DARK.value -> it.findItem(R.id.theme_dark).setChecked(true)
-                Theme.LIGHT.value -> it.findItem(R.id.theme_light).setChecked(true)
-                Theme.AUTO.value -> it.findItem(R.id.theme_auto).setChecked(true)
-                else -> {}
-            }
+        when (settings.isDarkTheme) {
+            Theme.DARK.value -> menu.findItem(R.id.theme_dark).isChecked = true
+            Theme.LIGHT.value -> menu.findItem(R.id.theme_light).isChecked = true
+            Theme.AUTO.value -> menu.findItem(R.id.theme_auto).isChecked = true
+            else -> {}
         }
+
     }
 
     private fun getIconForChangeLayoutItemMenu(): Int =
