@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.data.api
 
-import android.nfc.tech.MifareUltralight.PAGE_SIZE
 import com.elchaninov.gif_searcher.BuildConfig
+import com.elchaninov.gif_searcher.data.GifsRxPagingSource.Companion.PAGE_SIZE
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Query

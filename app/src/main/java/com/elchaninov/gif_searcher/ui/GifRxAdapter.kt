@@ -7,9 +7,12 @@ import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.model.Gif
 
 class GifsRxAdapter(
-    var itemLayoutForInflate: Int,
+    private val itemLayoutForInflate: Int,
     private val onItemClickListener: OnItemClickListener
 ) : PagingDataAdapter<Gif, GifViewHolder>(COMPARATOR) {
+
+    var lastPosition = 0
+    var direction = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GifViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -19,6 +22,9 @@ class GifsRxAdapter(
     }
 
     override fun onBindViewHolder(holder: GifViewHolder, position: Int) {
+        lastPosition = position
+        direction = lastPosition > position
+
         getItem(position)?.let {
             holder.bind(it, onItemClickListener)
         }
