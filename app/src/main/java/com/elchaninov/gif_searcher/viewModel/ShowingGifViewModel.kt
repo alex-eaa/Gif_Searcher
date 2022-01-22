@@ -10,8 +10,9 @@ import io.reactivex.rxjava3.schedulers.Schedulers
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
+import javax.inject.Inject
 
-class ShowingGifViewModel : ViewModel() {
+class ShowingGifViewModel @Inject constructor(): ViewModel() {
 
     private val mDisposable = CompositeDisposable()
 

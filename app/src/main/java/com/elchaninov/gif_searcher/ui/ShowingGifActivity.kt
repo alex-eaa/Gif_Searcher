@@ -10,26 +10,30 @@ import androidx.core.content.FileProvider.getUriForFile
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.CachingState
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import java.io.File
+import javax.inject.Inject
 
 class ShowingGifActivity : AppCompatActivity() {
 
-    private val viewModel: ShowingGifViewModel by lazy {
-        ViewModelProvider(this)[ShowingGifViewModel::class.java]
-    }
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    lateinit var viewModel: ShowingGifViewModel
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        App.instance.component.inject(this)
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        viewModel = factory.create(ShowingGifViewModel::class.java)
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
 

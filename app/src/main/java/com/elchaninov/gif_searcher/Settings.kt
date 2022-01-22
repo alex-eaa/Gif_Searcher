@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.elchaninov.gif_searcher.ui.Theme
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+@Singleton
 class Settings @Inject constructor(context: Context) {
 
     private val prefs: SharedPreferences =

@@ -1,26 +1,18 @@
 package com.elchaninov.gif_searcher.di
 
-import androidx.paging.PagingConfig
-import com.elchaninov.gif_searcher.data.*
-import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
+import com.elchaninov.gif_searcher.data.GetGifsRxRepository
+import com.elchaninov.gif_searcher.data.GetGifsRxRepositoryImpl
+import com.elchaninov.gif_searcher.data.GiphyGifsRepository
+import com.elchaninov.gif_searcher.data.GiphyGifsRepositoryImpl
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
-class RepositoryModule {
+abstract class RepositoryModule {
 
-    @Provides
-    fun provideGiphyGifRepository(
-        giphyGifsApi: GiphyGifsApi,
-    ): GiphyGifsRepository {
-        return GiphyGifsRepositoryImpl(giphyGifsApi)
-    }
+    @Binds
+    abstract fun bindsGiphyGifsRepository(giphyGifsRepositoryImpl: GiphyGifsRepositoryImpl): GiphyGifsRepository
 
-    @Provides
-    fun provideGetGIfsRxRepository(
-        getGifsRxPagingSourceFactory: GifsRxPagingSource.Factory,
-        pagingConfig: PagingConfig
-    ): GetGifsRxRepository {
-        return GetGifsRxRepositoryImpl(getGifsRxPagingSourceFactory, pagingConfig)
-    }
+    @Binds
+    abstract fun bindsGetGIfsRxRepository(getGifsRxRepositoryImpl: GetGifsRxRepositoryImpl): GetGifsRxRepository
 }

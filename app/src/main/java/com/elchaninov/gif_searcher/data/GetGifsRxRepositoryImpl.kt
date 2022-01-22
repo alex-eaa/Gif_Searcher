@@ -4,7 +4,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.observable
-import com.elchaninov.gif_searcher.data.GifsRxPagingSource.Companion.PAGE_SIZE
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
@@ -23,9 +22,4 @@ class GetGifsRxRepositoryImpl @Inject constructor(
             pagingSourceFactory = { pagingSource }
         ).observable
     }
-
-//    private fun getPageConfig(): PagingConfig = PagingConfig(
-//        pageSize = PAGE_SIZE,
-//        enablePlaceholders = false,
-//    )
 }

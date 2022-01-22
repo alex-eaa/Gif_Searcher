@@ -6,9 +6,10 @@ import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
 import com.elchaninov.gif_searcher.model.Gif
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
-class MainViewModel constructor(
+class MainViewModel @Inject constructor(
     private val getGifsRxRepository: GetGifsRxRepository,
 ) : ViewModel() {
 
@@ -45,17 +46,5 @@ class MainViewModel constructor(
     override fun onCleared() {
         disposable.dispose()
         super.onCleared()
-    }
-
-    class Factory @Inject constructor(
-        private val getGifsRxRepository: GetGifsRxRepository,
-    ) : ViewModelProvider.Factory {
-
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-                return MainViewModel(getGifsRxRepository) as T
-            }
-            throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

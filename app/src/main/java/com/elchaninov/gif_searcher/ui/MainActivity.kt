@@ -27,18 +27,14 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
-    private lateinit var binding: MainActivityBinding
-
     @Inject
     lateinit var settings: Settings
 
     @Inject
-    lateinit var factory: MainViewModel.Factory
+    lateinit var factory: ViewModelProvider.Factory
+    lateinit var viewModel: MainViewModel
 
-    private val viewModel: MainViewModel by lazy {
-        ViewModelProvider(this, factory)[MainViewModel::class.java]
-    }
-
+    private lateinit var binding: MainActivityBinding
     private lateinit var gifsAdapter: GifsRxAdapter
     private var searchView: SearchView? = null
 
@@ -46,6 +42,8 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         App.instance.component.inject(this)
         setTheme()
         super.onCreate(savedInstanceState)
+        viewModel = factory.create(MainViewModel::class.java)
+
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
