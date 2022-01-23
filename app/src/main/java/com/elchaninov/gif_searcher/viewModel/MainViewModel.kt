@@ -1,12 +1,14 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.data.GetGifsRxRepository
 import com.elchaninov.gif_searcher.model.Gif
 import io.reactivex.rxjava3.disposables.CompositeDisposable
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
