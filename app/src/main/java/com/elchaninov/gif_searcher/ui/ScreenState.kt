@@ -62,7 +62,7 @@ class ScreenState @Inject constructor(
             )
         }
 
-    private fun getIconForChangeLayoutItemMenu(): Int =
+    fun getIconForChangeLayoutItemMenu(): Int =
         when (settings.layoutManager) {
             Layout.LINEAR -> R.drawable.ic_baseline_dashboard_24
             Layout.GRID -> R.drawable.ic_baseline_view_agenda_24
