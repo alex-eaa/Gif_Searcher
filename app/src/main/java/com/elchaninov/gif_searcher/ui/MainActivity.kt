@@ -133,7 +133,12 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         return when (item.itemId) {
             R.id.action_change_layout -> {
                 screenState.changeLayoutMode()
-                this.recreate()
+
+                val scrollToPosition = if (gifsAdapter.direction) gifsAdapter.lastPosition
+                else gifsAdapter.lastPosition - binding.recyclerView.childCount
+
+                initRecyclerView()
+                binding.recyclerView.scrollToPosition(scrollToPosition)
                 true
             }
             android.R.id.home -> {
