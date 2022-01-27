@@ -38,7 +38,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         App.instance.component.inject(this)
         setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = viewModelFactory.create(MainViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
