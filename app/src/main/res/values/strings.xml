@@ -12,6 +12,7 @@
 <!--    BUTTONS-->
     <string name="button_try_again">Повторить</string>
     <string name="fab_share">Поделиться</string>
+    <string name="fab_search">Найти GIF</string>
 
 <!--    ITEMS MENU-->
     <string name="item_menu_change_view">Вид</string>
