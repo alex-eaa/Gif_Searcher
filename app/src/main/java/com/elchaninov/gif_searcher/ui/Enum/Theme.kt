@@ -1,13 +1,15 @@
 package com.elchaninov.gif_searcher.ui.Enum
 
-enum class Theme {
-    LIGHT,
-    DARK,
-    AUTO;
+import androidx.appcompat.app.AppCompatDelegate.*
+
+enum class Theme(val value: Int) {
+    LIGHT(MODE_NIGHT_NO),
+    DARK(MODE_NIGHT_YES),
+    AUTO(MODE_NIGHT_FOLLOW_SYSTEM);
 
     companion object {
         @JvmStatic
-        fun fromName(status: String?): Theme? =
-            values().find { value -> value.name == status }
+        fun fromName(name: String?): Theme? =
+            values().find { value -> value.name == name }
     }
 }

@@ -7,8 +7,8 @@ enum class Layout {
 
     companion object {
         @JvmStatic
-        fun fromName(status: String?): Layout? =
-            values().find { value -> value.name == status }
+        fun fromName(name: String?): Layout? =
+            values().find { value -> value.name == name }
     }
 }
 
