@@ -21,7 +21,8 @@ import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
+class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
+    SearchDialogFragment.OnSearchClickListener {
 
     @Inject
     lateinit var screenState: ScreenState
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
         initToolbar()
         initRecyclerView()
+        initViews()
     }
 
     private fun initRecyclerView() {
@@ -64,6 +66,13 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         }
         viewModel.pagingDataLiveData.observe(this) { observable ->
             gifsAdapter.submitData(lifecycle, observable)
+        }
+    }
+
+    private fun initViews() {
+        binding.fab.setOnClickListener {
+            val searchDialogFragment = SearchDialogFragment.newInstance()
+            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
         }
     }
 
@@ -96,36 +105,17 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
 
     private fun initToolbar() {
         setSupportActionBar(binding.topAppBar)
-        supportActionBar?.setDisplayShowTitleEnabled(true)
-        supportActionBar?.title = getString(R.string.top)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.apply{
+            setDisplayShowTitleEnabled(true)
+            title = getString(R.string.top)
+            setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
         binding.topAppBar.setNavigationIcon(R.drawable.ic_sharp_grade_24)
-
-        menu?.let { it ->
-            screenState.setIconsItemsMenu(it)
-
-            searchView = it.findItem(R.id.action_search).actionView as SearchView?
-            searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
-            searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    searchView?.hideKeyboard()
-                    query?.let { queryString ->
-                        viewModel.changeSearchQuery(SearchQuery.Search(queryString))
-                        supportActionBar?.title = queryString
-                    }
-                    return true
-                }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return true
-                }
-            })
-        }
-
+        menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
 
@@ -173,9 +163,16 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener {
         startActivity(intent)
     }
 
+    override fun onClick(searchWord: String) {
+        searchView?.hideKeyboard()
+        viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
+        supportActionBar?.title = searchWord
+    }
 
     companion object {
         const val SPAN_COUNT_PORTRAIT = 3
         const val SPAN_COUNT_LANDSCAPE = 5
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
+            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 }
