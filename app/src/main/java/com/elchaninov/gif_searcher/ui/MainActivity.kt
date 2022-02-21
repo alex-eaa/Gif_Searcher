@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
-        binding.topAppBar.setNavigationIcon(R.drawable.ic_sharp_grade_24)
+        binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_star_rate_24)
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
