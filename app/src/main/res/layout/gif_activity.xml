@@ -15,9 +15,13 @@
         android:scaleType="fitCenter"
         tools:src="@tools:sample/avatars" />
 
-    <include
-        android:id="@+id/progress_container"
-        layout="@layout/progress_content" />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressIndicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="20dp"
+        android:indeterminate="false" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
