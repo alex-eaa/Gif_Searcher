@@ -40,24 +40,27 @@ class ShowingGifActivity : AppCompatActivity() {
         fetchGif()
 
         viewModel.fileLiveData.observe(this) { cachingState ->
+            binding.progressIndicator.hide()
             when (cachingState) {
                 is CachingState.Success -> {
                     renderGif(cachingState.file)
-                    binding.progressContainer.progress.hide()
                     binding.fab.show()
                     binding.fab.setOnClickListener { shareGif(cachingState.file) }
                 }
                 is CachingState.Failure -> {
-                    binding.progressContainer.progress.hide()
                     showError()
                 }
             }
+        }
+
+        viewModel.fileLoadProgress.observe(this) {
+            binding.progressIndicator.progress = it
         }
     }
 
     private fun fetchGif() {
         gif?.let {
-            binding.progressContainer.progress.show()
+            binding.progressIndicator.show()
             viewModel.fileCaching(it, getSharedFileInstance(it))
         }
     }
@@ -97,6 +100,11 @@ class ShowingGifActivity : AppCompatActivity() {
             actionText = getString(R.string.button_try_again),
             action = { fetchGif() }
         )
+    }
+
+    override fun onDestroy() {
+        viewModel.destroyJobs()
+        super.onDestroy()
     }
 
     companion object {
