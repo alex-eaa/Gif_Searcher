@@ -40,21 +40,21 @@ class ShowingGifActivity : AppCompatActivity() {
         fetchGif()
 
         viewModel.fileLiveData.observe(this) { cachingState ->
-            binding.progressIndicator.hide()
             when (cachingState) {
                 is CachingState.Success -> {
+                    binding.progressIndicator.hide()
                     renderGif(cachingState.file)
                     binding.fab.show()
                     binding.fab.setOnClickListener { shareGif(cachingState.file) }
                 }
                 is CachingState.Failure -> {
+                    binding.progressIndicator.hide()
                     showError()
                 }
+                is CachingState.Progress->{
+                    binding.progressIndicator.progress = cachingState.percent
+                }
             }
-        }
-
-        viewModel.fileLoadProgress.observe(this) {
-            binding.progressIndicator.progress = it
         }
     }
 
