@@ -42,16 +42,18 @@ class ShowingGifActivity : AppCompatActivity() {
         viewModel.fileLiveData.observe(this) { cachingState ->
             when (cachingState) {
                 is CachingState.Success -> {
-                    binding.progressIndicator.hide()
+                    binding.progress.hide()
                     renderGif(cachingState.file)
                     binding.fab.show()
                     binding.fab.setOnClickListener { shareGif(cachingState.file) }
                 }
                 is CachingState.Failure -> {
-                    binding.progressIndicator.hide()
+                    binding.progress.hide()
                     showError()
                 }
-                is CachingState.Progress->{
+                is CachingState.Progress -> {
+                    binding.progressText.text =
+                        getString(R.string.progress_percent, cachingState.percent)
                     binding.progressIndicator.progress = cachingState.percent
                 }
             }
@@ -60,7 +62,7 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private fun fetchGif() {
         gif?.let {
-            binding.progressIndicator.show()
+            binding.progress.show()
             viewModel.fileCaching(it, getSharedFileInstance(it))
         }
     }
