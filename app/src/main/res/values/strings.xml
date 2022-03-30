@@ -26,4 +26,7 @@
     <string name="item_menu_dark">Темная</string>
     <string name="item_menu_auto">Авто</string>
 
+    <string name="progress_start_text">0%</string>
+    <string name="progress_percent">%d%%</string>
+
 </resources>
