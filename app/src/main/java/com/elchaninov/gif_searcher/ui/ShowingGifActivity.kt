@@ -33,11 +33,11 @@ class ShowingGifActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = viewModelFactory.create(ShowingGifViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
 
-        fetchGif()
+        if (savedInstanceState == null) fetchGif()
 
         viewModel.fileLiveData.observe(this) { cachingState ->
             when (cachingState) {
@@ -52,6 +52,7 @@ class ShowingGifActivity : AppCompatActivity() {
                     showError()
                 }
                 is CachingState.Progress -> {
+                    binding.progress.show()
                     binding.progressText.text =
                         getString(R.string.progress_percent, cachingState.percent)
                     binding.progressIndicator.progress = cachingState.percent
@@ -62,7 +63,6 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private fun fetchGif() {
         gif?.let {
-            binding.progress.show()
             viewModel.fileCaching(it, getSharedFileInstance(it))
         }
     }
@@ -102,11 +102,6 @@ class ShowingGifActivity : AppCompatActivity() {
             actionText = getString(R.string.button_try_again),
             action = { fetchGif() }
         )
-    }
-
-    override fun onDestroy() {
-        viewModel.destroyJobs()
-        super.onDestroy()
     }
 
     companion object {

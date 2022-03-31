@@ -14,7 +14,6 @@
         android:theme="@style/Theme.Gif_Searcher">
         <activity
             android:name=".ui.ShowingGifActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Gif_Searcher.Fullscreen"/>
 
