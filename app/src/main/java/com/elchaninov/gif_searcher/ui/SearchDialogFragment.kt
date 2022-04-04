@@ -51,19 +51,20 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
             }
 
             searchEditText.setOnEditorActionListener { _, actionId, _ ->
-                var handled = false
                 if (actionId == EditorInfo.IME_ACTION_SEND || actionId == EditorInfo.IME_ACTION_SEARCH) {
-                    executeSearch()
-                    handled = true
+                    return@setOnEditorActionListener executeSearch()
                 }
-                handled
+                return@setOnEditorActionListener false
             }
         }
     }
 
-    private fun executeSearch() {
-        onSearchClickListener?.onClick(binding.searchEditText.text.toString())
+    private fun executeSearch(): Boolean {
+        val keyword = binding.searchEditText.text.toString()
+        if (keyword.isBlank()) return true
+        onSearchClickListener?.onClick(keyword)
         dismiss()
+        return false
     }
 
     override fun onDestroyView() {
