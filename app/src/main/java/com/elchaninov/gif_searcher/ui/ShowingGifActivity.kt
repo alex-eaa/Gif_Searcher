@@ -33,23 +33,29 @@ class ShowingGifActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        viewModel = viewModelFactory.create(ShowingGifViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
 
-        fetchGif()
+        if (savedInstanceState == null) fetchGif()
 
         viewModel.fileLiveData.observe(this) { cachingState ->
             when (cachingState) {
                 is CachingState.Success -> {
+                    binding.progress.hide()
                     renderGif(cachingState.file)
-                    binding.progressContainer.progress.hide()
                     binding.fab.show()
                     binding.fab.setOnClickListener { shareGif(cachingState.file) }
                 }
                 is CachingState.Failure -> {
-                    binding.progressContainer.progress.hide()
+                    binding.progress.hide()
                     showError()
+                }
+                is CachingState.Progress -> {
+                    binding.progress.show()
+                    binding.progressText.text =
+                        getString(R.string.progress_percent, cachingState.percent)
+                    binding.progressIndicator.progress = cachingState.percent
                 }
             }
         }
@@ -57,7 +63,6 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private fun fetchGif() {
         gif?.let {
-            binding.progressContainer.progress.show()
             viewModel.fileCaching(it, getSharedFileInstance(it))
         }
     }
