@@ -1,32 +1,31 @@
 <resources>
-    <string name="app_name">Gif Searcher</string>
+    <string name="app_name">GIF Searcher</string>
 
-    <string name="top">В тренде</string>
-    <string name="search">Поиск</string>
-    <string name="error">ОШИБКА ЗАГРУЗКИ</string>
+    <string name="top">Trending</string>
+    <string name="search">Search</string>
+    <string name="error">LOADING ERROR</string>
 
-<!--    MESSAGES-->
-    <string name="error_message_1">Не удалось загрузить список изображений</string>
-    <string name="error_message_2">Не удалось загрузить изображение</string>
+    <!--    MESSAGES-->
+    <string name="error_message_1">Failed to load image list</string>
+    <string name="error_message_2">Failed to load image</string>
 
-<!--    BUTTONS-->
-    <string name="button_try_again">Повторить</string>
-    <string name="fab_share">Поделиться</string>
-    <string name="fab_search">Найти GIF</string>
-    <string name="button_search">ИСКАТЬ</string>
+    <!--    BUTTONS-->
+    <string name="button_try_again">Try Again</string>
+    <string name="fab_share">Share</string>
+    <string name="fab_search">Search GIF</string>
+    <string name="button_search">SEARCH</string>
 
-    <string name="search_hint">Введите слово</string>
-    <string name="delete_description">Очистить</string>
+    <string name="search_hint">Enter a word</string>
+    <string name="delete_description">Clear</string>
 
-<!--    ITEMS MENU-->
-    <string name="item_menu_change_view">Вид</string>
-    <string name="item_menu_search">Поиск</string>
-    <string name="item_menu_theme">Тема</string>
-    <string name="item_menu_light">Светлая</string>
-    <string name="item_menu_dark">Темная</string>
-    <string name="item_menu_auto">Авто</string>
+    <!--    ITEMS MENU-->
+    <string name="item_menu_change_view">View</string>
+    <string name="item_menu_search">Search</string>
+    <string name="item_menu_theme">Theme</string>
+    <string name="item_menu_light">Light</string>
+    <string name="item_menu_dark">Dark</string>
+    <string name="item_menu_auto">Auto</string>
 
     <string name="progress_start_text">0%</string>
     <string name="progress_percent">%d%%</string>
-
 </resources>

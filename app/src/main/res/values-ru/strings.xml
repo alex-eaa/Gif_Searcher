@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">GIF поиск</string>
+
+    <string name="top">В тренде</string>
+    <string name="search">Поиск</string>
+    <string name="error">ОШИБКА ЗАГРУЗКИ</string>
+
+    <!--    MESSAGES-->
+    <string name="error_message_1">Не удалось загрузить список изображений</string>
+    <string name="error_message_2">Не удалось загрузить изображение</string>
+
+    <!--    BUTTONS-->
+    <string name="button_try_again">Повторить</string>
+    <string name="fab_share">Поделиться</string>
+    <string name="fab_search">Найти GIF</string>
+    <string name="button_search">ИСКАТЬ</string>
+
+    <string name="search_hint">Введите слово</string>
+    <string name="delete_description">Очистить</string>
+
+    <!--    ITEMS MENU-->
+    <string name="item_menu_change_view">Вид</string>
+    <string name="item_menu_search">Поиск</string>
+    <string name="item_menu_theme">Тема</string>
+    <string name="item_menu_light">Светлая</string>
+    <string name="item_menu_dark">Темная</string>
+    <string name="item_menu_auto">Авто</string>
+
+    <string name="progress_start_text">0%</string>
+    <string name="progress_percent">%d%%</string>
+</resources>
