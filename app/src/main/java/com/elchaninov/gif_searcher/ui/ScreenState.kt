@@ -25,7 +25,7 @@ class ScreenState @Inject constructor(
     fun changeLayoutMode() {
         when (settings.layoutManager) {
             Layout.LINEAR -> settings.layoutManager = Layout.STAGGERED
-            Layout.STAGGERED -> settings.layoutManager = Layout.GRID
+            Layout.STAGGERED -> settings.layoutManager = Layout.LINEAR
             else -> settings.layoutManager = Layout.LINEAR
         }
     }
@@ -43,14 +43,13 @@ class ScreenState @Inject constructor(
     }
 
     fun getItemLayoutForInflate(): Int = when (settings.layoutManager) {
-        Layout.GRID, Layout.STAGGERED -> R.layout.item_gif
+        Layout.STAGGERED -> R.layout.item_gif
         else -> R.layout.item_line_gif
     }
 
     fun getMyLayoutManager(): RecyclerView.LayoutManager =
         when (settings.layoutManager) {
             Layout.LINEAR -> LinearLayoutManager(context)
-            Layout.GRID -> GridLayoutManager(context, getSpanCount())
             else -> StaggeredGridLayoutManager(
                 getSpanCount(),
                 StaggeredGridLayoutManager.VERTICAL
@@ -59,9 +58,8 @@ class ScreenState @Inject constructor(
 
     fun getIconForChangeLayoutItemMenu(): Int =
         when (settings.layoutManager) {
-            Layout.LINEAR -> R.drawable.ic_baseline_dashboard_24
-            Layout.GRID -> R.drawable.ic_baseline_view_agenda_24
-            else -> R.drawable.ic_sharp_grid_view_24
+            Layout.LINEAR -> R.drawable.ic_baseline_view_agenda_24
+            else -> R.drawable.ic_baseline_dashboard_24
         }
 
     private fun getSpanCount(): Int =
