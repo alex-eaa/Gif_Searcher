@@ -15,6 +15,7 @@ import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.parcelable
 import com.elchaninov.gif_searcher.viewModel.CachingState
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import com.google.android.gms.ads.AdRequest
@@ -41,8 +42,7 @@ class ShowingGifActivity : AppCompatActivity() {
         setContentView(binding.root)
         bannerAdsInit()
         viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
-
-        gif = intent.getParcelableExtra(EXTRA_GIF)
+        gif = intent.parcelable(EXTRA_GIF)
 
         if (savedInstanceState == null) fetchGif()
 
