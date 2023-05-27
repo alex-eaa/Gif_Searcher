@@ -16,6 +16,7 @@ import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.CachingState
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
+import com.google.android.gms.ads.AdRequest
 import java.io.File
 import javax.inject.Inject
 
@@ -59,12 +60,30 @@ class ShowingGifActivity : AppCompatActivity() {
                 }
             }
         }
+
+        val adRequest = AdRequest.Builder().build()
+        binding.adView.loadAd(adRequest)
     }
 
     private fun fetchGif() {
         gif?.let {
             viewModel.fileCaching(it, getSharedFileInstance(it))
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.adView.resume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        binding.adView.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding.adView.destroy()
     }
 
     private fun renderGif(file: File) {

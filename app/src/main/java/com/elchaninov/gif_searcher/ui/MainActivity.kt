@@ -19,6 +19,7 @@ import com.elchaninov.gif_searcher.ui.Enum.Theme
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
+import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
@@ -47,6 +48,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         initToolbar()
         initRecyclerView()
         initViews()
+        initAdmob()
     }
 
     private fun initRecyclerView() {
@@ -167,6 +169,10 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         searchView?.hideKeyboard()
         viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
         supportActionBar?.title = searchWord
+    }
+
+    private fun initAdmob() {
+        MobileAds.initialize(this)
     }
 
     companion object {
