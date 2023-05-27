@@ -5,6 +5,13 @@ plugins {
     id 'kotlin-parcelize'
 }
 
+def appPropertiesFile = rootProject.file("app.properties")
+def appProperties = new Properties()
+try {
+    appProperties.load(new FileInputStream(appPropertiesFile))
+} catch (e) {
+}
+
 android {
     compileSdk 33
 
@@ -19,15 +26,21 @@ android {
     }
 
     buildTypes {
-        release {
+        debug {
+            debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
+            buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
         }
-    }
-    buildTypes.each {
-        def localProperties = new Properties()
-        localProperties.load(new FileInputStream(rootProject.file("apikey.properties")))
-        it.buildConfigField "String", "GIPHY_API_KEY", "${localProperties['giphyApiKey']}"
+
+        release {
+            debuggable false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
+            buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
+        }
     }
     buildFeatures {
         viewBinding true

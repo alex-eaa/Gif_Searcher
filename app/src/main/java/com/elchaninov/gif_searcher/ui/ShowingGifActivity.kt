@@ -11,14 +11,18 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.elchaninov.gif_searcher.App
+import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.CachingState
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import java.io.File
 import javax.inject.Inject
+
 
 class ShowingGifActivity : AppCompatActivity() {
 
@@ -28,12 +32,14 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
+    private lateinit var adView: AdView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.instance.component.inject(this)
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        bannerAdsInit()
         viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
 
         gif = intent.getParcelableExtra(EXTRA_GIF)
@@ -62,7 +68,7 @@ class ShowingGifActivity : AppCompatActivity() {
         }
 
         val adRequest = AdRequest.Builder().build()
-        binding.adView.loadAd(adRequest)
+        adView.loadAd(adRequest)
     }
 
     private fun fetchGif() {
@@ -73,17 +79,17 @@ class ShowingGifActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        binding.adView.resume()
+        adView.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        binding.adView.pause()
+        adView.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        binding.adView.destroy()
+        adView.destroy()
     }
 
     private fun renderGif(file: File) {
@@ -121,6 +127,13 @@ class ShowingGifActivity : AppCompatActivity() {
             actionText = getString(R.string.button_try_again),
             action = { fetchGif() }
         )
+    }
+
+    private fun bannerAdsInit() {
+        adView = AdView(this)
+        adView.adUnitId = BuildConfig.BANNER_AD_UNIT_ID
+        adView.setAdSize(AdSize.BANNER)
+        binding.layoutBannerHolder.addView(adView)
     }
 
     companion object {
