@@ -33,14 +33,14 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
-    private lateinit var adView: AdView
+    private var adView: AdView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.instance.component.inject(this)
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        bannerAdsInit()
+        if (BuildConfig.ALLOW_AD) bannerAdsInit()
         viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
         gif = intent.parcelable(EXTRA_GIF)
 
@@ -68,7 +68,7 @@ class ShowingGifActivity : AppCompatActivity() {
         }
 
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adView?.loadAd(adRequest)
     }
 
     private fun fetchGif() {
@@ -79,17 +79,17 @@ class ShowingGifActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adView.resume()
+        adView?.resume()
     }
 
     override fun onPause() {
         super.onPause()
-        adView.pause()
+        adView?.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        adView.destroy()
+        adView?.destroy()
     }
 
     private fun renderGif(file: File) {
@@ -131,8 +131,9 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private fun bannerAdsInit() {
         adView = AdView(this)
-        adView.adUnitId = BuildConfig.BANNER_AD_UNIT_ID
-        adView.setAdSize(AdSize.BANNER)
+        adView?.adUnitId = BuildConfig.BANNER_AD_UNIT_ID
+        adView?.setAdSize(AdSize.BANNER)
+        binding.layoutBannerHolder.layoutParams.height = resources.getDimensionPixelSize(R.dimen.banner_height)
         binding.layoutBannerHolder.addView(adView)
     }
 

@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.inputmethod.EditorInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.App
+import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         initToolbar()
         initRecyclerView()
         initViews()
-        initAdmob()
+        if (BuildConfig.ALLOW_AD) initAdmob()
     }
 
     private fun initRecyclerView() {

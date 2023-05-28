@@ -31,6 +31,7 @@ android {
             minifyEnabled false
             buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
+            buildConfigField("boolean", "ALLOW_AD", "false")
         }
 
         release {
@@ -40,6 +41,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
+            buildConfigField("boolean", "ALLOW_AD", "false")
         }
     }
     buildFeatures {
