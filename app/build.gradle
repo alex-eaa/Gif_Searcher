@@ -19,10 +19,15 @@ android {
         applicationId "com.elchaninov.gif_searcher"
         minSdk 22
         targetSdk 33
-        versionCode 103
-        versionName "1.0.3"
+        versionCode 104
+        versionName "1.0.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    defaultConfig {
+        buildConfigField("boolean", "ALLOW_AD", "true")
+        buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
     }
 
     buildTypes {
@@ -30,9 +35,8 @@ android {
             debuggable true
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
-            buildConfigField("boolean", "ALLOW_AD", "false")
+            resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-debug'])
         }
 
         release {
@@ -40,9 +44,8 @@ android {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
-            buildConfigField("boolean", "ALLOW_AD", "true")
+            resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-release'])
         }
     }
     buildFeatures {
