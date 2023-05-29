@@ -140,6 +140,6 @@ class ShowingGifActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_GIF = "EXTRA_GIF"
         const val PROVIDER_AUTHORITIES = "com.elchaninov.gif_searcher.fileProvider"
-        const val INTENT_TYPE = "image/gif"
+        const val INTENT_TYPE = "video/gif"
     }
 }
