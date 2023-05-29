@@ -5,6 +5,9 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.lifecycle.ViewModelProvider
@@ -22,6 +25,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import java.io.File
+import java.io.FileInputStream
 import javax.inject.Inject
 
 
@@ -33,7 +37,23 @@ class ShowingGifActivity : AppCompatActivity() {
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
+    private var gifFile: File? = null
     private var adView: AdView? = null
+
+    private val saveLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument()) { uri ->
+            try {
+                if (uri != null) {
+                    gifFile?.let { gifFile ->
+                        saveFile(uri, gifFile)
+                        this.gifFile = null
+                        showMessage(R.string.success_save_file)
+                    }
+                }
+            } catch (e: Exception) {
+                showMessage(R.string.cant_save_file)
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.instance.component.inject(this)
@@ -51,8 +71,14 @@ class ShowingGifActivity : AppCompatActivity() {
                 is CachingState.Success -> {
                     binding.progress.hide()
                     renderGif(cachingState.file)
-                    binding.fab.show()
-                    binding.fab.setOnClickListener { shareGif(cachingState.file) }
+                    with(binding.fab) {
+                        setOnClickListener { shareGif(cachingState.file) }
+                        show()
+                    }
+                    with(binding.fabDownload) {
+                        setOnClickListener { saveGifToDownloads(cachingState.file) }
+                        show()
+                    }
                 }
                 is CachingState.Failure -> {
                     binding.progress.hide()
@@ -133,8 +159,30 @@ class ShowingGifActivity : AppCompatActivity() {
         adView = AdView(this)
         adView?.adUnitId = BuildConfig.BANNER_AD_UNIT_ID
         adView?.setAdSize(AdSize.BANNER)
-        binding.layoutBannerHolder.layoutParams.height = resources.getDimensionPixelSize(R.dimen.banner_height)
+        binding.layoutBannerHolder.layoutParams.height =
+            resources.getDimensionPixelSize(R.dimen.banner_height)
         binding.layoutBannerHolder.addView(adView)
+    }
+
+    private fun saveGifToDownloads(gifFile: File) {
+        this.gifFile = gifFile
+        saveLauncher.launch(gifFile.name)
+    }
+
+    private fun saveFile(destUri: Uri, gifFile: File) {
+        FileInputStream(gifFile).use { inputStream ->
+            contentResolver.openOutputStream(destUri)?.use { outputStream ->
+                val buffer = ByteArray(1024)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    outputStream.write(buffer, 0, bytesRead)
+                }
+            } ?: throw IllegalStateException("Can't open output stream")
+        }
+    }
+
+    private fun showMessage(@StringRes res: Int) {
+        Toast.makeText(this, res, Toast.LENGTH_SHORT).show()
     }
 
     companion object {

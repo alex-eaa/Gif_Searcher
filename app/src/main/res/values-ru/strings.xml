@@ -13,6 +13,7 @@
     <string name="button_try_again">Повторить</string>
     <string name="fab_share">Поделиться</string>
     <string name="fab_search">Найти GIF</string>
+    <string name="fab_download">Скачать</string>
     <string name="button_search">ИСКАТЬ</string>
 
     <string name="search_hint">Введите слово</string>
@@ -28,4 +29,7 @@
 
     <string name="progress_start_text">0%</string>
     <string name="progress_percent">%d%%</string>
+
+    <string name="success_save_file">The GIF file has been saved to the Download folder</string>
+    <string name="cant_save_file">Error while saving the GIF file</string>
 </resources>

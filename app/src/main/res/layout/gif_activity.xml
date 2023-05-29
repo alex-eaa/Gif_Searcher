@@ -29,6 +29,21 @@
             tools:src="@tools:sample/avatars" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="@dimen/margin_end_small_fab"
+            android:layout_marginBottom="@dimen/margin_bottom_small_fab"
+            android:contentDescription="@string/fab_download"
+            android:visibility="gone"
+            app:backgroundTint="?colorSecondary"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_baseline_download_24"
+            app:tint="?colorOnPrimary"
+            tools:visibility="visible" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -38,7 +53,8 @@
             android:visibility="gone"
             app:backgroundTint="?colorSecondary"
             app:srcCompat="@drawable/ic_baseline_share_24"
-            app:tint="?colorOnPrimary" />
+            app:tint="?colorOnPrimary"
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/progress"
