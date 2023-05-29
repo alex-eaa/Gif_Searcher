@@ -19,8 +19,8 @@ android {
         applicationId "com.elchaninov.gif_searcher"
         minSdk 22
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 102
+        versionName "1.0.2"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,6 +29,7 @@ android {
         debug {
             debuggable true
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
             buildConfigField("boolean", "ALLOW_AD", "false")
@@ -36,12 +37,12 @@ android {
 
         release {
             debuggable false
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
-            buildConfigField("boolean", "ALLOW_AD", "false")
+            buildConfigField("boolean", "ALLOW_AD", "true")
         }
     }
     buildFeatures {
