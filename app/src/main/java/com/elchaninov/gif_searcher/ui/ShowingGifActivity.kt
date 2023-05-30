@@ -73,11 +73,11 @@ class ShowingGifActivity : AppCompatActivity() {
                     renderGif(cachingState.file)
                     with(binding.fab) {
                         setOnClickListener { shareGif(cachingState.file) }
-                        show()
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_fab))
                     }
                     with(binding.fabDownload) {
                         setOnClickListener { saveGifToDownloads(cachingState.file) }
-                        show()
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_small_fab))
                     }
                 }
                 is CachingState.Failure -> {
