@@ -121,17 +121,6 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-//            R.id.action_change_layout -> {
-//                screenState.changeLayoutMode()
-//                item.setIcon(screenState.getIconForChangeLayoutItemMenu())
-//                initRecyclerView()
-//                true
-//            }
-//            android.R.id.home -> {
-//                searchView?.onActionViewCollapsed()
-//                supportActionBar?.title = getString(R.string.top)
-//                true
-//            }
             R.id.theme_dark -> {
                 screenState.changeThemeMode(Theme.DARK)
                 this.recreate()
@@ -152,15 +141,18 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     override fun onItemClick(category: Category) {
-        val intent = Intent(this, MainActivity::class.java)
-//        intent.putExtra(EXTRA_GIF, gif)
-        startActivity(intent)
+        startSearchActivity(category.name)
     }
 
-    override fun onClick(searchWord: String) {
+    override fun onSearch(searchWord: String) {
         searchView?.hideKeyboard()
-//        viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
-        supportActionBar?.title = searchWord
+        startSearchActivity(searchWord)
+    }
+
+    private fun startSearchActivity(searchWord: String?) {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra(EXTRA_CATEGORIES, searchWord)
+        startActivity(intent)
     }
 
     private fun initAdmob() {
@@ -177,7 +169,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     companion object {
         const val CATEGORIES_SPAN_COUNT_PORTRAIT = 2
         const val CATEGORIES_SPAN_COUNT_LANDSCAPE = 3
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
+        const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }
 }

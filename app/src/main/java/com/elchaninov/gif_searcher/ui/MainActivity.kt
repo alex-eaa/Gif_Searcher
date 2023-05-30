@@ -14,6 +14,7 @@ import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.ui.CategoriesActivity.Companion.EXTRA_CATEGORIES
 import com.elchaninov.gif_searcher.ui.Enum.Theme
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
@@ -46,6 +47,10 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         initToolbar()
         initRecyclerView()
         initViews()
+
+        intent.getStringExtra(EXTRA_CATEGORIES)?.let {
+            onSearch(it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -162,7 +167,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         startActivity(intent)
     }
 
-    override fun onClick(searchWord: String) {
+    override fun onSearch(searchWord: String) {
         searchView?.hideKeyboard()
         viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
         supportActionBar?.title = searchWord

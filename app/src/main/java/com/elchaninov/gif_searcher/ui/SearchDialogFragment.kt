@@ -62,7 +62,7 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     private fun executeSearch(): Boolean {
         val keyword = binding.searchEditText.text.toString()
         if (keyword.isBlank()) return true
-        onSearchClickListener?.onClick(keyword)
+        onSearchClickListener?.onSearch(keyword)
         dismiss()
         return false
     }
@@ -73,7 +73,7 @@ class SearchDialogFragment : BottomSheetDialogFragment() {
     }
 
     interface OnSearchClickListener {
-        fun onClick(searchWord: String)
+        fun onSearch(searchWord: String)
     }
 
     companion object {
