@@ -19,7 +19,7 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.parcelable
-import com.elchaninov.gif_searcher.viewModel.CachingState
+import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -68,7 +68,7 @@ class ShowingGifActivity : AppCompatActivity() {
 
         viewModel.fileLiveData.observe(this) { cachingState ->
             when (cachingState) {
-                is CachingState.Success -> {
+                is LoadingState.Success -> {
                     binding.progress.hide()
                     renderGif(cachingState.file)
                     with(binding.fab) {
@@ -80,11 +80,11 @@ class ShowingGifActivity : AppCompatActivity() {
                         slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_small_fab))
                     }
                 }
-                is CachingState.Failure -> {
+                is LoadingState.Failure -> {
                     binding.progress.hide()
                     showError()
                 }
-                is CachingState.Progress -> {
+                is LoadingState.Progress -> {
                     binding.progress.show()
                     binding.progressText.text =
                         getString(R.string.progress_percent, cachingState.percent)

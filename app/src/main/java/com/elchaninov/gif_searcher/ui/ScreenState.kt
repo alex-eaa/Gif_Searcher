@@ -3,7 +3,6 @@ package com.elchaninov.gif_searcher.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.view.Menu
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -63,6 +62,11 @@ class ScreenState @Inject constructor(
         }
 
     private fun getSpanCount(): Int =
-        if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MainActivity.SPAN_COUNT_LANDSCAPE
-        else MainActivity.SPAN_COUNT_PORTRAIT
+        if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) SPAN_COUNT_LANDSCAPE
+        else SPAN_COUNT_PORTRAIT
+
+    companion object {
+        const val SPAN_COUNT_PORTRAIT = 3
+        const val SPAN_COUNT_LANDSCAPE = 5
+    }
 }

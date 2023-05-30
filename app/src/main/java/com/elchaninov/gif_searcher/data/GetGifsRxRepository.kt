@@ -1,6 +1,7 @@
 package com.elchaninov.gif_searcher.data
 
 import androidx.paging.PagingData
+import com.elchaninov.gif_searcher.model.Category
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable

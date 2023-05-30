@@ -2,6 +2,7 @@ package com.elchaninov.gif_searcher.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
 import com.elchaninov.gif_searcher.viewModel.ViewModelFactory
@@ -25,4 +26,9 @@ internal abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(ShowingGifViewModel::class)
     protected abstract fun showingGifViewModel(showingGifViewModel: ShowingGifViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CategoriesViewModel::class)
+    protected abstract fun categoriesViewModel(categoriesViewModel: CategoriesViewModel): ViewModel
 }

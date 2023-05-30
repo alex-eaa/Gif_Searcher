@@ -3,11 +3,11 @@ package com.elchaninov.gif_searcher.data.api
 import com.google.gson.annotations.SerializedName
 
 data class GiphyGifsResponseDto(
-    val data: List<DataDto>,
+    val data: List<GifDto>,
     val pagination: PaginationDto,
 )
 
-data class DataDto(
+data class GifDto(
     val id: String?,
     val type: String?,
     val title: String?,

@@ -17,19 +17,19 @@ import javax.inject.Inject
 
 class ShowingGifViewModel @Inject constructor() : ViewModel() {
 
-    private var _fileLiveData: MutableLiveData<CachingState> =
-        MutableLiveData(CachingState.Progress())
+    private var _fileLiveData: MutableLiveData<LoadingState<File>> =
+        MutableLiveData(LoadingState.Progress())
 
-    val fileLiveData: LiveData<CachingState> get() = _fileLiveData
+    val fileLiveData: LiveData<LoadingState<File>> get() = _fileLiveData
 
     fun fileCaching(gif: Gif, file: File) {
         if (file.exists() && file.length() == gif.size) {
-            _fileLiveData.value = CachingState.Success(file)
+            _fileLiveData.value = LoadingState.Success(file)
         } else {
             viewModelScope.launch {
                 fetchGif(gif, file)
                     .catch { e ->
-                        _fileLiveData.postValue(CachingState.Failure(e))
+                        _fileLiveData.postValue(LoadingState.Failure(e))
                     }
                     .collect {
                         _fileLiveData.postValue(it)
@@ -60,12 +60,12 @@ class ShowingGifViewModel @Inject constructor() : ViewModel() {
                     loadedBytes++
 
                     if (loadedBytes % onePercentRate == 0) {
-                        emit(CachingState.Progress(loadedBytes / onePercentRate))
+                        emit(LoadingState.Progress(loadedBytes / onePercentRate))
                     }
                 }
 
                 if (loadedBytes > 0) saveToFile(byteArray, file)
-                emit(CachingState.Success(file))
+                emit(LoadingState.Success(file))
             } catch (e: Exception) {
                 throw e
             } finally {
