@@ -1,5 +1,6 @@
 package com.elchaninov.gif_searcher.ui
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
@@ -56,7 +57,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun initRecyclerView() {
-        categoriesAdapter = CategoriesAdapter(R.layout.category_item, this)
+        categoriesAdapter = CategoriesAdapter(this)
 
         binding.recyclerView.apply {
             layoutManager = StaggeredGridLayoutManager(
@@ -120,23 +121,17 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_change_layout -> {
-                screenState.changeLayoutMode()
-                item.setIcon(screenState.getIconForChangeLayoutItemMenu())
-
-//                val scrollToPosition = if (gifsAdapter.direction) gifsAdapter.lastPosition
-//                else gifsAdapter.lastPosition - binding.recyclerView.childCount
-
-                initRecyclerView()
-//                binding.recyclerView.scrollToPosition(scrollToPosition)
-                true
-            }
-            android.R.id.home -> {
-                searchView?.onActionViewCollapsed()
-//                viewModel.changeSearchQuery(SearchQuery.Top)
-                supportActionBar?.title = getString(R.string.top)
-                true
-            }
+//            R.id.action_change_layout -> {
+//                screenState.changeLayoutMode()
+//                item.setIcon(screenState.getIconForChangeLayoutItemMenu())
+//                initRecyclerView()
+//                true
+//            }
+//            android.R.id.home -> {
+//                searchView?.onActionViewCollapsed()
+//                supportActionBar?.title = getString(R.string.top)
+//                true
+//            }
             R.id.theme_dark -> {
                 screenState.changeThemeMode(Theme.DARK)
                 this.recreate()
@@ -157,10 +152,9 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     override fun onItemClick(category: Category) {
-//        val intent = Intent(this, ShowingGifActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
 //        intent.putExtra(EXTRA_GIF, gif)
-//        startActivity(intent)
-        TODO("Not yet implemented")
+        startActivity(intent)
     }
 
     override fun onClick(searchWord: String) {

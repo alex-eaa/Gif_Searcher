@@ -25,7 +25,9 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 giphyGifsRepository.getCategories().let {
-                    _dataLiveData.postValue(LoadingState.Success(it))
+                    val list = mutableListOf(Category.empty())
+                    list.addAll(it)
+                    _dataLiveData.postValue(LoadingState.Success(list))
                 }
             } catch (e: Exception) {
                 _dataLiveData.postValue(LoadingState.Failure(e))

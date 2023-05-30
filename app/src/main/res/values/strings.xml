@@ -4,7 +4,6 @@
     <string name="top">Trending</string>
     <string name="search">Search</string>
     <string name="error">LOADING ERROR</string>
-    <string name="categories">Categories</string>
 
     <!--    MESSAGES-->
     <string name="error_message_1">Failed to load image list</string>
