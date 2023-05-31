@@ -30,23 +30,4 @@
             android:textSize="@dimen/gif_title_text_size"
             tools:text="Описание картинки. Описание" />
     </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/trending_category_layout"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        tools:visibility="visible">
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/trending_category_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/trending_title_text_size"
-            tools:text="Описание картинки. Описание" />
-    </FrameLayout>
-
 </com.google.android.material.card.MaterialCardView>
