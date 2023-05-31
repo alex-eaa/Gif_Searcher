@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/trending_card_height"
     android:layout_margin="5dp"
+    app:cardBackgroundColor="?attr/myCardBackgroundColor"
     app:cardCornerRadius="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView

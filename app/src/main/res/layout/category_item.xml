@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
+    app:cardBackgroundColor="?attr/myCardBackgroundColor"
     app:cardCornerRadius="8dp">
 
     <LinearLayout
@@ -34,9 +35,9 @@
         android:id="@+id/trending_category_layout"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:layout_gravity="center"
         android:visibility="gone"
-        tools:visibility="visible"
-        android:layout_gravity="center">
+        tools:visibility="visible">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/trending_category_title"

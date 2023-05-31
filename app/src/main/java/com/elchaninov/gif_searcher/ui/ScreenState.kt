@@ -3,6 +3,7 @@ package com.elchaninov.gif_searcher.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.view.Menu
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
@@ -30,7 +31,7 @@ class ScreenState @Inject constructor(
         }
     }
 
-    fun getThemeMode(): Int = settings.nightTheme!!.value
+    fun getThemeMode(): Int = settings.nightTheme?.value ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 
     fun setIconsItemsMenu(menu: Menu) {
         menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())

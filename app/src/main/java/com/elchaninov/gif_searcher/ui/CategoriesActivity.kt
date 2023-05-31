@@ -1,7 +1,6 @@
 package com.elchaninov.gif_searcher.ui
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,15 +9,14 @@ import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
 import com.elchaninov.gif_searcher.ui.enum.Theme
-import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
+import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
 
@@ -42,7 +40,6 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
         setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[CategoriesViewModel::class.java]
-
         binding = CategoriesActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

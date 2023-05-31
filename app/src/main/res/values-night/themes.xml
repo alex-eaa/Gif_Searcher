@@ -9,25 +9,16 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
+        <!-- My color. -->
+        <item name="myCardBackgroundColor">@color/material_grey_900</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorOnPrimary</item>
+        <item name="android:statusBarColor">?attr/colorOnPrimary</item>
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
-
-        <!-- CardView color. -->
-        <item name="materialCardViewStyle">@style/Widget.App.CardView</item>
     </style>
 
     <style name="Theme.Gif_Searcher.Fullscreen" parent="Theme.Gif_Searcher">
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowFullscreen">true</item>
-    </style>
-
-    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
-        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Card</item>
-    </style>
-
-    <style name="ThemeOverlay.App.Card" parent="">
-        <item name="colorSurface">@color/material_grey_900</item>
     </style>
 </resources>
