@@ -16,7 +16,7 @@ import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
-import com.elchaninov.gif_searcher.ui.Enum.Theme
+import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.google.android.gms.ads.MobileAds
@@ -60,10 +60,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
         categoriesAdapter = CategoriesAdapter(this)
 
         binding.recyclerView.apply {
-            layoutManager = StaggeredGridLayoutManager(
-                getCategoriesSpanCount(),
-                StaggeredGridLayoutManager.VERTICAL
-            )
+            layoutManager = screenState.getCategoriesLayoutManager()
             adapter = categoriesAdapter
         }
 
@@ -116,6 +113,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
 
@@ -159,16 +157,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
         MobileAds.initialize(this)
     }
 
-    private fun getCategoriesSpanCount(): Int {
-        return if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
-            CATEGORIES_SPAN_COUNT_LANDSCAPE
-        else
-            CATEGORIES_SPAN_COUNT_PORTRAIT
-    }
-
     companion object {
-        const val CATEGORIES_SPAN_COUNT_PORTRAIT = 2
-        const val CATEGORIES_SPAN_COUNT_LANDSCAPE = 3
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
         const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }

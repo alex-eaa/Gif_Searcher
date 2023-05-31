@@ -15,7 +15,7 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.CategoriesActivity.Companion.EXTRA_CATEGORIES
-import com.elchaninov.gif_searcher.ui.Enum.Theme
+import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
