@@ -60,6 +60,9 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
             layoutManager = screenState.getCategoriesLayoutManager()
             adapter = categoriesAdapter
         }
+        binding.recyclerView.addItemDecoration(
+            CustomItemDecoration(resources.getDimensionPixelSize(R.dimen.item_decoration_space))
+        )
 
         viewModel.dataLiveData.observe(this) { state ->
             when (state) {

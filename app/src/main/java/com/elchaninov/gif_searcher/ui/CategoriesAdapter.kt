@@ -3,6 +3,7 @@ package com.elchaninov.gif_searcher.ui
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.model.Category
 
@@ -20,11 +21,15 @@ class CategoriesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return if (viewType == TRENDING_CATEGORIES_VIEW_TYPE) {
-            val view = inflater.inflate(R.layout.trending_category_item, parent, false)
-            TrendingCategoryViewHolder(view)
+            val itemView = inflater.inflate(R.layout.trending_category_item, parent, false)
+            val layoutParams = StaggeredGridLayoutManager.LayoutParams(itemView.layoutParams).apply {
+                isFullSpan = true
+            }
+            itemView.layoutParams = layoutParams
+            TrendingCategoryViewHolder(itemView)
         } else {
-            val view = inflater.inflate(R.layout.category_item, parent, false)
-            CategoryViewHolder(view)
+            val itemView = inflater.inflate(R.layout.category_item, parent, false)
+            CategoryViewHolder(itemView)
         }
     }
 
