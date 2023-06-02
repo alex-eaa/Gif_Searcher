@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.Enum
+package com.elchaninov.gif_searcher.ui.enum
 
 enum class Layout {
     LINEAR,

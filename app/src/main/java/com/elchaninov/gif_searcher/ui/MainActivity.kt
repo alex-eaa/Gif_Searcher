@@ -11,15 +11,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.App
-import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
-import com.elchaninov.gif_searcher.ui.Enum.Theme
+import com.elchaninov.gif_searcher.ui.CategoriesActivity.Companion.EXTRA_CATEGORIES
+import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
-import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
@@ -48,7 +47,10 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         initToolbar()
         initRecyclerView()
         initViews()
-        if (BuildConfig.ALLOW_AD) initAdmob()
+
+        intent.getStringExtra(EXTRA_CATEGORIES)?.let {
+            onSearch(it)
+        }
     }
 
     private fun initRecyclerView() {
@@ -165,19 +167,13 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         startActivity(intent)
     }
 
-    override fun onClick(searchWord: String) {
+    override fun onSearch(searchWord: String) {
         searchView?.hideKeyboard()
         viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
         supportActionBar?.title = searchWord
     }
 
-    private fun initAdmob() {
-        MobileAds.initialize(this)
-    }
-
     companion object {
-        const val SPAN_COUNT_PORTRAIT = 3
-        const val SPAN_COUNT_LANDSCAPE = 5
         private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
             "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }

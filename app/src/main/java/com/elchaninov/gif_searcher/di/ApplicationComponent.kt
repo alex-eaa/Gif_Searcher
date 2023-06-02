@@ -1,6 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
 import android.content.Context
+import com.elchaninov.gif_searcher.ui.CategoriesActivity
 import com.elchaninov.gif_searcher.ui.MainActivity
 import com.elchaninov.gif_searcher.ui.ShowingGifActivity
 import dagger.BindsInstance
@@ -26,6 +27,7 @@ interface ApplicationComponent {
         fun build(): ApplicationComponent
     }
 
+    fun inject(categoryActivity: CategoriesActivity)
     fun inject(mainActivity: MainActivity)
     fun inject(showingGifActivity: ShowingGifActivity)
 }

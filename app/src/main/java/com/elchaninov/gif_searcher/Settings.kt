@@ -2,8 +2,8 @@ package com.elchaninov.gif_searcher
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.elchaninov.gif_searcher.ui.Enum.Layout
-import com.elchaninov.gif_searcher.ui.Enum.Theme
+import com.elchaninov.gif_searcher.ui.enum.Layout
+import com.elchaninov.gif_searcher.ui.enum.Theme
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.properties.ReadWriteProperty

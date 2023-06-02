@@ -3,16 +3,18 @@ package com.elchaninov.gif_searcher.ui
 import android.content.Context
 import android.content.res.Configuration
 import android.view.Menu
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.Settings
-import com.elchaninov.gif_searcher.ui.Enum.Layout
-import com.elchaninov.gif_searcher.ui.Enum.Theme
+import com.elchaninov.gif_searcher.ui.enum.Layout
+import com.elchaninov.gif_searcher.ui.enum.Theme
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ScreenState @Inject constructor(
     private val context: Context,
     private val settings: Settings
@@ -25,12 +27,11 @@ class ScreenState @Inject constructor(
     fun changeLayoutMode() {
         when (settings.layoutManager) {
             Layout.LINEAR -> settings.layoutManager = Layout.STAGGERED
-            Layout.STAGGERED -> settings.layoutManager = Layout.LINEAR
             else -> settings.layoutManager = Layout.LINEAR
         }
     }
 
-    fun getThemeMode(): Int = settings.nightTheme!!.value
+    fun getThemeMode(): Int = settings.nightTheme?.value ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 
     fun setIconsItemsMenu(menu: Menu) {
         menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
@@ -43,9 +44,15 @@ class ScreenState @Inject constructor(
     }
 
     fun getItemLayoutForInflate(): Int = when (settings.layoutManager) {
-        Layout.STAGGERED -> R.layout.item_gif
-        else -> R.layout.item_line_gif
+        Layout.LINEAR -> R.layout.item_line_gif
+        else -> R.layout.item_gif
     }
+
+    fun getCategoriesLayoutManager(): RecyclerView.LayoutManager =
+        StaggeredGridLayoutManager(
+            getCategoriesSpanCount(),
+            StaggeredGridLayoutManager.VERTICAL
+        )
 
     fun getMyLayoutManager(): RecyclerView.LayoutManager =
         when (settings.layoutManager) {
@@ -62,7 +69,21 @@ class ScreenState @Inject constructor(
             else -> R.drawable.ic_baseline_dashboard_24
         }
 
+    private fun getCategoriesSpanCount(): Int {
+        return if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            CATEGORIES_SPAN_COUNT_LANDSCAPE
+        else
+            CATEGORIES_SPAN_COUNT_PORTRAIT
+    }
+
     private fun getSpanCount(): Int =
-        if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) MainActivity.SPAN_COUNT_LANDSCAPE
-        else MainActivity.SPAN_COUNT_PORTRAIT
+        if (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) SPAN_COUNT_LANDSCAPE
+        else SPAN_COUNT_PORTRAIT
+
+    companion object {
+        const val SPAN_COUNT_PORTRAIT = 3
+        const val SPAN_COUNT_LANDSCAPE = 5
+        const val CATEGORIES_SPAN_COUNT_PORTRAIT = 2
+        const val CATEGORIES_SPAN_COUNT_LANDSCAPE = 3
+    }
 }
