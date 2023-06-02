@@ -14,8 +14,10 @@ class MapGifDtoToGif @Inject constructor() {
                 type = it.type,
                 title = it.title,
                 urlPreview = it.images.previewGif.url,
-                urlView = it.images.original.url,
-                size = it.images.original.size
+                heightPreview = it.images.previewGif.height,
+                widthPreview = it.images.previewGif.width,
+                urlOriginal = it.images.original.url,
+                sizeOriginal = it.images.original.size
             )
         }
     }
@@ -26,8 +28,10 @@ class MapGifDtoToGif @Inject constructor() {
             type = gifDto.type,
             title = gifDto.title,
             urlPreview = gifDto.images.previewGif.url,
-            urlView = gifDto.images.original.url,
-            size = gifDto.images.original.size
+            heightPreview = gifDto.images.previewGif.height,
+            widthPreview = gifDto.images.previewGif.width,
+            urlOriginal = gifDto.images.original.url,
+            sizeOriginal = gifDto.images.original.size
         )
     }
 }
