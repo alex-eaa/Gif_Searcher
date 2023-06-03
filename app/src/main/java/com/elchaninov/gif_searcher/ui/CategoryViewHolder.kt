@@ -12,28 +12,31 @@ import com.elchaninov.gif_searcher.model.Category
 
 class CategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(category: Category, onItemClickListener: CategoriesAdapter.OnItemClickListener) {
+    fun bind(category: Category, onClick: (Category) -> Unit) {
         category.name?.let { name ->
             val imageTitle: TextView? = itemView.findViewById(R.id.category_title)
             imageTitle?.text = name
         }
 
-        category.gif?.let { gif ->
-            val imageView: ImageView? = itemView.findViewById(R.id.category_image_view)
-            imageView?.let {
+        val imageView: ImageView? = itemView.findViewById(R.id.category_image_view)
+        imageView?.let {
+            if (category.gif != null) {
+                imageView.visibility = View.VISIBLE
                 Glide
-                    .with(it)
+                    .with(imageView)
                     .asGif()
                     .placeholder(R.drawable.ic_baseline_image_24)
                     .error(R.drawable.ic_baseline_broken_image_24)
-                    .load(gif.urlPreview)
+                    .load(category.gif.urlPreview)
                     .diskCacheStrategy(DiskCacheStrategy.DATA)
                     .into(imageView)
+            } else {
+                imageView.visibility = View.GONE
             }
         }
 
         itemView.rootView.setOnClickListener {
-            onItemClickListener.onItemClick(category)
+            onClick(category)
         }
     }
 }

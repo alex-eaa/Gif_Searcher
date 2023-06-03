@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/trending_card_height"
+    android:layout_height="@dimen/subcategory_card_height"
     app:cardBackgroundColor="?attr/myCardBackgroundColor"
     app:cardCornerRadius="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/trending_category_title"
+        android:id="@+id/category_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -16,7 +16,7 @@
         android:padding="@dimen/category_text_margin"
         android:text="@string/top"
         android:textColor="@color/white"
-        android:textSize="@dimen/trending_title_text_size"
+        android:textSize="@dimen/gif_title_text_size"
         tools:text="Описание картинки. Описание картинки." />
 
 </com.google.android.material.card.MaterialCardView>

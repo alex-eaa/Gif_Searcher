@@ -25,7 +25,7 @@ class CategoriesViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 giphyGifsRepository.getCategories().let {
-                    val list = mutableListOf(Category.empty())
+                    val list = mutableListOf(Category.createTrendingCategory())
                     list.addAll(it)
                     _dataLiveData.postValue(LoadingState.Success(list))
                 }
