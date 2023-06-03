@@ -23,7 +23,7 @@ class ShowingGifViewModel @Inject constructor() : ViewModel() {
     val fileLiveData: LiveData<LoadingState<File>> get() = _fileLiveData
 
     fun fileCaching(gif: Gif, file: File) {
-        if (file.exists() && file.length() == gif.size) {
+        if (file.exists() && file.length() == gif.sizeOriginal) {
             _fileLiveData.value = LoadingState.Success(file)
         } else {
             viewModelScope.launch {
@@ -43,7 +43,7 @@ class ShowingGifViewModel @Inject constructor() : ViewModel() {
             var inputStream: InputStream? = null
 
             try {
-                val openConnection = URL(gif.urlView).openConnection()
+                val openConnection = URL(gif.urlOriginal).openConnection()
 
                 val contentLength: Int = openConnection.contentLength
                 val byteArray = ByteArray(contentLength)

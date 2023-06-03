@@ -9,14 +9,7 @@ class MapGifDtoToGif @Inject constructor() {
 
     fun map(giphyGifsResponseDto: GiphyGifsResponseDto): List<Gif> {
         return giphyGifsResponseDto.data.map {
-            Gif(
-                id = it.id,
-                type = it.type,
-                title = it.title,
-                urlPreview = it.images.previewGif.url,
-                urlView = it.images.original.url,
-                size = it.images.original.size
-            )
+            map(it)
         }
     }
 
@@ -26,8 +19,10 @@ class MapGifDtoToGif @Inject constructor() {
             type = gifDto.type,
             title = gifDto.title,
             urlPreview = gifDto.images.previewGif.url,
-            urlView = gifDto.images.original.url,
-            size = gifDto.images.original.size
+            heightPreview = gifDto.images.previewGif.height,
+            widthPreview = gifDto.images.previewGif.width,
+            urlOriginal = gifDto.images.original.url,
+            sizeOriginal = gifDto.images.original.size
         )
     }
 }

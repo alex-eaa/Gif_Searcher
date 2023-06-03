@@ -112,13 +112,13 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         supportActionBar?.apply{
             setDisplayShowTitleEnabled(true)
             title = getString(R.string.top)
+
             setDisplayHomeAsUpEnabled(true)
         }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
-        binding.topAppBar.setNavigationIcon(R.drawable.ic_baseline_star_rate_24)
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
@@ -137,9 +137,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
                 true
             }
             android.R.id.home -> {
-                searchView?.onActionViewCollapsed()
-                viewModel.changeSearchQuery(SearchQuery.Top)
-                supportActionBar?.title = getString(R.string.top)
+                finish()
                 true
             }
             R.id.theme_dark -> {
