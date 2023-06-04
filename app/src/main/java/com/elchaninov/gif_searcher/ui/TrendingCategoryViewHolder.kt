@@ -7,9 +7,9 @@ import com.elchaninov.gif_searcher.model.Category
 
 class TrendingCategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(category: Category, onItemClickListener: CategoriesAdapter.OnItemClickListener) {
+    fun bind(category: Category, onClick: (Category) -> Unit) {
         itemView.rootView.setOnClickListener {
-            onItemClickListener.onItemClick(category)
+            onClick(category)
         }
     }
 }

@@ -21,8 +21,7 @@ import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
 
 
-class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickListener,
-    SearchDialogFragment.OnSearchClickListener {
+class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
 
     @Inject
     lateinit var screenState: ScreenState
@@ -54,7 +53,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun initRecyclerView() {
-        categoriesAdapter = CategoriesAdapter(this)
+        categoriesAdapter = CategoriesAdapter(onItemClickListener = { onItemClick(it) })
 
         binding.recyclerView.apply {
             layoutManager = screenState.getCategoriesLayoutManager()
@@ -99,7 +98,8 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun initToolbar() {
-        binding.topAppBar.logo = ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
+        binding.topAppBar.logo =
+            ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
@@ -138,8 +138,9 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
         }
     }
 
-    override fun onItemClick(category: Category) {
-        startSearchActivity(category.name)
+    private fun onItemClick(category: Category) {
+        if (category.subcategories.isEmpty()) startSearchActivity(category.name)
+        else viewModel.onClickCategory(category)
     }
 
     override fun onSearch(searchWord: String) {
@@ -158,7 +159,8 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
+            "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
         const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }
 }

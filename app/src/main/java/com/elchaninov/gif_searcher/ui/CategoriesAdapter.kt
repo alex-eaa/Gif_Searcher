@@ -6,15 +6,15 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.model.Category
-import com.elchaninov.gif_searcher.model.asCategory
 
 
 class CategoriesAdapter(
-    private val onItemClickListener: OnItemClickListener
+    private val onItemClickListener: (Category) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val categoryList: MutableList<Category> = mutableListOf()
 
-    fun setItems(categories: Collection<Category>) {
+    fun setItems(categories: List<Category>) {
+        categoryList.clear()
         categoryList.addAll(categories)
         notifyDataSetChanged()
     }
@@ -56,13 +56,7 @@ class CategoriesAdapter(
             is CategoryViewHolder -> {
                 holder.bind(
                     category = categoryList[position],
-                    onClick = {
-                        if (categoryList[position].subcategories.isEmpty()) {
-                            onItemClickListener.onItemClick(it)
-                        } else {
-                            if (it.isExpanded) collapseCategory(it) else expandCategory(it)
-                        }
-                    }
+                    onClick = onItemClickListener,
                 )
             }
             is TrendingCategoryViewHolder -> {
@@ -82,40 +76,6 @@ class CategoriesAdapter(
             categoryList[position].isExpanded -> EXPANDED_CATEGORIES_VIEW_TYPE
             else -> COLLAPSE_CATEGORIES_VIEW_TYPE
         }
-    }
-
-    private fun expandCategory(category: Category) {
-        categoryList.indexOf(category).let {
-            val oldCategory = categoryList[it]
-            categoryList[it] = oldCategory.copy(isExpanded = !oldCategory.isExpanded)
-
-            val subcategoryList = mutableListOf<Category>()
-            categoryList[it].subcategories.map { subcategory ->
-                subcategoryList.add(subcategory.asCategory())
-            }
-
-            categoryList.addAll(it + 1, subcategoryList)
-            notifyDataSetChanged()
-        }
-    }
-
-    private fun collapseCategory(category: Category) {
-        categoryList.indexOf(category).let {
-            val oldCategory = categoryList[it]
-            categoryList[it] = oldCategory.copy(isExpanded = !oldCategory.isExpanded)
-
-            oldCategory.subcategories.forEach { subcategory ->
-                val index = categoryList.indexOfFirst { category ->
-                    category.name == subcategory.nameEncoded
-                }
-                categoryList.removeAt(index)
-            }
-            notifyDataSetChanged()
-        }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(category: Category)
     }
 
     companion object {
