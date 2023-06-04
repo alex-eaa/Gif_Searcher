@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.data
 
-import android.util.Log
 import androidx.paging.PagingState
 import androidx.paging.rxjava3.RxPagingSource
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
@@ -35,7 +34,6 @@ class GifsRxPagingSource @AssistedInject constructor(
                     .subscribeOn(Schedulers.io())
                     .map { toLoadResult(it) }
                     .onErrorReturn {
-                        Log.d("TAG1", "loadSingle: ${it.message}")
                         LoadResult.Error(it)
                     }
             }
