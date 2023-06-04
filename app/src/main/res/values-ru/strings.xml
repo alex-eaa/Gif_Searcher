@@ -20,6 +20,7 @@
     <string name="delete_description">Очистить</string>
 
     <!--    ITEMS MENU-->
+    <string name="item_menu_collapse_subcategories">Свернуть подкатегории</string>
     <string name="item_menu_change_view">Вид</string>
     <string name="item_menu_search">Поиск</string>
     <string name="item_menu_theme">Тема</string>

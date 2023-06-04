@@ -126,6 +126,7 @@ class GifsActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.findItem(R.id.collapse_categories)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }

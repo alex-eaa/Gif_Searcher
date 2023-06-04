@@ -8,13 +8,16 @@ data class Category(
 ) {
     companion object {
         fun createTrendingCategory() = Category(null, null, emptyList())
+        fun Category.isSubcategory() = this.subcategories.isEmpty()
     }
 }
 
 data class Subcategory(
     val nameEncoded: String,
-)
-
-fun Subcategory.asCategory(): Category {
-    return Category(nameEncoded, null, emptyList())
+) {
+    companion object {
+        fun Subcategory.asCategory(): Category {
+            return Category(nameEncoded, null, emptyList())
+        }
+    }
 }

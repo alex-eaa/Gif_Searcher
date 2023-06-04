@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
+        android:id="@+id/collapse_categories"
+        android:icon="@drawable/ic_baseline_compress_24"
+        android:orderInCategory="1"
+        android:title="@string/item_menu_change_view"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/action_change_layout"
         android:orderInCategory="2"
         android:title="@string/item_menu_change_view"

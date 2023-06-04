@@ -20,6 +20,7 @@
     <string name="delete_description">Clear</string>
 
     <!--    ITEMS MENU-->
+    <string name="item_menu_collapse_subcategories">Collapse subcategories</string>
     <string name="item_menu_change_view">View</string>
     <string name="item_menu_search">Search</string>
     <string name="item_menu_theme">Theme</string>

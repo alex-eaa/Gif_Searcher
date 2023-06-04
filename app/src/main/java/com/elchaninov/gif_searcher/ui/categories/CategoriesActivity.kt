@@ -77,6 +77,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                     binding.progressContainer.progress.hide()
                     binding.swipeToRefresh.isRefreshing = false
                     updateAdapterData(state.file)
+                    invalidateOptionsMenu()
                 }
                 is LoadingState.Failure -> {
                     binding.progressContainer.progress.hide()
@@ -123,18 +124,23 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_change_layout)?.isVisible = false
+        menu?.findItem(R.id.collapse_categories)?.isVisible = viewModel.isShowCollapseItemMenuLiveData
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.findItem(R.id.action_change_layout)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.collapse_categories -> {
+                viewModel.collapseAll()
+                true
+            }
             R.id.theme_dark -> {
                 screenState.changeThemeMode(Theme.DARK)
                 this.recreate()
