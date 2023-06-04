@@ -1,9 +1,9 @@
 package com.elchaninov.gif_searcher.di
 
 import android.content.Context
-import com.elchaninov.gif_searcher.ui.CategoriesActivity
-import com.elchaninov.gif_searcher.ui.MainActivity
-import com.elchaninov.gif_searcher.ui.ShowingGifActivity
+import com.elchaninov.gif_searcher.ui.categories.CategoriesActivity
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
+import com.elchaninov.gif_searcher.ui.FullGifActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -28,6 +28,6 @@ interface ApplicationComponent {
     }
 
     fun inject(categoryActivity: CategoriesActivity)
-    fun inject(mainActivity: MainActivity)
-    fun inject(showingGifActivity: ShowingGifActivity)
+    fun inject(gifsActivity: GifsActivity)
+    fun inject(fullGifActivity: FullGifActivity)
 }

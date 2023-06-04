@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui
+package com.elchaninov.gif_searcher.ui.categories
 
 import android.content.Intent
 import android.os.Bundle
@@ -15,7 +15,14 @@ import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
+import com.elchaninov.gif_searcher.ui.ScreenState
+import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import com.elchaninov.gif_searcher.ui.hide
+import com.elchaninov.gif_searcher.ui.hideKeyboard
+import com.elchaninov.gif_searcher.ui.show
+import com.elchaninov.gif_searcher.ui.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
@@ -158,7 +165,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     }
 
     private fun startSearchActivity(searchWord: String?) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, GifsActivity::class.java)
         intent.putExtra(EXTRA_CATEGORIES, searchWord)
         startActivity(intent)
     }

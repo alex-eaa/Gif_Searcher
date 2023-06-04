@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui
+package com.elchaninov.gif_searcher.ui.gifs
 
 import android.view.ViewGroup
 import androidx.paging.LoadState

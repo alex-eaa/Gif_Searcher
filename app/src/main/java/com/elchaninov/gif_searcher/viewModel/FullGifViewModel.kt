@@ -15,7 +15,7 @@ import java.io.InputStream
 import java.net.URL
 import javax.inject.Inject
 
-class ShowingGifViewModel @Inject constructor() : ViewModel() {
+class FullGifViewModel @Inject constructor() : ViewModel() {
 
     private var _fileLiveData: MutableLiveData<LoadingState<File>> =
         MutableLiveData(LoadingState.Progress())

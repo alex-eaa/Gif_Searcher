@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui
+package com.elchaninov.gif_searcher.ui.categories
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
