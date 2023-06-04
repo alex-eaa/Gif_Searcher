@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
@@ -68,7 +69,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                 is LoadingState.Success -> {
                     binding.progressContainer.progress.hide()
                     binding.swipeToRefresh.isRefreshing = false
-                    categoriesAdapter.setItems(state.file)
+                    updateAdapterData(state.file)
                 }
                 is LoadingState.Failure -> {
                     binding.progressContainer.progress.hide()
@@ -80,6 +81,14 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                 }
             }
         }
+    }
+
+    private fun updateAdapterData(newList: List<Category>) {
+        val categoriesDiffUtilCallback =
+            CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
+        val productDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
+        categoriesAdapter.setItems(newList)
+        productDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
     private fun initViews() {

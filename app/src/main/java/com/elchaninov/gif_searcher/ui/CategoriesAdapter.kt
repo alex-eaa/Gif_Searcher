@@ -16,8 +16,9 @@ class CategoriesAdapter(
     fun setItems(categories: List<Category>) {
         categoryList.clear()
         categoryList.addAll(categories)
-        notifyDataSetChanged()
     }
+
+    fun getItems(): List<Category> = categoryList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
