@@ -1,5 +1,6 @@
 package com.elchaninov.gif_searcher.data
 
+import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -7,8 +8,10 @@ import androidx.paging.rxjava3.observable
 import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
 import com.elchaninov.gif_searcher.data.mappers.MapCategoryDtoToCategory
+import com.elchaninov.gif_searcher.data.mappers.MapGifToGifEntity
 import com.elchaninov.gif_searcher.model.Category
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.room.GifDatabase
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
@@ -18,7 +21,9 @@ class GiphyGifsRepositoryImpl @Inject constructor(
     private val giphyGifsApi: GiphyGifsApi,
     private val mapCategoryDtoToCategory: MapCategoryDtoToCategory,
     private val factory: GifsRxPagingSource.Factory,
-    private val pagingConfig: PagingConfig
+    private val pagingConfig: PagingConfig,
+    private val gifDatabase: GifDatabase,
+    private val mapGifToGifEntity: MapGifToGifEntity,
 ) : GiphyGifsRepository {
 
     override fun getGifs(query: String, offset: Int): Single<GiphyGifsResponseDto> =
@@ -40,5 +45,17 @@ class GiphyGifsRepositoryImpl @Inject constructor(
         return giphyGifsApi.fetchCategories().body()?.data?.map {
             mapCategoryDtoToCategory.map(it)
         } ?: listOf()
+    }
+
+    override suspend fun putFavorite(gif: Gif) {
+        gifDatabase.gifDao.insert(mapGifToGifEntity.map(gif))
+    }
+
+    override suspend fun getFavorite(): LiveData<Gif> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteFavorite(gif: Gif) {
+        TODO("Not yet implemented")
     }
 }

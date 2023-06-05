@@ -1,5 +1,6 @@
 package com.elchaninov.gif_searcher.data
 
+import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
 import com.elchaninov.gif_searcher.model.Category
@@ -13,4 +14,8 @@ interface GiphyGifsRepository {
     fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>>
     fun getGifsTrending(offset: Int): Single<GiphyGifsResponseDto>
     suspend fun getCategories(): List<Category>
+
+    suspend fun putFavorite(gif: Gif)
+    suspend fun getFavorite(): LiveData<Gif>
+    suspend fun deleteFavorite(gif: Gif)
 }
