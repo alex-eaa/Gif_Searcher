@@ -16,8 +16,6 @@ data class Subcategory(
     val nameEncoded: String,
 ) {
     companion object {
-        fun Subcategory.asCategory(): Category {
-            return Category(nameEncoded, null, emptyList())
-        }
+        fun Subcategory.asCategory() = Category(nameEncoded, null, emptyList())
     }
 }
