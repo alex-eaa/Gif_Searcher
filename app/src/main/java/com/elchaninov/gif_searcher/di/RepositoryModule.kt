@@ -1,11 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
-import com.elchaninov.gif_searcher.data.GetGifsRxRepository
-import com.elchaninov.gif_searcher.data.GetGifsRxRepositoryImpl
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.data.GiphyGifsRepositoryImpl
-import com.elchaninov.gif_searcher.data.mappers.MapCategoryDtoToCategory
-import com.elchaninov.gif_searcher.data.mappers.MapGifDtoToGif
 import dagger.Binds
 import dagger.Module
 
@@ -14,7 +10,4 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindsGiphyGifsRepository(giphyGifsRepositoryImpl: GiphyGifsRepositoryImpl): GiphyGifsRepository
-
-    @Binds
-    abstract fun bindsGetGIfsRxRepository(getGifsRxRepositoryImpl: GetGifsRxRepositoryImpl): GetGifsRxRepository
 }

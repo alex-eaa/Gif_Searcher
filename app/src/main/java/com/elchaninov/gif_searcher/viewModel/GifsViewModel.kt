@@ -6,13 +6,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
-import com.elchaninov.gif_searcher.data.GetGifsRxRepository
+import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
-class MainViewModel @Inject constructor(
-    private val getGifsRxRepository: GetGifsRxRepository,
+@OptIn(ExperimentalCoroutinesApi::class)
+class GifsViewModel @Inject constructor(
+    private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {
 
     private val disposable = CompositeDisposable()
@@ -36,7 +38,7 @@ class MainViewModel @Inject constructor(
 
     private fun updateValuePagingData() {
         disposable.clear()
-        disposable.add(getGifsRxRepository.getGifs(savedSearchQuery)
+        disposable.add(giphyGifsRepository.getGifs(savedSearchQuery)
             .cachedIn(viewModelScope)
             .map {
                 _pagingDataLiveData.postValue(it)

@@ -33,7 +33,9 @@ class GifsRxPagingSource @AssistedInject constructor(
                 giphyGifsRepository.getGifs(query = searchQuery.query, offset = position)
                     .subscribeOn(Schedulers.io())
                     .map { toLoadResult(it) }
-                    .onErrorReturn { LoadResult.Error(it) }
+                    .onErrorReturn {
+                        LoadResult.Error(it)
+                    }
             }
             is SearchQuery.Top -> {
                 giphyGifsRepository.getGifsTrending(offset = position)

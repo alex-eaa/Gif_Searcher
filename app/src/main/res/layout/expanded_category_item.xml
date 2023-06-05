@@ -15,9 +15,9 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/category_image_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/trending_card_height"
             android:adjustViewBounds="true"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             tools:src="@tools:sample/avatars" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -25,6 +25,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="@dimen/category_text_margin"
             android:textColor="@color/white"
             android:textSize="@dimen/gif_title_text_size"
             tools:text="Описание картинки. Описание" />

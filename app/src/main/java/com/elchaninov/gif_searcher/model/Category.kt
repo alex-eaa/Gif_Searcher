@@ -1,14 +1,21 @@
 package com.elchaninov.gif_searcher.model
 
-import android.os.Parcelable
-import kotlinx.parcelize.Parcelize
-
-@Parcelize
 data class Category(
     val name: String?,
     val gif: Gif?,
-) : Parcelable {
+    val subcategories: List<Subcategory>,
+    val isExpanded: Boolean = false,
+) {
     companion object {
-        fun empty() = Category(null, null)
+        fun createTrendingCategory() = Category(null, null, emptyList())
+        fun Category.isSubcategory() = this.subcategories.isEmpty()
+    }
+}
+
+data class Subcategory(
+    val nameEncoded: String,
+) {
+    companion object {
+        fun Subcategory.asCategory() = Category(nameEncoded, null, emptyList())
     }
 }

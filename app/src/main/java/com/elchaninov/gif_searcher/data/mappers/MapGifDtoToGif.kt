@@ -18,9 +18,9 @@ class MapGifDtoToGif @Inject constructor() {
             id = gifDto.id,
             type = gifDto.type,
             title = gifDto.title,
-            urlPreview = gifDto.images.previewGif.url,
-            heightPreview = gifDto.images.previewGif.height,
-            widthPreview = gifDto.images.previewGif.width,
+            urlPreview = gifDto.images.previewGif?.url,
+            heightPreview = gifDto.images.previewGif?.height,
+            widthPreview = gifDto.images.previewGif?.width,
             urlOriginal = gifDto.images.original.url,
             sizeOriginal = gifDto.images.original.size
         )

@@ -20,7 +20,7 @@ import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.parcelable
 import com.elchaninov.gif_searcher.viewModel.LoadingState
-import com.elchaninov.gif_searcher.viewModel.ShowingGifViewModel
+import com.elchaninov.gif_searcher.viewModel.FullGifViewModel
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -29,11 +29,11 @@ import java.io.FileInputStream
 import javax.inject.Inject
 
 
-class ShowingGifActivity : AppCompatActivity() {
+class FullGifActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: ShowingGifViewModel
+    lateinit var viewModel: FullGifViewModel
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
@@ -61,7 +61,7 @@ class ShowingGifActivity : AppCompatActivity() {
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (BuildConfig.ALLOW_AD) bannerAdsInit()
-        viewModel = ViewModelProvider(this, viewModelFactory)[ShowingGifViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[FullGifViewModel::class.java]
         gif = intent.parcelable(EXTRA_GIF)
 
         if (savedInstanceState == null) fetchGif()

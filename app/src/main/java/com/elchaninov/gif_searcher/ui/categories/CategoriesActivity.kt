@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui
+package com.elchaninov.gif_searcher.ui.categories
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,20 +9,27 @@ import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
+import com.elchaninov.gif_searcher.ui.ScreenState
+import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import com.elchaninov.gif_searcher.ui.hide
+import com.elchaninov.gif_searcher.ui.hideKeyboard
+import com.elchaninov.gif_searcher.ui.show
+import com.elchaninov.gif_searcher.ui.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
 
 
-class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickListener,
-    SearchDialogFragment.OnSearchClickListener {
+class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
 
     @Inject
     lateinit var screenState: ScreenState
@@ -54,7 +61,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun initRecyclerView() {
-        categoriesAdapter = CategoriesAdapter(this)
+        categoriesAdapter = CategoriesAdapter(onItemClickListener = { onItemClick(it) })
 
         binding.recyclerView.apply {
             layoutManager = screenState.getCategoriesLayoutManager()
@@ -69,7 +76,8 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
                 is LoadingState.Success -> {
                     binding.progressContainer.progress.hide()
                     binding.swipeToRefresh.isRefreshing = false
-                    categoriesAdapter.setItems(state.file)
+                    updateAdapterData(state.file)
+                    invalidateOptionsMenu()
                 }
                 is LoadingState.Failure -> {
                     binding.progressContainer.progress.hide()
@@ -81,6 +89,14 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
                 }
             }
         }
+    }
+
+    private fun updateAdapterData(newList: List<Category>) {
+        val categoriesDiffUtilCallback =
+            CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
+        val productDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
+        categoriesAdapter.setItems(newList)
+        productDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
     private fun initViews() {
@@ -99,7 +115,8 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun initToolbar() {
-        binding.topAppBar.logo = ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
+        binding.topAppBar.logo =
+            ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(false)
@@ -107,18 +124,23 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.action_change_layout)?.isVisible = false
+        menu?.findItem(R.id.collapse_categories)?.isVisible = viewModel.isShowCollapseItemMenuLiveData
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.findItem(R.id.action_change_layout)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.collapse_categories -> {
+                viewModel.collapseAll()
+                true
+            }
             R.id.theme_dark -> {
                 screenState.changeThemeMode(Theme.DARK)
                 this.recreate()
@@ -138,8 +160,9 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
         }
     }
 
-    override fun onItemClick(category: Category) {
-        startSearchActivity(category.name)
+    private fun onItemClick(category: Category) {
+        if (category.subcategories.isEmpty()) startSearchActivity(category.name)
+        else viewModel.onClickCategory(category)
     }
 
     override fun onSearch(searchWord: String) {
@@ -148,7 +171,7 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     private fun startSearchActivity(searchWord: String?) {
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, GifsActivity::class.java)
         intent.putExtra(EXTRA_CATEGORIES, searchWord)
         startActivity(intent)
     }
@@ -158,7 +181,8 @@ class CategoriesActivity : AppCompatActivity(), CategoriesAdapter.OnItemClickLis
     }
 
     companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG = "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
+        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
+            "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
         const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }
 }

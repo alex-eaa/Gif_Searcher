@@ -16,7 +16,7 @@ data class GifDto(
 
 data class ImagesDto(
     val original: OriginalDto,
-    @SerializedName("preview_gif") val previewGif: PreviewGifDto,
+    @SerializedName("preview_gif") val previewGif: PreviewGifDto?,
 )
 
 data class OriginalDto(

@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui
+package com.elchaninov.gif_searcher.ui.gifs
 
 import android.content.Intent
 import android.os.Bundle
@@ -14,14 +14,21 @@ import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
-import com.elchaninov.gif_searcher.ui.CategoriesActivity.Companion.EXTRA_CATEGORIES
+import com.elchaninov.gif_searcher.ui.ScreenState
+import com.elchaninov.gif_searcher.ui.SearchDialogFragment
+import com.elchaninov.gif_searcher.ui.FullGifActivity
+import com.elchaninov.gif_searcher.ui.categories.CategoriesActivity.Companion.EXTRA_CATEGORIES
 import com.elchaninov.gif_searcher.ui.enum.Theme
-import com.elchaninov.gif_searcher.ui.ShowingGifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.viewModel.MainViewModel
+import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
+import com.elchaninov.gif_searcher.ui.hide
+import com.elchaninov.gif_searcher.ui.hideKeyboard
+import com.elchaninov.gif_searcher.ui.show
+import com.elchaninov.gif_searcher.ui.showSnackbar
+import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
+class GifsActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
     SearchDialogFragment.OnSearchClickListener {
 
     @Inject
@@ -29,7 +36,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: MainViewModel
+    lateinit var viewModel: GifsViewModel
 
     private lateinit var binding: MainActivityBinding
     private lateinit var gifsAdapter: GifsRxAdapter
@@ -39,7 +46,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         App.instance.component.inject(this)
         setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[MainViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[GifsViewModel::class.java]
 
         binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -119,6 +126,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.findItem(R.id.collapse_categories)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
@@ -160,7 +168,7 @@ class MainActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
     }
 
     override fun onItemClick(gif: Gif) {
-        val intent = Intent(this, ShowingGifActivity::class.java)
+        val intent = Intent(this, FullGifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)
     }

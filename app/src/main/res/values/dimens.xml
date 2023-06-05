@@ -20,6 +20,8 @@
 
     <!-- Categories RecyclerView-->
     <dimen name="trending_card_height">120dp</dimen>
+    <dimen name="subcategory_card_height">60dp</dimen>
+    <dimen name="category_text_margin">6dp</dimen>
     <dimen name="item_decoration_space">4dp</dimen>
 
     <!-- GIFs Linear RecyclerView-->
