@@ -15,6 +15,7 @@ import javax.inject.Singleton
         PagingModule::class,
         RepositoryModule::class,
         RetrofitModule::class,
+        RoomModule::class,
     ]
 )
 interface ApplicationComponent {
