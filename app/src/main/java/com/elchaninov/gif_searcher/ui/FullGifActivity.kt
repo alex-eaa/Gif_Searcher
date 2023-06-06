@@ -77,7 +77,13 @@ class FullGifActivity : AppCompatActivity() {
                     }
                     with(binding.fabDownload) {
                         setOnClickListener { saveGifToDownloads(cachingState.file) }
-                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_small_fab))
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_download_fab))
+                    }
+                    with(binding.fabFavorites) {
+                        setOnClickListener {
+                            gif?.let { gif -> viewModel.addToFavorite(gif) }
+                        }
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_favorite_fab))
                     }
                 }
                 is LoadingState.Failure -> {

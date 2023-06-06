@@ -15,7 +15,7 @@ interface GiphyGifsRepository {
     fun getGifsTrending(offset: Int): Single<GiphyGifsResponseDto>
     suspend fun getCategories(): List<Category>
 
-    suspend fun putFavorite(gif: Gif)
+    suspend fun addToFavorite(gif: Gif)
     suspend fun getFavorite(): LiveData<Gif>
     suspend fun deleteFavorite(gif: Gif)
 }

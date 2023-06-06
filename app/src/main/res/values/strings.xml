@@ -14,6 +14,7 @@
     <string name="fab_share">Share</string>
     <string name="fab_search">Search GIF</string>
     <string name="fab_download">Download</string>
+    <string name="fab_favorites">Add to favorites</string>
     <string name="button_search">SEARCH</string>
 
     <string name="search_hint">Enter a word</string>

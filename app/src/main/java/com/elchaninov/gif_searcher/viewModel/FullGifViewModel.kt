@@ -1,21 +1,26 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.URL
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
-class FullGifViewModel @Inject constructor() : ViewModel() {
+class FullGifViewModel @Inject constructor(
+    private val giphyGifsRepository: GiphyGifsRepository,
+) : ViewModel() {
 
     private var _fileLiveData: MutableLiveData<LoadingState<File>> =
         MutableLiveData(LoadingState.Progress())
@@ -35,6 +40,12 @@ class FullGifViewModel @Inject constructor() : ViewModel() {
                         _fileLiveData.postValue(it)
                     }
             }
+        }
+    }
+
+    fun addToFavorite(gif: Gif) {
+        viewModelScope.launch {
+            giphyGifsRepository.addToFavorite(gif)
         }
     }
 

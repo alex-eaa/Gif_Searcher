@@ -47,7 +47,7 @@ class GiphyGifsRepositoryImpl @Inject constructor(
         } ?: listOf()
     }
 
-    override suspend fun putFavorite(gif: Gif) {
+    override suspend fun addToFavorite(gif: Gif) {
         gifDatabase.gifDao.insert(mapGifToGifEntity.map(gif))
     }
 
