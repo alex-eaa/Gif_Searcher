@@ -9,7 +9,7 @@ import com.elchaninov.gif_searcher.BuildConfig
 private const val DATABASE_NAME = "favorite_gif_db"
 
 @Database(
-    version = BuildConfig.VERSION_CODE,
+    version = BuildConfig.DB_VERSION,
     entities = [GifEntity::class],
     exportSchema = true,
 )
