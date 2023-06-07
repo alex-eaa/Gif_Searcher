@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.data
 
-import androidx.lifecycle.LiveData
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -20,6 +19,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 
 class GiphyGifsRepositoryImpl @Inject constructor(
     private val giphyGifsApi: GiphyGifsApi,
@@ -65,7 +65,11 @@ class GiphyGifsRepositoryImpl @Inject constructor(
             .distinctUntilChanged()
     }
 
-    override suspend fun getFavorite(): LiveData<Gif> {
-        TODO("Not yet implemented")
+    override fun getFavoritesFlow(): Flow<List<Gif>> {
+        return gifDatabase.gifDao.observeAll()
+            .distinctUntilChanged()
+            .map {
+                it.map { mapGifToGifEntity.map(it) }
+            }
     }
 }

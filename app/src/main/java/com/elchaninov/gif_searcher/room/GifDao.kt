@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.room
 
-import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -20,5 +19,5 @@ interface GifDao {
     fun isObjectExists(id: String): Flow<Boolean>
 
     @Query("SELECT * FROM ${GifEntity.TABLE_NAME} ORDER BY ${GifEntity.FAVORITE_CREATED} DESC")
-    fun observeAll(): LiveData<List<GifEntity>>
+    fun observeAll(): Flow<List<GifEntity>>
 }

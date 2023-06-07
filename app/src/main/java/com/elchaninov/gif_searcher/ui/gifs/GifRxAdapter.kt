@@ -22,8 +22,8 @@ class GifsRxAdapter(
     }
 
     override fun onBindViewHolder(holder: GifViewHolder, position: Int) {
-        lastPosition = position
         direction = lastPosition > position
+        lastPosition = position
 
         getItem(position)?.let {
             holder.bind(it, onItemClickListener)

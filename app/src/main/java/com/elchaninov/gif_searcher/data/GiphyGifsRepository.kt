@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.data
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
 import com.elchaninov.gif_searcher.model.Category
@@ -18,5 +17,5 @@ interface GiphyGifsRepository {
 
     suspend fun toggleGifFavorite(gif: Gif)
     fun isFavoriteGifFlow(id: String): Flow<Boolean>
-    suspend fun getFavorite(): LiveData<Gif>
+    fun getFavoritesFlow(): Flow<List<Gif>>
 }
