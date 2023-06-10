@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
@@ -54,6 +55,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         initToolbar()
         initRecyclerView()
         initViews()
+        onBackPressedInit()
         if (BuildConfig.ALLOW_AD) initAdmob()
 
         binding.swipeToRefresh.setOnRefreshListener {
@@ -125,7 +127,8 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.collapse_categories)?.isVisible = viewModel.isShowCollapseItemMenuLiveData
+        menu?.findItem(R.id.collapse_categories)?.isVisible =
+            viewModel.isShowCollapseItemMenuLiveData
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -188,6 +191,16 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     private fun initAdmob() {
         MobileAds.initialize(this)
+    }
+
+    private fun onBackPressedInit() {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
+                else finish()
+            }
+        })
     }
 
     companion object {
