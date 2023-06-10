@@ -128,7 +128,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
         menu?.findItem(R.id.collapse_categories)?.isVisible = false
-        menu?.findItem(R.id.collapse_categories)?.isVisible = false
+        menu?.findItem(R.id.favorites)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }

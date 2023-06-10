@@ -24,8 +24,7 @@
         android:id="@+id/action_theme_day_night"
         android:orderInCategory="4"
         android:title="@string/item_menu_theme"
-        app:showAsAction="collapseActionView"
-        tools:icon="@drawable/ic_baseline_dashboard_24">
+        app:showAsAction="collapseActionView">
         <menu>
             <group android:checkableBehavior="single">
                 <item
