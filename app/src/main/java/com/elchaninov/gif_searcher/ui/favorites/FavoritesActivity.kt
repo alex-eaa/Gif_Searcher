@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.databinding.MainActivityBinding
+import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
@@ -32,7 +32,7 @@ class FavoritesActivity : AppCompatActivity() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: FavoritesViewModel
 
-    private lateinit var binding: MainActivityBinding
+    private lateinit var binding: GifsListActivityBinding
     private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +41,7 @@ class FavoritesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[FavoritesViewModel::class.java]
 
-        binding = MainActivityBinding.inflate(layoutInflater)
+        binding = GifsListActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initToolbar()

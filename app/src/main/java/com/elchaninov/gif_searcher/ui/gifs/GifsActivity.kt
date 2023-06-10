@@ -12,7 +12,7 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.databinding.MainActivityBinding
+import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
@@ -37,7 +37,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
     lateinit var viewModelFactory: ViewModelProvider.Factory
     lateinit var viewModel: GifsViewModel
 
-    private lateinit var binding: MainActivityBinding
+    private lateinit var binding: GifsListActivityBinding
     private lateinit var gifsAdapter: GifsRxAdapter
     private var searchView: SearchView? = null
 
@@ -47,7 +47,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory)[GifsViewModel::class.java]
 
-        binding = MainActivityBinding.inflate(layoutInflater)
+        binding = GifsListActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initToolbar()
@@ -117,7 +117,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
 
     private fun initToolbar() {
         setSupportActionBar(binding.topAppBar)
-        supportActionBar?.apply{
+        supportActionBar?.apply {
             setDisplayShowTitleEnabled(true)
             title = getString(R.string.top)
 
@@ -127,6 +127,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar, menu)
+        menu?.findItem(R.id.collapse_categories)?.isVisible = false
         menu?.findItem(R.id.collapse_categories)?.isVisible = false
         menu?.let { screenState.setIconsItemsMenu(it) }
         return true
