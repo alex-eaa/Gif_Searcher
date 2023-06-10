@@ -14,12 +14,12 @@ import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.ui.FullGifActivity
+import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.SearchDialogFragment
-import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.categories.CategoriesActivity.Companion.EXTRA_CATEGORIES
 import com.elchaninov.gif_searcher.ui.enum.Theme
-import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.hideKeyboard
 import com.elchaninov.gif_searcher.ui.show
@@ -28,8 +28,7 @@ import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import javax.inject.Inject
 
-class GifsActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
-    SearchDialogFragment.OnSearchClickListener {
+class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
 
     @Inject
     lateinit var screenState: ScreenState
@@ -61,8 +60,10 @@ class GifsActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
     }
 
     private fun initRecyclerView() {
-        gifsAdapter =
-            GifsRxAdapter(screenState.getItemLayoutForInflate(), this)
+        gifsAdapter = GifsRxAdapter(
+            itemLayoutForInflate = screenState.getItemLayoutForInflate(),
+            onItemClick = { onItemClick(it) }
+        )
         gifsAdapter.addLoadStateListener { combinedLoadStates ->
             processingPreloadStates(combinedLoadStates)
         }
@@ -167,7 +168,7 @@ class GifsActivity : AppCompatActivity(), GifsRxAdapter.OnItemClickListener,
         }
     }
 
-    override fun onItemClick(gif: Gif) {
+    private fun onItemClick(gif: Gif) {
         val intent = Intent(this, FullGifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)

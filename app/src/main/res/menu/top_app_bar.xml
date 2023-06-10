@@ -3,20 +3,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <item
+        android:id="@+id/favorites"
+        android:icon="@drawable/ic_baseline_favorite_border_24"
+        android:orderInCategory="1"
+        android:title="@string/item_menu_show_favorites"
+        app:showAsAction="ifRoom" />
+    <item
         android:id="@+id/collapse_categories"
         android:icon="@drawable/ic_baseline_compress_24"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/item_menu_change_view"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_change_layout"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/item_menu_change_view"
         app:showAsAction="ifRoom"
         tools:icon="@drawable/ic_baseline_dashboard_24" />
     <item
         android:id="@+id/action_theme_day_night"
-        android:orderInCategory="3"
+        android:orderInCategory="4"
         android:title="@string/item_menu_theme"
         app:showAsAction="collapseActionView"
         tools:icon="@drawable/ic_baseline_dashboard_24">

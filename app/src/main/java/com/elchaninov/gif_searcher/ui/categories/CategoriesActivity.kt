@@ -15,10 +15,11 @@ import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
-import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.hideKeyboard
 import com.elchaninov.gif_searcher.ui.show
@@ -94,9 +95,9 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     private fun updateAdapterData(newList: List<Category>) {
         val categoriesDiffUtilCallback =
             CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
-        val productDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
+        val categoriesDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
         categoriesAdapter.setItems(newList)
-        productDiffResult.dispatchUpdatesTo(categoriesAdapter)
+        categoriesDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
     private fun initViews() {
@@ -137,6 +138,10 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.favorites -> {
+                startFavoriteActivity()
+                true
+            }
             R.id.collapse_categories -> {
                 viewModel.collapseAll()
                 true
@@ -173,6 +178,11 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     private fun startSearchActivity(searchWord: String?) {
         val intent = Intent(this, GifsActivity::class.java)
         intent.putExtra(EXTRA_CATEGORIES, searchWord)
+        startActivity(intent)
+    }
+
+    private fun startFavoriteActivity() {
+        val intent = Intent(this, FavoritesActivity::class.java)
         startActivity(intent)
     }
 

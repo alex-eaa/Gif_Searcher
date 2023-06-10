@@ -3,8 +3,9 @@ package com.elchaninov.gif_searcher.di
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
-import com.elchaninov.gif_searcher.viewModel.GifsViewModel
+import com.elchaninov.gif_searcher.viewModel.FavoritesViewModel
 import com.elchaninov.gif_searcher.viewModel.FullGifViewModel
+import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.viewModel.ViewModelFactory
 import dagger.Binds
 import dagger.Module
@@ -30,4 +31,9 @@ internal abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CategoriesViewModel::class)
     protected abstract fun categoriesViewModel(categoriesViewModel: CategoriesViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(FavoritesViewModel::class)
+    protected abstract fun favoritesViewModel(favoritesViewModel: FavoritesViewModel): ViewModel
 }
