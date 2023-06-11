@@ -1,26 +1,43 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.net.URL
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 
-class FullGifViewModel @Inject constructor() : ViewModel() {
+@OptIn(ExperimentalCoroutinesApi::class)
+class FullGifViewModel @Inject constructor(
+    private val giphyGifsRepository: GiphyGifsRepository,
+) : ViewModel() {
 
     private var _fileLiveData: MutableLiveData<LoadingState<File>> =
         MutableLiveData(LoadingState.Progress())
-
     val fileLiveData: LiveData<LoadingState<File>> get() = _fileLiveData
+
+    private val initFlow = MutableStateFlow<Gif?>(null)
+    val isFavoriteGif = initFlow
+        .filterNotNull()
+        .flatMapLatest {
+            giphyGifsRepository.isFavoriteGifFlow(it.id)
+        }
 
     fun fileCaching(gif: Gif, file: File) {
         if (file.exists() && file.length() == gif.sizeOriginal) {
@@ -35,6 +52,14 @@ class FullGifViewModel @Inject constructor() : ViewModel() {
                         _fileLiveData.postValue(it)
                     }
             }
+        }
+
+        initFlow.tryEmit(gif)
+    }
+
+    fun toggleGifFavorite(gif: Gif) {
+        viewModelScope.launch {
+            giphyGifsRepository.toggleGifFavorite(gif)
         }
     }
 

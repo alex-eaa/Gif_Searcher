@@ -10,7 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider.getUriForFile
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.elchaninov.gif_searcher.App
@@ -19,14 +22,15 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.parcelable
-import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.elchaninov.gif_searcher.viewModel.FullGifViewModel
+import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import java.io.File
 import java.io.FileInputStream
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 
 class FullGifActivity : AppCompatActivity() {
@@ -63,7 +67,6 @@ class FullGifActivity : AppCompatActivity() {
         if (BuildConfig.ALLOW_AD) bannerAdsInit()
         viewModel = ViewModelProvider(this, viewModelFactory)[FullGifViewModel::class.java]
         gif = intent.parcelable(EXTRA_GIF)
-
         if (savedInstanceState == null) fetchGif()
 
         viewModel.fileLiveData.observe(this) { cachingState ->
@@ -77,7 +80,13 @@ class FullGifActivity : AppCompatActivity() {
                     }
                     with(binding.fabDownload) {
                         setOnClickListener { saveGifToDownloads(cachingState.file) }
-                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_small_fab))
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_download_fab))
+                    }
+                    with(binding.fabFavorites) {
+                        setOnClickListener {
+                            gif?.let { gif -> viewModel.toggleGifFavorite(gif) }
+                        }
+                        slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_favorite_fab))
                     }
                 }
                 is LoadingState.Failure -> {
@@ -89,6 +98,15 @@ class FullGifActivity : AppCompatActivity() {
                     binding.progressText.text =
                         getString(R.string.progress_percent, cachingState.percent)
                     binding.progressIndicator.progress = cachingState.percent
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isFavoriteGif.collect {
+                    if (it) binding.fabFavorites.setImageResource(R.drawable.ic_baseline_favorite_24)
+                    else binding.fabFavorites.setImageResource(R.drawable.ic_baseline_favorite_border_24)
                 }
             }
         }

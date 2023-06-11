@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
@@ -15,10 +16,11 @@ import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.Category
-import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.hideKeyboard
 import com.elchaninov.gif_searcher.ui.show
@@ -53,6 +55,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         initToolbar()
         initRecyclerView()
         initViews()
+        onBackPressedInit()
         if (BuildConfig.ALLOW_AD) initAdmob()
 
         binding.swipeToRefresh.setOnRefreshListener {
@@ -94,9 +97,9 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     private fun updateAdapterData(newList: List<Category>) {
         val categoriesDiffUtilCallback =
             CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
-        val productDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
+        val categoriesDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
         categoriesAdapter.setItems(newList)
-        productDiffResult.dispatchUpdatesTo(categoriesAdapter)
+        categoriesDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
     private fun initViews() {
@@ -124,7 +127,8 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.collapse_categories)?.isVisible = viewModel.isShowCollapseItemMenuLiveData
+        menu?.findItem(R.id.collapse_categories)?.isVisible =
+            viewModel.isShowCollapseItemMenuLiveData
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -137,6 +141,10 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.favorites -> {
+                startFavoriteActivity()
+                true
+            }
             R.id.collapse_categories -> {
                 viewModel.collapseAll()
                 true
@@ -176,8 +184,23 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         startActivity(intent)
     }
 
+    private fun startFavoriteActivity() {
+        val intent = Intent(this, FavoritesActivity::class.java)
+        startActivity(intent)
+    }
+
     private fun initAdmob() {
         MobileAds.initialize(this)
+    }
+
+    private fun onBackPressedInit() {
+        onBackPressedDispatcher.addCallback(this,
+            object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
+                else finish()
+            }
+        })
     }
 
     companion object {

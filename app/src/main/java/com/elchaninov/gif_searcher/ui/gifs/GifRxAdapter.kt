@@ -8,7 +8,7 @@ import com.elchaninov.gif_searcher.model.Gif
 
 class GifsRxAdapter(
     private val itemLayoutForInflate: Int,
-    private val onItemClickListener: OnItemClickListener
+    private val onItemClick: (Gif) -> Unit
 ) : PagingDataAdapter<Gif, GifViewHolder>(COMPARATOR) {
 
     var lastPosition = 0
@@ -22,11 +22,11 @@ class GifsRxAdapter(
     }
 
     override fun onBindViewHolder(holder: GifViewHolder, position: Int) {
-        lastPosition = position
         direction = lastPosition > position
+        lastPosition = position
 
         getItem(position)?.let {
-            holder.bind(it, onItemClickListener)
+            holder.bind(it, onItemClick)
         }
     }
 
@@ -40,9 +40,5 @@ class GifsRxAdapter(
                 return oldItem == newItem
             }
         }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(gif: Gif)
     }
 }

@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.gifs
+package com.elchaninov.gif_searcher.ui.favorites
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,10 +6,11 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
-import androidx.appcompat.widget.SearchView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.paging.CombinedLoadStates
-import androidx.paging.LoadState
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
@@ -17,109 +18,61 @@ import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.ScreenState
-import com.elchaninov.gif_searcher.ui.SearchDialogFragment
-import com.elchaninov.gif_searcher.ui.categories.CategoriesActivity.Companion.EXTRA_CATEGORIES
 import com.elchaninov.gif_searcher.ui.enum.Theme
-import com.elchaninov.gif_searcher.ui.hide
-import com.elchaninov.gif_searcher.ui.hideKeyboard
-import com.elchaninov.gif_searcher.ui.show
-import com.elchaninov.gif_searcher.ui.showSnackbar
-import com.elchaninov.gif_searcher.viewModel.GifsViewModel
-import com.elchaninov.gif_searcher.viewModel.SearchQuery
+import com.elchaninov.gif_searcher.viewModel.FavoritesViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
+class FavoritesActivity : AppCompatActivity() {
 
     @Inject
     lateinit var screenState: ScreenState
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: GifsViewModel
+    lateinit var viewModel: FavoritesViewModel
 
     private lateinit var binding: GifsListActivityBinding
-    private lateinit var gifsAdapter: GifsRxAdapter
-    private var searchView: SearchView? = null
+    private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         App.instance.component.inject(this)
         setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[GifsViewModel::class.java]
+        viewModel = ViewModelProvider(this, viewModelFactory)[FavoritesViewModel::class.java]
 
         binding = GifsListActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initToolbar()
         initRecyclerView()
-        initViews()
-
-        intent.getStringExtra(EXTRA_CATEGORIES)?.let {
-            onSearch(it)
-        }
     }
 
     private fun initRecyclerView() {
-        gifsAdapter = GifsRxAdapter(
+        favoritesAdapter = FavoritesAdapter(
             itemLayoutForInflate = screenState.getItemLayoutForInflate(),
-            onItemClick = { onItemClick(it) }
+            onItemClickListener = { onItemClick(it) }
         )
-        gifsAdapter.addLoadStateListener { combinedLoadStates ->
-            processingPreloadStates(combinedLoadStates)
-        }
 
         binding.recyclerView.apply {
             layoutManager = screenState.getMyLayoutManager()
-            adapter = gifsAdapter
-            adapter = gifsAdapter.withLoadStateHeaderAndFooter(
-                header = GifsLoadStateAdapter { gifsAdapter.retry() },
-                footer = GifsLoadStateAdapter { gifsAdapter.retry() }
-            )
+            adapter = favoritesAdapter
         }
-        viewModel.pagingDataLiveData.observe(this) { observable ->
-            gifsAdapter.submitData(lifecycle, observable)
-        }
-    }
 
-    private fun initViews() {
-        binding.fab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
-    }
-
-    private fun processingPreloadStates(loadState: CombinedLoadStates) {
-        when (loadState.refresh) {
-            is LoadState.Loading -> {
-                binding.progressContainer.progress.show()
-            }
-            else -> {
-                binding.progressContainer.progress.hide()
-
-                val error = when (loadState.refresh) {
-                    is LoadState.Error -> loadState.refresh as LoadState.Error
-                    else -> null
-                }
-                error?.let {
-                    showError()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favoritesFlow.collect {
+                    updateAdapterData(it)
                 }
             }
         }
-    }
-
-    private fun showError() {
-        binding.root.showSnackbar(
-            text = getString(R.string.error_message_1),
-            actionText = getString(R.string.button_try_again),
-            action = { gifsAdapter.retry() }
-        )
     }
 
     private fun initToolbar() {
         setSupportActionBar(binding.topAppBar)
         supportActionBar?.apply {
             setDisplayShowTitleEnabled(true)
-            title = getString(R.string.top)
+            title = getString(R.string.favorites)
 
             setDisplayHomeAsUpEnabled(true)
         }
@@ -139,8 +92,8 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
                 screenState.changeLayoutMode()
                 item.setIcon(screenState.getIconForChangeLayoutItemMenu())
 
-                val scrollToPosition = if (gifsAdapter.direction) gifsAdapter.lastPosition
-                else gifsAdapter.lastPosition - binding.recyclerView.childCount
+                val scrollToPosition = if (favoritesAdapter.direction) favoritesAdapter.lastPosition
+                else favoritesAdapter.lastPosition - binding.recyclerView.childCount
 
                 initRecyclerView()
                 binding.recyclerView.scrollToPosition(scrollToPosition)
@@ -169,20 +122,17 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
         }
     }
 
+    private fun updateAdapterData(newList: List<Gif>) {
+        val gifsDiffUtilCallback =
+            GifsDiffUtilCallback(favoritesAdapter.getItems(), newList)
+        val categoriesDiffResult = DiffUtil.calculateDiff(gifsDiffUtilCallback)
+        favoritesAdapter.setItems(newList)
+        categoriesDiffResult.dispatchUpdatesTo(favoritesAdapter)
+    }
+
     private fun onItemClick(gif: Gif) {
         val intent = Intent(this, FullGifActivity::class.java)
         intent.putExtra(EXTRA_GIF, gif)
         startActivity(intent)
-    }
-
-    override fun onSearch(searchWord: String) {
-        searchView?.hideKeyboard()
-        viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
-        supportActionBar?.title = searchWord
-    }
-
-    companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
     }
 }

@@ -10,10 +10,9 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.model.Gif
 
 
-class GifViewHolder(itemView: View) :
-    RecyclerView.ViewHolder(itemView) {
+class GifViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    fun bind(gif: Gif, onItemClickListener: GifsRxAdapter.OnItemClickListener) {
+    fun bind(gif: Gif, onClick: (Gif) -> Unit) {
         val imageView: ImageView? = itemView.findViewById(R.id.image_view)
         val imageTitle: TextView? = itemView.findViewById(R.id.image_title)
 
@@ -31,7 +30,7 @@ class GifViewHolder(itemView: View) :
         }
 
         itemView.rootView.setOnClickListener {
-            onItemClickListener.onItemClick(gif)
+            onClick(gif)
         }
     }
 }
