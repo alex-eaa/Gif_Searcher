@@ -1,21 +1,40 @@
 package com.elchaninov.gif_searcher.model
 
-data class Category(
-    val name: String?,
-    val gif: Gif?,
-    val subcategories: List<Subcategory>,
-    val isExpanded: Boolean = false,
-) {
-    companion object {
-        fun createTrendingCategory() = Category(null, null, emptyList())
-        fun Category.isSubcategory() = this.subcategories.isEmpty()
+import androidx.annotation.StringRes
+import com.elchaninov.gif_searcher.R
+
+sealed class TypedCategory(open val name: String) {
+    sealed class Custom(
+        override val name: String,
+        @StringRes open val nameId: Int,
+        open val isExpanded: Boolean
+    ) : TypedCategory(name) {
+        data class Favorite(
+            @StringRes override val nameId: Int = R.string.favorites,
+            override val isExpanded: Boolean,
+        ) : Custom(nameId.toString(), nameId, isExpanded)
+
+        data class Trending(
+            @StringRes override val nameId: Int = R.string.top,
+            override val isExpanded: Boolean,
+        ) : Custom(nameId.toString(), nameId, isExpanded)
     }
+
+    data class Subcategory(override val name: String) : TypedCategory(name)
+
+    data class Category(
+        override val name: String,
+        val gif: Gif,
+        val subcategories: List<SubcategoryModel>,
+        val isExpanded: Boolean = false,
+    ) : TypedCategory(name)
 }
 
-data class Subcategory(
+
+data class SubcategoryModel(
     val nameEncoded: String,
 ) {
     companion object {
-        fun Subcategory.asCategory() = Category(nameEncoded, null, emptyList())
+        fun SubcategoryModel.asSubcategory() = TypedCategory.Subcategory(nameEncoded)
     }
 }

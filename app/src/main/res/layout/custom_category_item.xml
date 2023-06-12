@@ -8,13 +8,12 @@
     app:cardCornerRadius="8dp">
 
     <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/trending_category_title"
+        android:id="@+id/custom_category_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:padding="@dimen/category_text_margin"
-        android:text="@string/top"
         android:textColor="@color/white"
         android:textSize="@dimen/trending_title_text_size"
         tools:text="Описание картинки. Описание картинки." />

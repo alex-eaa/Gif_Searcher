@@ -1,11 +1,11 @@
 package com.elchaninov.gif_searcher.ui.categories
 
 import androidx.recyclerview.widget.DiffUtil
-import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.model.TypedCategory
 
 class CategoriesDiffUtilCallback(
-    private val oldList: List<Category>,
-    private val newList: List<Category>
+    private val oldList: List<TypedCategory>,
+    private val newList: List<TypedCategory>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {
@@ -17,14 +17,14 @@ class CategoriesDiffUtilCallback(
     }
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldCategory: Category = oldList[oldItemPosition]
-        val newCategory: Category = newList[newItemPosition]
-        return oldCategory.name == newCategory.name
+        val oldTypedCategory: TypedCategory = oldList[oldItemPosition]
+        val newTypedCategory: TypedCategory = newList[newItemPosition]
+        return oldTypedCategory.name == newTypedCategory.name
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldCategory: Category = oldList[oldItemPosition]
-        val newCategory: Category = newList[newItemPosition]
-        return (oldCategory.name == newCategory.name && oldCategory.isExpanded == newCategory.isExpanded)
+//        val oldTypedCategory: TypedCategory = oldList[oldItemPosition]
+//        val newTypedCategory: TypedCategory = newList[newItemPosition]
+        return true
     }
 }

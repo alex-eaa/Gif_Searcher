@@ -9,8 +9,8 @@ import com.elchaninov.gif_searcher.data.api.GiphyGifsApi
 import com.elchaninov.gif_searcher.data.api.GiphyGifsResponseDto
 import com.elchaninov.gif_searcher.data.mappers.MapCategoryDtoToCategory
 import com.elchaninov.gif_searcher.data.mappers.MapGifToGifEntity
-import com.elchaninov.gif_searcher.model.Category
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.room.GifDatabase
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
@@ -45,10 +45,10 @@ class GiphyGifsRepositoryImpl @Inject constructor(
     override fun getGifsTrending(offset: Int): Single<GiphyGifsResponseDto> =
         giphyGifsApi.fetchGifsTrending(offset = offset)
 
-    override suspend fun getCategories(): List<Category> {
+    override suspend fun getCategories(): List<TypedCategory.Category> {
         return giphyGifsApi.fetchCategories().body()?.data?.map {
             mapCategoryDtoToCategory.map(it)
-        } ?: listOf()
+        } ?: emptyList()
     }
 
     override suspend fun toggleGifFavorite(gif: Gif) {
@@ -71,5 +71,14 @@ class GiphyGifsRepositoryImpl @Inject constructor(
             .map {
                 it.map { mapGifToGifEntity.map(it) }
             }
+    }
+
+    override fun isFavoritesNotEmpty(): Flow<Boolean> {
+        return gifDatabase.gifDao.getRowCount()
+            .distinctUntilChanged()
+            .map {
+                it > 0
+            }
+            .distinctUntilChanged()
     }
 }

@@ -1,106 +1,129 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
-import com.elchaninov.gif_searcher.model.Category
-import com.elchaninov.gif_searcher.model.Category.Companion.isSubcategory
-import com.elchaninov.gif_searcher.model.Subcategory.Companion.asCategory
+import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategory
+import com.elchaninov.gif_searcher.model.TypedCategory
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {
-    private val _dataLiveData: MutableLiveData<LoadingState<List<Category>>> = MutableLiveData()
-    val dataLiveData: LiveData<LoadingState<List<Category>>> get() = _dataLiveData
 
-    var isShowCollapseItemMenuLiveData: Boolean = false
+    private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow
+
+    private val loadingStateFlow: MutableStateFlow<LoadingState<List<TypedCategory>>> =
+        MutableStateFlow(LoadingState.Progress())
+
+    val combinedLoadingStateFlow: Flow<LoadingState<List<TypedCategory>>> = combine(
+        loadingStateFlow,
+        giphyGifsRepository.isFavoritesNotEmpty()
+    ) { typedCategoryList, isFavoritesNotEmpty ->
+        if (typedCategoryList is LoadingState.Success) {
+            val list: MutableList<TypedCategory> = mutableListOf()
+            if (isFavoritesNotEmpty) {
+                list.add(TypedCategory.Custom.Favorite(isExpanded = false))
+                list.add(TypedCategory.Custom.Trending(isExpanded = false))
+            } else {
+                list.add(TypedCategory.Custom.Trending(isExpanded = true))
+            }
+            list.addAll(typedCategoryList.file)
+            LoadingState.Success(list)
+        } else {
+            typedCategoryList
+        }
+    }
 
     init {
-        _dataLiveData.postValue(LoadingState.Progress())
         updateData()
     }
 
     fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
+            loadingStateFlow.value = LoadingState.Progress()
             try {
-                giphyGifsRepository.getCategories().let {
-                    val list = arrayListOf(Category.createTrendingCategory())
-                    list.addAll(it)
-                    _dataLiveData.postValue(LoadingState.Success(list))
-                }
+                loadingStateFlow.value = LoadingState.Success(giphyGifsRepository.getCategories())
             } catch (e: Exception) {
-                _dataLiveData.postValue(LoadingState.Failure(e))
+                loadingStateFlow.value = LoadingState.Failure(e)
             }
         }
     }
 
-    fun onClickCategory(category: Category) {
+    fun onClickCategory(category: TypedCategory.Category) {
         if (category.isExpanded) {
             collapseCategory(category)
-            isShowCollapseItemMenuLiveData = hasExpandedSubcategories()
+            _isShowCollapseItemMenuFlow.value = hasExpandedSubcategories()
         } else {
-            isShowCollapseItemMenuLiveData = true
             expandCategory(category)
-        }
-    }
-
-    private fun expandCategory(category: Category) {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()?.let { categoryList ->
-            categoryList.indexOf(category).let {
-                val oldCategory = categoryList[it]
-                categoryList[it] = oldCategory.copy(isExpanded = !oldCategory.isExpanded)
-
-                val subcategoryList = mutableListOf<Category>()
-                categoryList[it].subcategories.map { subcategory ->
-                    subcategoryList.add(subcategory.asCategory())
-                }
-
-                categoryList.addAll(it + 1, subcategoryList)
-            }
-            _dataLiveData.postValue(LoadingState.Success(categoryList))
-        }
-    }
-
-    private fun collapseCategory(category: Category) {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()?.let { categoryList ->
-            categoryList.indexOf(category).let {
-                val oldCategory = categoryList[it]
-                categoryList[it] = oldCategory.copy(isExpanded = !oldCategory.isExpanded)
-
-                oldCategory.subcategories.forEach { subcategory ->
-                    val index = categoryList.indexOfFirst { category ->
-                        category.name == subcategory.nameEncoded
-                    }
-                    categoryList.removeAt(index)
-                }
-                _dataLiveData.postValue(LoadingState.Success(categoryList))
-            }
+            _isShowCollapseItemMenuFlow.value = true
         }
     }
 
     fun collapseAll() {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()?.let { categoryList ->
-            categoryList.forEachIndexed { index, category ->
-                categoryList[index] = category.copy(isExpanded = false)
-            }
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
+            ?.let { typedCategoryList ->
+                typedCategoryList.forEachIndexed { index, typedCategory ->
+                    (typedCategory as? TypedCategory.Category)?.let {
+                        typedCategoryList[index] = it.copy(isExpanded = false)
+                    }
+                }
 
-            categoryList.removeAll {
-                it.name != null && it.isSubcategory()
-            }
+                typedCategoryList.removeAll {
+                    it is TypedCategory.Subcategory
+                }
 
-            isShowCollapseItemMenuLiveData = false
-            _dataLiveData.postValue(LoadingState.Success(categoryList))
-        }
+                _isShowCollapseItemMenuFlow.value = false
+                loadingStateFlow.value = LoadingState.Success(typedCategoryList)
+            }
+    }
+
+    private fun expandCategory(category: TypedCategory.Category) {
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
+            ?.let { typedCategoryList ->
+                typedCategoryList.indexOf(category).let { index ->
+                    typedCategoryList[index] = category.copy(isExpanded = true)
+
+                    val subcategoryList = mutableListOf<TypedCategory.Subcategory>()
+                    category.subcategories.map { subcategoryModel ->
+                        subcategoryList.add(subcategoryModel.asSubcategory())
+                    }
+                    typedCategoryList.addAll(index + 1, subcategoryList)
+                }
+                loadingStateFlow.value = LoadingState.Success(typedCategoryList)
+            }
+    }
+
+    private fun collapseCategory(category: TypedCategory.Category) {
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
+            ?.let { typedCategoryList ->
+                typedCategoryList.indexOf(category).let { index ->
+                    typedCategoryList[index] = category.copy(isExpanded = false)
+
+                    category.subcategories.forEach { subcategoryModel ->
+                        val i = typedCategoryList.indexOfFirst {
+                            it is TypedCategory.Subcategory && it.name == subcategoryModel.nameEncoded
+                        }
+                        if (i != -1) typedCategoryList.removeAt(i)
+                    }
+                    loadingStateFlow.value = LoadingState.Success(typedCategoryList)
+                }
+            }
     }
 
     private fun hasExpandedSubcategories(): Boolean {
-        return (_dataLiveData.value as? LoadingState.Success)?.file?.let { categoryList ->
-            categoryList.find { it.isExpanded }
-        } == null
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.let { categoryList ->
+            categoryList.forEach {
+                if (it is TypedCategory.Category && it.isExpanded) return true
+            }
+        }
+        return false
     }
 }

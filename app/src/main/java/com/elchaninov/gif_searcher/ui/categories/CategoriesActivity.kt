@@ -9,13 +9,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
-import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
@@ -29,6 +32,7 @@ import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 
 class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
@@ -74,27 +78,38 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
             CustomItemDecoration(resources.getDimensionPixelSize(R.dimen.item_decoration_space))
         )
 
-        viewModel.dataLiveData.observe(this) { state ->
-            when (state) {
-                is LoadingState.Success -> {
-                    binding.progressContainer.progress.hide()
-                    binding.swipeToRefresh.isRefreshing = false
-                    updateAdapterData(state.file)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.combinedLoadingStateFlow.collect { state ->
+                    when (state) {
+                        is LoadingState.Success -> {
+                            binding.progressContainer.progress.hide()
+                            binding.swipeToRefresh.isRefreshing = false
+                            updateAdapterData(state.file)
+                        }
+                        is LoadingState.Failure -> {
+                            binding.progressContainer.progress.hide()
+                            binding.swipeToRefresh.isRefreshing = false
+                            showError()
+                        }
+                        is LoadingState.Progress -> {
+                            binding.progressContainer.progress.show()
+                        }
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isShowCollapseItemMenuFlow.collect {
                     invalidateOptionsMenu()
-                }
-                is LoadingState.Failure -> {
-                    binding.progressContainer.progress.hide()
-                    binding.swipeToRefresh.isRefreshing = false
-                    showError()
-                }
-                is LoadingState.Progress -> {
-                    binding.progressContainer.progress.show()
                 }
             }
         }
     }
 
-    private fun updateAdapterData(newList: List<Category>) {
+    private fun updateAdapterData(newList: List<TypedCategory>) {
         val categoriesDiffUtilCallback =
             CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
         val categoriesDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
@@ -128,7 +143,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.collapse_categories)?.isVisible =
-            viewModel.isShowCollapseItemMenuLiveData
+            viewModel.isShowCollapseItemMenuFlow.value
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -168,9 +183,13 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         }
     }
 
-    private fun onItemClick(category: Category) {
-        if (category.subcategories.isEmpty()) startSearchActivity(category.name)
-        else viewModel.onClickCategory(category)
+    private fun onItemClick(category: TypedCategory) {
+        when (category) {
+            is TypedCategory.Subcategory -> startSearchActivity(category.name)
+            is TypedCategory.Custom.Trending -> startSearchActivity(null)
+            is TypedCategory.Custom.Favorite -> startFavoriteActivity()
+            is TypedCategory.Category -> viewModel.onClickCategory(category)
+        }
     }
 
     override fun onSearch(searchWord: String) {
@@ -196,11 +215,11 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     private fun onBackPressedInit() {
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
-                else finish()
-            }
-        })
+                override fun handleOnBackPressed() {
+                    if (viewModel.isShowCollapseItemMenuFlow.value) viewModel.collapseAll()
+                    else finish()
+                }
+            })
     }
 
     companion object {
