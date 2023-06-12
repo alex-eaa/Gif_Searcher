@@ -9,13 +9,20 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {
+    val isFavoritesNotEmpty: StateFlow<Boolean> = giphyGifsRepository.isFavoritesNotEmpty().stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.Eagerly
+    )
 
     private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow
@@ -25,7 +32,7 @@ class CategoriesViewModel @Inject constructor(
 
     val combinedLoadingStateFlow: Flow<LoadingState<List<TypedCategory>>> = combine(
         loadingStateFlow,
-        giphyGifsRepository.isFavoritesNotEmpty()
+        isFavoritesNotEmpty
     ) { typedCategoryList, isFavoritesNotEmpty ->
         if (typedCategoryList is LoadingState.Success) {
             val list: MutableList<TypedCategory> = mutableListOf()

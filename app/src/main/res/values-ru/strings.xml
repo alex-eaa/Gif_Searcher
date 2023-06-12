@@ -23,7 +23,7 @@
 
     <!--    ITEMS MENU-->
     <string name="item_menu_collapse_subcategories">Свернуть подкатегории</string>
-    <string name="item_menu_show_favorites">Показать избранные</string>
+    <string name="item_menu_show_favorites">Избранное</string>
     <string name="item_menu_change_view">Вид</string>
     <string name="item_menu_search">Поиск</string>
     <string name="item_menu_theme">Тема</string>
