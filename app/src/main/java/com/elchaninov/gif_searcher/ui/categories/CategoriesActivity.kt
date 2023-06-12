@@ -85,15 +85,17 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                         is LoadingState.Success -> {
                             binding.progressContainer.progress.hide()
                             binding.swipeToRefresh.isRefreshing = false
-                            updateAdapterData(state.file)
+                            updateAdapterData(state.data)
                         }
                         is LoadingState.Failure -> {
                             binding.progressContainer.progress.hide()
                             binding.swipeToRefresh.isRefreshing = false
+                            updateAdapterData(state.data ?: emptyList())
                             showError()
                         }
                         is LoadingState.Progress -> {
                             binding.progressContainer.progress.show()
+                            updateAdapterData(state.data ?: emptyList())
                         }
                     }
                 }

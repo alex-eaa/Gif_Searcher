@@ -73,13 +73,13 @@ class FullGifActivity : AppCompatActivity() {
             when (cachingState) {
                 is LoadingState.Success -> {
                     binding.progress.hide()
-                    renderGif(cachingState.file)
+                    renderGif(cachingState.data)
                     with(binding.fab) {
-                        setOnClickListener { shareGif(cachingState.file) }
+                        setOnClickListener { shareGif(cachingState.data) }
                         slideIn(resources.getDimensionPixelSize(R.dimen.margin_fab))
                     }
                     with(binding.fabDownload) {
-                        setOnClickListener { saveGifToDownloads(cachingState.file) }
+                        setOnClickListener { saveGifToDownloads(cachingState.data) }
                         slideIn(resources.getDimensionPixelSize(R.dimen.margin_bottom_download_fab))
                     }
                     with(binding.fabFavorites) {
