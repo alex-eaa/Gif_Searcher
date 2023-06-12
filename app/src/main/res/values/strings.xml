@@ -24,7 +24,7 @@
 
     <!--    ITEMS MENU-->
     <string name="item_menu_collapse_subcategories">Collapse subcategories</string>
-    <string name="item_menu_show_favorites">Show Favorites</string>
+    <string name="item_menu_show_favorites">Favorites</string>
     <string name="item_menu_change_view">View</string>
     <string name="item_menu_search">Search</string>
     <string name="item_menu_theme">Theme</string>
