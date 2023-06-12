@@ -15,7 +15,7 @@ import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
-import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.SearchDialogFragment
 import com.elchaninov.gif_searcher.ui.enum.Theme
@@ -94,7 +94,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         }
     }
 
-    private fun updateAdapterData(newList: List<Category>) {
+    private fun updateAdapterData(newList: List<TypedCategory>) {
         val categoriesDiffUtilCallback =
             CategoriesDiffUtilCallback(categoriesAdapter.getItems(), newList)
         val categoriesDiffResult = DiffUtil.calculateDiff(categoriesDiffUtilCallback)
@@ -168,9 +168,13 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         }
     }
 
-    private fun onItemClick(category: Category) {
-        if (category.subcategories.isEmpty()) startSearchActivity(category.name)
-        else viewModel.onClickCategory(category)
+    private fun onItemClick(category: TypedCategory) {
+        when (category) {
+            is TypedCategory.Subcategory -> startSearchActivity(category.name)
+            is TypedCategory.Custom.Trending -> startSearchActivity(null)
+            is TypedCategory.Custom.Favorite -> startFavoriteActivity()
+            is TypedCategory.Category -> viewModel.onClickCategory(category)
+        }
     }
 
     override fun onSearch(searchWord: String) {
@@ -196,11 +200,11 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     private fun onBackPressedInit() {
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
-                else finish()
-            }
-        })
+                override fun handleOnBackPressed() {
+                    if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
+                    else finish()
+                }
+            })
     }
 
     companion object {

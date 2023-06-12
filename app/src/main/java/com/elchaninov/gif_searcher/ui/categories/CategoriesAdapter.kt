@@ -5,32 +5,32 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.model.Category
+import com.elchaninov.gif_searcher.model.TypedCategory
 
 
 class CategoriesAdapter(
-    private val onItemClickListener: (Category) -> Unit,
+    private val onItemClickListener: (TypedCategory) -> Unit,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val categoryList: MutableList<Category> = mutableListOf()
+    private val categoryList: MutableList<TypedCategory> = mutableListOf()
 
-    fun setItems(categories: List<Category>) {
+    fun setItems(categories: List<TypedCategory>) {
         categoryList.clear()
         categoryList.addAll(categories)
     }
 
-    fun getItems(): List<Category> = categoryList
+    fun getItems(): List<TypedCategory> = categoryList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            TRENDING_CATEGORIES_VIEW_TYPE -> {
-                val itemView = inflater.inflate(R.layout.trending_category_item, parent, false)
+            CUSTOM_CATEGORIES_VIEW_TYPE -> {
+                val itemView = inflater.inflate(R.layout.custom_category_item, parent, false)
                 val layoutParams =
                     StaggeredGridLayoutManager.LayoutParams(itemView.layoutParams).apply {
                         isFullSpan = true
                     }
                 itemView.layoutParams = layoutParams
-                TrendingCategoryViewHolder(itemView)
+                CustomCategoryViewHolder(itemView)
             }
             COLLAPSE_CATEGORIES_VIEW_TYPE -> {
                 val itemView = inflater.inflate(R.layout.collapsed_category_item, parent, false)
@@ -47,7 +47,7 @@ class CategoriesAdapter(
             }
             else -> {
                 val itemView = inflater.inflate(R.layout.subcategory_item, parent, false)
-                CategoryViewHolder(itemView)
+                SubcategoryViewHolder(itemView)
             }
         }
     }
@@ -55,13 +55,19 @@ class CategoriesAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is CategoryViewHolder -> {
-                holder.bind(
-                    category = categoryList[position],
-                    onClick = onItemClickListener,
-                )
+                (categoryList[position] as? TypedCategory.Category)?.let {
+                    holder.bind(it, onItemClickListener)
+                }
             }
-            is TrendingCategoryViewHolder -> {
-                holder.bind(categoryList[position], onItemClickListener)
+            is CustomCategoryViewHolder -> {
+                (categoryList[position] as? TypedCategory.Custom)?.let {
+                    holder.bind(it, onItemClickListener)
+                }
+            }
+            is SubcategoryViewHolder -> {
+                (categoryList[position] as? TypedCategory.Subcategory)?.let {
+                    holder.bind(it, onItemClickListener)
+                }
             }
         }
     }
@@ -71,16 +77,18 @@ class CategoriesAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when {
-            position == 0 -> TRENDING_CATEGORIES_VIEW_TYPE
-            categoryList[position].subcategories.isEmpty() -> SUBCATEGORIES_VIEW_TYPE
-            categoryList[position].isExpanded -> EXPANDED_CATEGORIES_VIEW_TYPE
-            else -> COLLAPSE_CATEGORIES_VIEW_TYPE
+        return when (categoryList[position]) {
+            is TypedCategory.Custom -> CUSTOM_CATEGORIES_VIEW_TYPE
+            is TypedCategory.Category -> {
+                if ((categoryList[position] as TypedCategory.Category).isExpanded) EXPANDED_CATEGORIES_VIEW_TYPE
+                else COLLAPSE_CATEGORIES_VIEW_TYPE
+            }
+            is TypedCategory.Subcategory -> SUBCATEGORIES_VIEW_TYPE
         }
     }
 
     companion object {
-        const val TRENDING_CATEGORIES_VIEW_TYPE = 0
+        const val CUSTOM_CATEGORIES_VIEW_TYPE = 0
         const val COLLAPSE_CATEGORIES_VIEW_TYPE = 1
         const val EXPANDED_CATEGORIES_VIEW_TYPE = 2
         const val SUBCATEGORIES_VIEW_TYPE = 3

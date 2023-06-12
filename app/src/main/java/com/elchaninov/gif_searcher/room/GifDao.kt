@@ -20,4 +20,7 @@ interface GifDao {
 
     @Query("SELECT * FROM ${GifEntity.TABLE_NAME} ORDER BY ${GifEntity.FAVORITE_CREATED} DESC")
     fun observeAll(): Flow<List<GifEntity>>
+
+    @Query("SELECT COUNT(*) FROM ${GifEntity.TABLE_NAME}")
+    fun getRowCount(): Flow<Long>
 }
