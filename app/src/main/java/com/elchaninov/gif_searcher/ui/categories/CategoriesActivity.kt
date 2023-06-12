@@ -78,20 +78,24 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
             CustomItemDecoration(resources.getDimensionPixelSize(R.dimen.item_decoration_space))
         )
 
-        viewModel.dataLiveData.observe(this) { state ->
-            when (state) {
-                is LoadingState.Success -> {
-                    binding.progressContainer.progress.hide()
-                    binding.swipeToRefresh.isRefreshing = false
-                    updateAdapterData(state.file)
-                }
-                is LoadingState.Failure -> {
-                    binding.progressContainer.progress.hide()
-                    binding.swipeToRefresh.isRefreshing = false
-                    showError()
-                }
-                is LoadingState.Progress -> {
-                    binding.progressContainer.progress.show()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.combinedLoadingStateFlow.collect { state ->
+                    when (state) {
+                        is LoadingState.Success -> {
+                            binding.progressContainer.progress.hide()
+                            binding.swipeToRefresh.isRefreshing = false
+                            updateAdapterData(state.file)
+                        }
+                        is LoadingState.Failure -> {
+                            binding.progressContainer.progress.hide()
+                            binding.swipeToRefresh.isRefreshing = false
+                            showError()
+                        }
+                        is LoadingState.Progress -> {
+                            binding.progressContainer.progress.show()
+                        }
+                    }
                 }
             }
         }

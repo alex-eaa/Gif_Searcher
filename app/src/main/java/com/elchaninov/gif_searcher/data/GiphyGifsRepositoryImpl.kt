@@ -48,7 +48,7 @@ class GiphyGifsRepositoryImpl @Inject constructor(
     override suspend fun getCategories(): List<TypedCategory.Category> {
         return giphyGifsApi.fetchCategories().body()?.data?.map {
             mapCategoryDtoToCategory.map(it)
-        } ?: listOf()
+        } ?: emptyList()
     }
 
     override suspend fun toggleGifFavorite(gif: Gif) {

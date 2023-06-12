@@ -1,7 +1,5 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
@@ -9,59 +7,48 @@ import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategor
 import com.elchaninov.gif_searcher.model.TypedCategory
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class CategoriesViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {
-    private val _dataLiveData: MutableLiveData<LoadingState<List<TypedCategory>>> =
-        MutableLiveData()
-    val dataLiveData: LiveData<LoadingState<List<TypedCategory>>> get() = _dataLiveData
 
     private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow
 
-    init {
-        _dataLiveData.postValue(LoadingState.Progress())
+    private val loadingStateFlow: MutableStateFlow<LoadingState<List<TypedCategory>>> =
+        MutableStateFlow(LoadingState.Progress())
 
-
-        viewModelScope.launch(Dispatchers.IO) {
-            updateData()
-
-            giphyGifsRepository.isFavoritesNotEmpty()
-                .collect { isFavoritesNotEmpty ->
-                    (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()
-                        ?.let { typedCategoryList ->
-                            if (isFavoritesNotEmpty && (typedCategoryList[0] !is TypedCategory.Custom.Favorite || typedCategoryList.isEmpty()))
-                                typedCategoryList.add(0, TypedCategory.Custom.Favorite())
-                            else if (!isFavoritesNotEmpty && typedCategoryList[0] is TypedCategory.Custom.Favorite)
-                                typedCategoryList.removeAt(0)
-
-                            _dataLiveData.postValue(LoadingState.Success(typedCategoryList))
-                        }
-                }
+    val combinedLoadingStateFlow: Flow<LoadingState<List<TypedCategory>>> = combine(
+        loadingStateFlow,
+        giphyGifsRepository.isFavoritesNotEmpty()
+    ) { typedCategoryList, isFavoritesNotEmpty ->
+        if (typedCategoryList is LoadingState.Success) {
+            val list: MutableList<TypedCategory> = mutableListOf()
+            if (isFavoritesNotEmpty) list.add(TypedCategory.Custom.Favorite())
+            list.add(TypedCategory.Custom.Trending())
+            list.addAll(typedCategoryList.file)
+            LoadingState.Success(list)
+        } else {
+            typedCategoryList
         }
+    }
+
+    init {
+        updateData()
     }
 
     fun updateData() {
         viewModelScope.launch(Dispatchers.IO) {
+            loadingStateFlow.value = LoadingState.Progress()
             try {
-                giphyGifsRepository.getCategories().let {
-                    val list: MutableList<TypedCategory> = mutableListOf()
-
-                    if (giphyGifsRepository.isFavoritesNotEmpty().firstOrNull() == true) {
-                        list.add(TypedCategory.Custom.Favorite())
-                    }
-
-                    list.add(TypedCategory.Custom.Trending())
-                    list.addAll(it)
-                    _dataLiveData.postValue(LoadingState.Success(list))
-                }
+                loadingStateFlow.value = LoadingState.Success(giphyGifsRepository.getCategories())
             } catch (e: Exception) {
-                _dataLiveData.postValue(LoadingState.Failure(e))
+                loadingStateFlow.value = LoadingState.Failure(e)
             }
         }
     }
@@ -77,7 +64,7 @@ class CategoriesViewModel @Inject constructor(
     }
 
     fun collapseAll() {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
             ?.let { typedCategoryList ->
                 typedCategoryList.forEachIndexed { index, typedCategory ->
                     (typedCategory as? TypedCategory.Category)?.let {
@@ -90,12 +77,12 @@ class CategoriesViewModel @Inject constructor(
                 }
 
                 _isShowCollapseItemMenuFlow.value = false
-                _dataLiveData.value = LoadingState.Success(typedCategoryList)
+                loadingStateFlow.value = LoadingState.Success(typedCategoryList)
             }
     }
 
     private fun expandCategory(category: TypedCategory.Category) {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
             ?.let { typedCategoryList ->
                 typedCategoryList.indexOf(category).let { index ->
                     typedCategoryList[index] = category.copy(isExpanded = true)
@@ -106,12 +93,12 @@ class CategoriesViewModel @Inject constructor(
                     }
                     typedCategoryList.addAll(index + 1, subcategoryList)
                 }
-                _dataLiveData.value = LoadingState.Success(typedCategoryList)
+                loadingStateFlow.value = LoadingState.Success(typedCategoryList)
             }
     }
 
     private fun collapseCategory(category: TypedCategory.Category) {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.toMutableList()
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.toMutableList()
             ?.let { typedCategoryList ->
                 typedCategoryList.indexOf(category).let { index ->
                     typedCategoryList[index] = category.copy(isExpanded = false)
@@ -120,15 +107,15 @@ class CategoriesViewModel @Inject constructor(
                         val i = typedCategoryList.indexOfFirst {
                             it is TypedCategory.Subcategory && it.name == subcategoryModel.nameEncoded
                         }
-                        if (i >= 0) typedCategoryList.removeAt(index)
+                        if (i != -1) typedCategoryList.removeAt(i)
                     }
-                    _dataLiveData.value = LoadingState.Success(typedCategoryList)
+                    loadingStateFlow.value = LoadingState.Success(typedCategoryList)
                 }
             }
     }
 
     private fun hasExpandedSubcategories(): Boolean {
-        (_dataLiveData.value as? LoadingState.Success)?.file?.let { categoryList ->
+        (loadingStateFlow.value as? LoadingState.Success)?.file?.let { categoryList ->
             categoryList.forEach {
                 if (it is TypedCategory.Category && it.isExpanded) return true
             }
