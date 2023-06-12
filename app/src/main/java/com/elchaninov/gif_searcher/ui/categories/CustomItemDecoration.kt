@@ -16,21 +16,26 @@ class CustomItemDecoration(private val space: Int) : RecyclerView.ItemDecoration
         val layoutManager = parent.layoutManager as? StaggeredGridLayoutManager
         val layoutParams = view.layoutParams as StaggeredGridLayoutManager.LayoutParams
         val spanCount = layoutManager?.spanCount ?: 1
-//        val position = parent.getChildAdapterPosition(view)
+        val position = parent.getChildAdapterPosition(view)
+        val itemCount = parent.adapter?.itemCount?.let {
+            it - 1
+        }
 
         val isFullSpan = layoutParams.isFullSpan
         val column = layoutParams.spanIndex
-//        val isFirstColumn = column == 0
         val isLastColumn = column == spanCount - 1
 
+        outRect.top = space
         outRect.left = space
-        outRect.bottom = space
 
         if (isFullSpan) {
-            outRect.top = space
             outRect.right = space
         } else if (isLastColumn) {
             outRect.right = space
+        }
+
+        if (position == itemCount) {
+            outRect.bottom = space
         }
     }
 }

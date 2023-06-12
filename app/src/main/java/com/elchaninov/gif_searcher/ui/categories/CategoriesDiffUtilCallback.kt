@@ -19,15 +19,12 @@ class CategoriesDiffUtilCallback(
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
         val oldTypedCategory: TypedCategory = oldList[oldItemPosition]
         val newTypedCategory: TypedCategory = newList[newItemPosition]
-        return oldTypedCategory == newTypedCategory
+        return oldTypedCategory.name == newTypedCategory.name
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldTypedCategory: TypedCategory = oldList[oldItemPosition]
-        val newTypedCategory: TypedCategory = newList[newItemPosition]
-        return (oldTypedCategory is TypedCategory.Category
-                && newTypedCategory is TypedCategory.Category
-                && oldTypedCategory.name == newTypedCategory.name
-                && oldTypedCategory.isExpanded == newTypedCategory.isExpanded)
+//        val oldTypedCategory: TypedCategory = oldList[oldItemPosition]
+//        val newTypedCategory: TypedCategory = newList[newItemPosition]
+        return true
     }
 }

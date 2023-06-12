@@ -29,8 +29,12 @@ class CategoriesViewModel @Inject constructor(
     ) { typedCategoryList, isFavoritesNotEmpty ->
         if (typedCategoryList is LoadingState.Success) {
             val list: MutableList<TypedCategory> = mutableListOf()
-            if (isFavoritesNotEmpty) list.add(TypedCategory.Custom.Favorite())
-            list.add(TypedCategory.Custom.Trending())
+            if (isFavoritesNotEmpty) {
+                list.add(TypedCategory.Custom.Favorite(isExpanded = false))
+                list.add(TypedCategory.Custom.Trending(isExpanded = false))
+            } else {
+                list.add(TypedCategory.Custom.Trending(isExpanded = true))
+            }
             list.addAll(typedCategoryList.file)
             LoadingState.Success(list)
         } else {

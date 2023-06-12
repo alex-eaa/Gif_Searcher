@@ -12,7 +12,7 @@ class CustomCategoryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemVie
     fun bind(category: TypedCategory.Custom, onClick: (TypedCategory) -> Unit) {
         val categoryTitle: TextView? = itemView.findViewById(R.id.custom_category_title)
         categoryTitle?.let {
-            it.text = itemView.resources.getString(category.name)
+            it.text = itemView.resources.getString(category.nameId)
         }
         itemView.rootView.setOnClickListener {
             onClick(category)

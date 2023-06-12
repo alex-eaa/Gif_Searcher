@@ -3,20 +3,31 @@ package com.elchaninov.gif_searcher.model
 import androidx.annotation.StringRes
 import com.elchaninov.gif_searcher.R
 
-sealed class TypedCategory {
-    sealed class Custom(@StringRes open val name: Int) : TypedCategory() {
-        data class Favorite(@StringRes override val name: Int = R.string.favorites) : Custom(name)
-        data class Trending(@StringRes override val name: Int = R.string.top) : Custom(name)
+sealed class TypedCategory(open val name: String) {
+    sealed class Custom(
+        override val name: String,
+        @StringRes open val nameId: Int,
+        open val isExpanded: Boolean
+    ) : TypedCategory(name) {
+        data class Favorite(
+            @StringRes override val nameId: Int = R.string.favorites,
+            override val isExpanded: Boolean,
+        ) : Custom(nameId.toString(), nameId, isExpanded)
+
+        data class Trending(
+            @StringRes override val nameId: Int = R.string.top,
+            override val isExpanded: Boolean,
+        ) : Custom(nameId.toString(), nameId, isExpanded)
     }
 
-    data class Subcategory(val name: String) : TypedCategory()
+    data class Subcategory(override val name: String) : TypedCategory(name)
 
     data class Category(
-        val name: String,
+        override val name: String,
         val gif: Gif,
         val subcategories: List<SubcategoryModel>,
         val isExpanded: Boolean = false,
-    ) : TypedCategory()
+    ) : TypedCategory(name)
 }
 
 

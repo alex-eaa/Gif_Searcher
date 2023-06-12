@@ -23,11 +23,11 @@ class CategoriesAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         return when (viewType) {
-            CUSTOM_CATEGORIES_VIEW_TYPE -> {
+            COLLAPSE_CUSTOM_CATEGORIES_VIEW_TYPE, EXPANDED_CUSTOM_CATEGORIES_VIEW_TYPE -> {
                 val itemView = inflater.inflate(R.layout.custom_category_item, parent, false)
                 val layoutParams =
                     StaggeredGridLayoutManager.LayoutParams(itemView.layoutParams).apply {
-                        isFullSpan = true
+                        isFullSpan = viewType == EXPANDED_CUSTOM_CATEGORIES_VIEW_TYPE
                     }
                 itemView.layoutParams = layoutParams
                 CustomCategoryViewHolder(itemView)
@@ -78,7 +78,10 @@ class CategoriesAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (categoryList[position]) {
-            is TypedCategory.Custom -> CUSTOM_CATEGORIES_VIEW_TYPE
+            is TypedCategory.Custom -> {
+                if ((categoryList[position] as TypedCategory.Custom).isExpanded) EXPANDED_CUSTOM_CATEGORIES_VIEW_TYPE
+                else COLLAPSE_CUSTOM_CATEGORIES_VIEW_TYPE
+            }
             is TypedCategory.Category -> {
                 if ((categoryList[position] as TypedCategory.Category).isExpanded) EXPANDED_CATEGORIES_VIEW_TYPE
                 else COLLAPSE_CATEGORIES_VIEW_TYPE
@@ -88,9 +91,10 @@ class CategoriesAdapter(
     }
 
     companion object {
-        const val CUSTOM_CATEGORIES_VIEW_TYPE = 0
-        const val COLLAPSE_CATEGORIES_VIEW_TYPE = 1
-        const val EXPANDED_CATEGORIES_VIEW_TYPE = 2
-        const val SUBCATEGORIES_VIEW_TYPE = 3
+        const val COLLAPSE_CUSTOM_CATEGORIES_VIEW_TYPE = 0
+        const val EXPANDED_CUSTOM_CATEGORIES_VIEW_TYPE = 1
+        const val COLLAPSE_CATEGORIES_VIEW_TYPE = 2
+        const val EXPANDED_CATEGORIES_VIEW_TYPE = 3
+        const val SUBCATEGORIES_VIEW_TYPE = 4
     }
 }
