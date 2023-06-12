@@ -9,6 +9,7 @@
     <!--    MESSAGES-->
     <string name="error_message_1">Failed to load image list</string>
     <string name="error_message_2">Failed to load image</string>
+    <string name="error_message_3">Failed to load category list</string>
 
     <!--    BUTTONS-->
     <string name="button_try_again">Try Again</string>
