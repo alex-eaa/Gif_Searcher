@@ -146,6 +146,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.collapse_categories)?.isVisible =
             viewModel.isShowCollapseItemMenuFlow.value
+        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty.value
         return super.onPrepareOptionsMenu(menu)
     }
 
