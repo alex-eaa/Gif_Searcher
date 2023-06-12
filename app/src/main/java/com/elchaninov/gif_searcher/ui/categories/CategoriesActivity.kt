@@ -126,7 +126,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     private fun showError() {
         binding.root.showSnackbar(
-            text = getString(R.string.error_message_1),
+            text = getString(R.string.error_message_3),
             actionText = getString(R.string.button_try_again),
             action = { viewModel.updateData() }
         )
