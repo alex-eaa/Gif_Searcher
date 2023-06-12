@@ -9,7 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
@@ -29,6 +32,7 @@ import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
 
 class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
@@ -80,7 +84,6 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                     binding.progressContainer.progress.hide()
                     binding.swipeToRefresh.isRefreshing = false
                     updateAdapterData(state.file)
-                    invalidateOptionsMenu()
                 }
                 is LoadingState.Failure -> {
                     binding.progressContainer.progress.hide()
@@ -89,6 +92,14 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                 }
                 is LoadingState.Progress -> {
                     binding.progressContainer.progress.show()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isShowCollapseItemMenuFlow.collect {
+                    invalidateOptionsMenu()
                 }
             }
         }
@@ -128,7 +139,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         menu?.findItem(R.id.collapse_categories)?.isVisible =
-            viewModel.isShowCollapseItemMenuLiveData
+            viewModel.isShowCollapseItemMenuFlow.value
         return super.onPrepareOptionsMenu(menu)
     }
 
@@ -201,7 +212,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         onBackPressedDispatcher.addCallback(this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    if (viewModel.isShowCollapseItemMenuLiveData) viewModel.collapseAll()
+                    if (viewModel.isShowCollapseItemMenuFlow.value) viewModel.collapseAll()
                     else finish()
                 }
             })

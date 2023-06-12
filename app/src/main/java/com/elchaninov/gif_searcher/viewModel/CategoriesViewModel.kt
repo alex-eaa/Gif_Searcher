@@ -9,6 +9,8 @@ import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategor
 import com.elchaninov.gif_searcher.model.TypedCategory
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
@@ -19,7 +21,8 @@ class CategoriesViewModel @Inject constructor(
         MutableLiveData()
     val dataLiveData: LiveData<LoadingState<List<TypedCategory>>> get() = _dataLiveData
 
-    var isShowCollapseItemMenuLiveData: Boolean = false
+    private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow
 
     init {
         _dataLiveData.postValue(LoadingState.Progress())
@@ -66,10 +69,10 @@ class CategoriesViewModel @Inject constructor(
     fun onClickCategory(category: TypedCategory.Category) {
         if (category.isExpanded) {
             collapseCategory(category)
-            isShowCollapseItemMenuLiveData = hasExpandedSubcategories()
+            _isShowCollapseItemMenuFlow.value = hasExpandedSubcategories()
         } else {
             expandCategory(category)
-            isShowCollapseItemMenuLiveData = true
+            _isShowCollapseItemMenuFlow.value = true
         }
     }
 
@@ -86,7 +89,7 @@ class CategoriesViewModel @Inject constructor(
                     it is TypedCategory.Subcategory
                 }
 
-                isShowCollapseItemMenuLiveData = false
+                _isShowCollapseItemMenuFlow.value = false
                 _dataLiveData.value = LoadingState.Success(typedCategoryList)
             }
     }
