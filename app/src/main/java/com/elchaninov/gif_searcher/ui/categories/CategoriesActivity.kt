@@ -5,66 +5,59 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.OnBackPressedCallback
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
-import androidx.appcompat.widget.SearchView
+import androidx.activity.viewModels
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
-import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.TypedCategory
-import com.elchaninov.gif_searcher.ui.ScreenState
-import com.elchaninov.gif_searcher.ui.SearchDialogFragment
+import com.elchaninov.gif_searcher.ui.BaseActivity
 import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
 import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.hide
-import com.elchaninov.gif_searcher.ui.hideKeyboard
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.MobileAds
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
+class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
 
-class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
-
-    @Inject
-    lateinit var screenState: ScreenState
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: CategoriesViewModel
-
+    override val viewModel: CategoriesViewModel by viewModels()
     private lateinit var binding: CategoriesActivityBinding
     private lateinit var categoriesAdapter: CategoriesAdapter
-    private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.instance.component.inject(this)
-        setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[CategoriesViewModel::class.java]
         binding = CategoriesActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initToolbar()
+        initSearchFab(binding.fabSearchContainer.fabSearch)
+        initToolbar(binding.topAppBar)
         initRecyclerView()
-        initViews()
         onBackPressedInit()
         if (BuildConfig.ALLOW_AD) initAdmob()
 
         binding.swipeToRefresh.setOnRefreshListener {
             viewModel.updateData()
         }
+    }
+
+    override fun initToolbar(toolbar: Toolbar) {
+        super.initToolbar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        binding.topAppBar.logo =
+            ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
     }
 
     private fun initRecyclerView() {
@@ -83,18 +76,18 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                 viewModel.combinedLoadingStateFlow.collect { state ->
                     when (state) {
                         is LoadingState.Success -> {
-                            binding.progressContainer.progress.hide()
+                            binding.progressContainer.progressLayout.hide()
                             binding.swipeToRefresh.isRefreshing = false
                             updateAdapterData(state.data)
                         }
                         is LoadingState.Failure -> {
-                            binding.progressContainer.progress.hide()
+                            binding.progressContainer.progressLayout.hide()
                             binding.swipeToRefresh.isRefreshing = false
                             updateAdapterData(state.data ?: emptyList())
                             showError()
                         }
                         is LoadingState.Progress -> {
-                            binding.progressContainer.progress.show()
+                            binding.progressContainer.progressLayout.show()
                             updateAdapterData(state.data ?: emptyList())
                         }
                     }
@@ -119,28 +112,12 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
         categoriesDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
-    private fun initViews() {
-        binding.fab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
-    }
-
     private fun showError() {
         binding.root.showSnackbar(
             text = getString(R.string.error_message_3),
             actionText = getString(R.string.button_try_again),
             action = { viewModel.updateData() }
         )
-    }
-
-    private fun initToolbar() {
-        binding.topAppBar.logo =
-            ContextCompat.getDrawable(this, R.drawable.poweredby_640px_black_horiztext)
-        setSupportActionBar(binding.topAppBar)
-        supportActionBar?.apply {
-            setDisplayShowTitleEnabled(false)
-        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
@@ -196,7 +173,7 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
     }
 
     override fun onSearch(searchWord: String) {
-        searchView?.hideKeyboard()
+        super.onSearch(searchWord)
         startSearchActivity(searchWord)
     }
 
@@ -223,11 +200,5 @@ class CategoriesActivity : AppCompatActivity(), SearchDialogFragment.OnSearchCli
                     else finish()
                 }
             })
-    }
-
-    companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
-        const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }
 }

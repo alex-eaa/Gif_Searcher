@@ -1,30 +1,47 @@
 package com.elchaninov.gif_searcher.ui
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
 
-
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity<T : ViewModel> : AppCompatActivity(),
+    SearchDialogFragment.OnSearchClickListener {
 
     @Inject
     lateinit var screenState: ScreenState
+    abstract val viewModel: T
+    private var searchView: SearchView? = null
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: ViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(screenState.getThemeMode())
+    }
 
-    abstract val model: ViewModel
+    open fun initToolbar(toolbar: Toolbar) {
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayShowTitleEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    open fun initSearchFab(fab: FloatingActionButton) {
+        fab.setOnClickListener {
+            val searchDialogFragment = SearchDialogFragment.newInstance()
+            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
+        }
+    }
+
+    override fun onSearch(searchWord: String) {
+        searchView?.hideKeyboard()
     }
 
     companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
+        const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
+            "CategoriesActivity_BOTTOM_SHEET_FRAGMENT"
+        const val EXTRA_CATEGORIES = "EXTRA_CATEGORIES"
     }
 }

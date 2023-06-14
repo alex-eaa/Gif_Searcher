@@ -7,16 +7,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider.getUriForFile
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
@@ -27,17 +26,15 @@ import com.elchaninov.gif_searcher.viewModel.LoadingState
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.io.FileInputStream
-import javax.inject.Inject
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FullGifActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: FullGifViewModel
+    private val viewModel: FullGifViewModel by viewModels()
 
     private lateinit var binding: GifActivityBinding
     private var gif: Gif? = null
@@ -60,12 +57,10 @@ class FullGifActivity : AppCompatActivity() {
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.instance.component.inject(this)
         super.onCreate(savedInstanceState)
         binding = GifActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
         if (BuildConfig.ALLOW_AD) bannerAdsInit()
-        viewModel = ViewModelProvider(this, viewModelFactory)[FullGifViewModel::class.java]
         gif = intent.parcelable(EXTRA_GIF)
         if (savedInstanceState == null) fetchGif()
 
@@ -74,7 +69,7 @@ class FullGifActivity : AppCompatActivity() {
                 is LoadingState.Success -> {
                     binding.progress.hide()
                     renderGif(cachingState.data)
-                    with(binding.fab) {
+                    with(binding.fabSearch) {
                         setOnClickListener { shareGif(cachingState.data) }
                         slideIn(resources.getDimensionPixelSize(R.dimen.margin_fab))
                     }

@@ -4,59 +4,48 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
-import androidx.appcompat.widget.SearchView
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
+import androidx.appcompat.widget.Toolbar
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
-import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.ui.BaseActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.ui.ScreenState
-import com.elchaninov.gif_searcher.ui.SearchDialogFragment
-import com.elchaninov.gif_searcher.ui.categories.CategoriesActivity.Companion.EXTRA_CATEGORIES
 import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.hide
-import com.elchaninov.gif_searcher.ui.hideKeyboard
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
-class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickListener {
+@AndroidEntryPoint
+class GifsActivity : BaseActivity<GifsViewModel>() {
 
-    @Inject
-    lateinit var screenState: ScreenState
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: GifsViewModel
-
+    override val viewModel: GifsViewModel by viewModels()
     private lateinit var binding: GifsListActivityBinding
     private lateinit var gifsAdapter: GifsRxAdapter
-    private var searchView: SearchView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.instance.component.inject(this)
-        setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[GifsViewModel::class.java]
-
         binding = GifsListActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initToolbar()
+        initSearchFab(binding.fabSearchContainer.fabSearch)
+        initToolbar(binding.topAppBar)
         initRecyclerView()
-        initViews()
 
         intent.getStringExtra(EXTRA_CATEGORIES)?.let {
             onSearch(it)
         }
+    }
+
+    override fun initToolbar(toolbar: Toolbar) {
+        super.initToolbar(toolbar)
+        supportActionBar?.title = getString(R.string.top)
     }
 
     private fun initRecyclerView() {
@@ -81,20 +70,13 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
         }
     }
 
-    private fun initViews() {
-        binding.fab.setOnClickListener {
-            val searchDialogFragment = SearchDialogFragment.newInstance()
-            searchDialogFragment.show(supportFragmentManager, BOTTOM_SHEET_FRAGMENT_DIALOG_TAG)
-        }
-    }
-
     private fun processingPreloadStates(loadState: CombinedLoadStates) {
         when (loadState.refresh) {
             is LoadState.Loading -> {
-                binding.progressContainer.progress.show()
+                binding.progressContainer.progressLayout.show()
             }
             else -> {
-                binding.progressContainer.progress.hide()
+                binding.progressContainer.progressLayout.hide()
 
                 val error = when (loadState.refresh) {
                     is LoadState.Error -> loadState.refresh as LoadState.Error
@@ -113,16 +95,6 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
             actionText = getString(R.string.button_try_again),
             action = { gifsAdapter.retry() }
         )
-    }
-
-    private fun initToolbar() {
-        setSupportActionBar(binding.topAppBar)
-        supportActionBar?.apply {
-            setDisplayShowTitleEnabled(true)
-            title = getString(R.string.top)
-
-            setDisplayHomeAsUpEnabled(true)
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -176,7 +148,7 @@ class GifsActivity : AppCompatActivity(), SearchDialogFragment.OnSearchClickList
     }
 
     override fun onSearch(searchWord: String) {
-        searchView?.hideKeyboard()
+        super.onSearch(searchWord)
         viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
         supportActionBar?.title = searchWord
     }

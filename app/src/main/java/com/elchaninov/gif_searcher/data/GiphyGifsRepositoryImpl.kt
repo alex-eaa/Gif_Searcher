@@ -16,11 +16,13 @@ import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
+@Singleton
 class GiphyGifsRepositoryImpl @Inject constructor(
     private val giphyGifsApi: GiphyGifsApi,
     private val mapCategoryDtoToCategory: MapCategoryDtoToCategory,

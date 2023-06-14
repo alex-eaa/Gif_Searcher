@@ -4,9 +4,12 @@ import androidx.paging.PagingConfig
 import com.elchaninov.gif_searcher.data.GifsRxPagingSource
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 class PagingModule {
 
     @Singleton

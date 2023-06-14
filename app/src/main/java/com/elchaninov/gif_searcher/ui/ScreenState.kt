@@ -11,12 +11,13 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.Settings
 import com.elchaninov.gif_searcher.ui.enum.Layout
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ScreenState @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val settings: Settings
 ) {
 

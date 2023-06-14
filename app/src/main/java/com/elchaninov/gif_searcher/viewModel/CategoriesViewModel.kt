@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategory
 import com.elchaninov.gif_searcher.model.TypedCategory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
+@HiltViewModel
 class CategoriesViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {

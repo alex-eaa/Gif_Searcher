@@ -8,11 +8,13 @@ import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
 class GifsViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {

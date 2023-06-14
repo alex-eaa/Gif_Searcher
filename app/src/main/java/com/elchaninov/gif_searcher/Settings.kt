@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.elchaninov.gif_searcher.ui.enum.Layout
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 @Singleton
-class Settings @Inject constructor(context: Context) {
+class Settings @Inject constructor(@ApplicationContext context: Context) {
 
     private val prefs: SharedPreferences =
         context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

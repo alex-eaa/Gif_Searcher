@@ -2,23 +2,17 @@ package com.elchaninov.gif_searcher
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.elchaninov.gif_searcher.di.ApplicationComponent
-import com.elchaninov.gif_searcher.di.DaggerApplicationComponent
+import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
-
+@HiltAndroidApp
 class App : Application() {
 
-    lateinit var component: ApplicationComponent
+    @Inject
+    lateinit var settings: Settings
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
-        component = DaggerApplicationComponent.builder().setContext(this).build()
-
-        Settings(this).nightTheme?.let { AppCompatDelegate.setDefaultNightMode(it.value) }
-    }
-
-    companion object {
-        lateinit var instance: App
+        settings.nightTheme?.let { AppCompatDelegate.setDefaultNightMode(it.value) }
     }
 }

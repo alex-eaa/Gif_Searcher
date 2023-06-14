@@ -4,48 +4,43 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode
+import androidx.activity.viewModels
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
-import com.elchaninov.gif_searcher.App
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.ui.BaseActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.ui.ScreenState
 import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.viewModel.FavoritesViewModel
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-class FavoritesActivity : AppCompatActivity() {
+@AndroidEntryPoint
+class FavoritesActivity : BaseActivity<FavoritesViewModel>() {
 
-    @Inject
-    lateinit var screenState: ScreenState
-
-    @Inject
-    lateinit var viewModelFactory: ViewModelProvider.Factory
-    lateinit var viewModel: FavoritesViewModel
-
+    override val viewModel: FavoritesViewModel by viewModels()
     private lateinit var binding: GifsListActivityBinding
     private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        App.instance.component.inject(this)
-        setDefaultNightMode(screenState.getThemeMode())
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this, viewModelFactory)[FavoritesViewModel::class.java]
-
         binding = GifsListActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        initToolbar()
+        initSearchFab(binding.fabSearchContainer.fabSearch)
+        initToolbar(binding.topAppBar)
         initRecyclerView()
+    }
+
+    override fun initToolbar(toolbar: Toolbar) {
+        super.initToolbar(toolbar)
+        supportActionBar?.title = getString(R.string.favorites)
     }
 
     private fun initRecyclerView() {
@@ -65,16 +60,6 @@ class FavoritesActivity : AppCompatActivity() {
                     updateAdapterData(it)
                 }
             }
-        }
-    }
-
-    private fun initToolbar() {
-        setSupportActionBar(binding.topAppBar)
-        supportActionBar?.apply {
-            setDisplayShowTitleEnabled(true)
-            title = getString(R.string.favorites)
-
-            setDisplayHomeAsUpEnabled(true)
         }
     }
 

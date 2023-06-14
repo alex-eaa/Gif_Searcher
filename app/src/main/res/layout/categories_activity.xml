@@ -46,17 +46,10 @@
 
     <include
         android:id="@+id/progress_container"
-        layout="@layout/progress_content" />
+        layout="@layout/progress_layout" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="@dimen/margin_fab"
-        android:contentDescription="@string/fab_search"
-        app:backgroundTint="?colorSecondary"
-        app:srcCompat="@drawable/ic_baseline_search_24"
-        app:tint="?colorOnPrimary" />
+    <include
+        android:id="@+id/fab_search_container"
+        layout="@layout/fab_search_layout" />
 
 </FrameLayout>

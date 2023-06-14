@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.BufferedInputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -16,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@HiltViewModel
 class FullGifViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
 ) : ViewModel() {
