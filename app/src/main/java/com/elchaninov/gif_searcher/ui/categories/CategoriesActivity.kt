@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.ui.categories
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -17,8 +16,6 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.ui.BaseActivity
-import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
-import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
@@ -48,6 +45,18 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
 
         binding.swipeToRefresh.setOnRefreshListener {
             viewModel.updateData()
+        }
+
+        observerInitialization()
+    }
+
+    private fun observerInitialization() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isShowCollapseItemMenuFlow.collect {
+                    invalidateOptionsMenu()
+                }
+            }
         }
     }
 
@@ -93,14 +102,6 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
                 }
             }
         }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isShowCollapseItemMenuFlow.collect {
-                    invalidateOptionsMenu()
-                }
-            }
-        }
     }
 
     private fun updateAdapterData(newList: List<TypedCategory>) {
@@ -111,28 +112,16 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
         categoriesDiffResult.dispatchUpdatesTo(categoriesAdapter)
     }
 
-    private fun showError() {
-        binding.root.showSnackbar(
-            text = getString(R.string.error_message_3),
-            actionText = getString(R.string.button_try_again),
-            action = { viewModel.updateData() }
-        )
-    }
-
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty
         menu?.findItem(R.id.collapse_categories)?.isVisible =
             viewModel.isShowCollapseItemMenuFlow.value
-        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty.value
         return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
         return when (item.itemId) {
-            R.id.favorites -> {
-                startFavoriteActivity()
-                true
-            }
             R.id.collapse_categories -> {
                 viewModel.collapseAll()
                 true
@@ -150,22 +139,6 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
         }
     }
 
-    override fun onSearch(searchWord: String) {
-        super.onSearch(searchWord)
-        startSearchActivity(searchWord)
-    }
-
-    private fun startSearchActivity(searchWord: String?) {
-        val intent = Intent(this, GifsActivity::class.java)
-        intent.putExtra(EXTRA_CATEGORIES, searchWord)
-        startActivity(intent)
-    }
-
-    private fun startFavoriteActivity() {
-        val intent = Intent(this, FavoritesActivity::class.java)
-        startActivity(intent)
-    }
-
     private fun initAdmob() {
         MobileAds.initialize(this)
     }
@@ -179,4 +152,12 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
                 }
             })
     }
+    private fun showError() {
+        binding.root.showSnackbar(
+            text = getString(R.string.error_message_3),
+            actionText = getString(R.string.button_try_again),
+            action = { viewModel.updateData() }
+        )
+    }
+
 }

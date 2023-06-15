@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.ui.gifs
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -10,10 +9,7 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
-import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.BaseActivity
-import com.elchaninov.gif_searcher.ui.FullGifActivity
-import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
@@ -64,6 +60,7 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
                 footer = GifsLoadStateAdapter { gifsAdapter.retry() }
             )
         }
+
         viewModel.pagingDataLiveData.observe(this) { observable ->
             gifsAdapter.submitData(lifecycle, observable)
         }
@@ -88,12 +85,9 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
         }
     }
 
-    private fun showError() {
-        binding.root.showSnackbar(
-            text = getString(R.string.error_message_1),
-            actionText = getString(R.string.button_try_again),
-            action = { gifsAdapter.retry() }
-        )
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty
+        return super.onPrepareOptionsMenu(menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -120,20 +114,17 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
         }
     }
 
-    private fun onItemClick(gif: Gif) {
-        val intent = Intent(this, FullGifActivity::class.java)
-        intent.putExtra(EXTRA_GIF, gif)
-        startActivity(intent)
-    }
-
     override fun onSearch(searchWord: String) {
-        super.onSearch(searchWord)
         viewModel.changeSearchQuery(SearchQuery.Search(searchWord))
         supportActionBar?.title = searchWord
     }
 
-    companion object {
-        private const val BOTTOM_SHEET_FRAGMENT_DIALOG_TAG =
-            "74a54328-5d62-46bf-ab6b-cbf5fgt0-092395"
+    private fun showError() {
+        binding.root.showSnackbar(
+            text = getString(R.string.error_message_1),
+            actionText = getString(R.string.button_try_again),
+            action = { gifsAdapter.retry() }
+        )
     }
+
 }

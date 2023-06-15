@@ -1,5 +1,6 @@
 package com.elchaninov.gif_searcher.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -7,13 +8,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.elchaninov.gif_searcher.R
+import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.enum.Theme
+import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
+import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
+import com.elchaninov.gif_searcher.viewModel.BaseViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import javax.inject.Inject
+import kotlinx.coroutines.launch
 
-abstract class BaseActivity<T : ViewModel> : AppCompatActivity(),
+abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity(),
     SearchDialogFragment.OnSearchClickListener {
 
     @Inject
@@ -24,6 +32,14 @@ abstract class BaseActivity<T : ViewModel> : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppCompatDelegate.setDefaultNightMode(screenState.getThemeMode())
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.isFavoritesNotEmptyFlow.collect {
+                    invalidateOptionsMenu()
+                }
+            }
+        }
     }
 
     open fun initToolbar(toolbar: Toolbar) {
@@ -40,6 +56,10 @@ abstract class BaseActivity<T : ViewModel> : AppCompatActivity(),
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
+            R.id.favorites -> {
+                startFavoriteActivity()
+                true
+            }
             android.R.id.home -> {
                 finish()
                 true
@@ -72,6 +92,24 @@ abstract class BaseActivity<T : ViewModel> : AppCompatActivity(),
 
     override fun onSearch(searchWord: String) {
         searchView?.hideKeyboard()
+        startSearchActivity(searchWord)
+    }
+
+    protected fun startSearchActivity(searchWord: String?) {
+        val intent = Intent(this, GifsActivity::class.java)
+        intent.putExtra(EXTRA_CATEGORIES, searchWord)
+        startActivity(intent)
+    }
+
+    protected fun startFavoriteActivity() {
+        val intent = Intent(this, FavoritesActivity::class.java)
+        startActivity(intent)
+    }
+
+    protected fun onItemClick(gif: Gif) {
+        val intent = Intent(this, FullGifActivity::class.java)
+        intent.putExtra(FullGifActivity.EXTRA_GIF, gif)
+        startActivity(intent)
     }
 
     companion object {

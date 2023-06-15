@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.ui.favorites
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,8 +13,6 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.BaseActivity
-import com.elchaninov.gif_searcher.ui.FullGifActivity
-import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
 import com.elchaninov.gif_searcher.viewModel.FavoritesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -92,11 +89,5 @@ class FavoritesActivity : BaseActivity<FavoritesViewModel>() {
         val categoriesDiffResult = DiffUtil.calculateDiff(gifsDiffUtilCallback)
         favoritesAdapter.setItems(newList)
         categoriesDiffResult.dispatchUpdatesTo(favoritesAdapter)
-    }
-
-    private fun onItemClick(gif: Gif) {
-        val intent = Intent(this, FullGifActivity::class.java)
-        intent.putExtra(EXTRA_GIF, gif)
-        startActivity(intent)
     }
 }

@@ -1,6 +1,5 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategory
@@ -10,21 +9,14 @@ import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    private val giphyGifsRepository: GiphyGifsRepository,
-) : ViewModel() {
-    val isFavoritesNotEmpty: StateFlow<Boolean> = giphyGifsRepository.isFavoritesNotEmpty().stateIn(
-        scope = viewModelScope,
-        initialValue = false,
-        started = SharingStarted.Eagerly
-    )
+    giphyGifsRepository: GiphyGifsRepository,
+) : BaseViewModel(giphyGifsRepository) {
 
     private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow
@@ -34,7 +26,7 @@ class CategoriesViewModel @Inject constructor(
 
     val combinedLoadingStateFlow: Flow<LoadingState<List<TypedCategory>>> = combine(
         loadingStateFlow,
-        isFavoritesNotEmpty
+        isFavoritesNotEmptyFlow
     ) { loadingState, isFavoritesNotEmpty ->
         when (loadingState) {
             is LoadingState.Success -> {
