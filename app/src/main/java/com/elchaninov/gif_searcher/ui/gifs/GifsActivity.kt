@@ -14,7 +14,6 @@ import com.elchaninov.gif_searcher.model.Gif
 import com.elchaninov.gif_searcher.ui.BaseActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity
 import com.elchaninov.gif_searcher.ui.FullGifActivity.Companion.EXTRA_GIF
-import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
@@ -98,14 +97,13 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.top_app_bar, menu)
-        menu?.findItem(R.id.collapse_categories)?.isVisible = false
-        menu?.findItem(R.id.favorites)?.isVisible = false
-        menu?.let { screenState.setIconsItemsMenu(it) }
+        super.onCreateOptionsMenu(menu)
+        menu?.findItem(R.id.action_change_layout)?.isVisible = true
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.action_change_layout -> {
                 screenState.changeLayoutMode()
@@ -116,25 +114,6 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
 
                 initRecyclerView()
                 binding.recyclerView.scrollToPosition(scrollToPosition)
-                true
-            }
-            android.R.id.home -> {
-                finish()
-                true
-            }
-            R.id.theme_dark -> {
-                screenState.changeThemeMode(Theme.DARK)
-                this.recreate()
-                true
-            }
-            R.id.theme_light -> {
-                screenState.changeThemeMode(Theme.LIGHT)
-                this.recreate()
-                true
-            }
-            R.id.theme_auto -> {
-                screenState.changeThemeMode(Theme.AUTO)
-                this.recreate()
                 true
             }
             else -> true

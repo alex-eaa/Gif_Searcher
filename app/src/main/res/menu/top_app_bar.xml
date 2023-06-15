@@ -8,12 +8,14 @@
         android:icon="@drawable/ic_baseline_compress_24"
         android:orderInCategory="1"
         android:title="@string/item_menu_change_view"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_change_layout"
         android:orderInCategory="2"
         android:title="@string/item_menu_change_view"
+        android:visible="false"
         app:showAsAction="ifRoom"
         tools:icon="@drawable/ic_baseline_dashboard_24" />
 
@@ -22,7 +24,8 @@
         android:icon="@drawable/ic_baseline_favorite_border_24"
         android:orderInCategory="3"
         android:title="@string/item_menu_show_favorites"
-        app:showAsAction="never"/>
+        android:visible="false"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_theme_day_night"

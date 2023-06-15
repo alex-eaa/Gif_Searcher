@@ -17,7 +17,6 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
 import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.ui.BaseActivity
-import com.elchaninov.gif_searcher.ui.enum.Theme
 import com.elchaninov.gif_searcher.ui.favorites.FavoritesActivity
 import com.elchaninov.gif_searcher.ui.gifs.GifsActivity
 import com.elchaninov.gif_searcher.ui.hide
@@ -127,14 +126,8 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
         return super.onPrepareOptionsMenu(menu)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.top_app_bar, menu)
-        menu?.findItem(R.id.action_change_layout)?.isVisible = false
-        menu?.let { screenState.setIconsItemsMenu(it) }
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        super.onOptionsItemSelected(item)
         return when (item.itemId) {
             R.id.favorites -> {
                 startFavoriteActivity()
@@ -142,21 +135,6 @@ class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
             }
             R.id.collapse_categories -> {
                 viewModel.collapseAll()
-                true
-            }
-            R.id.theme_dark -> {
-                screenState.changeThemeMode(Theme.DARK)
-                this.recreate()
-                true
-            }
-            R.id.theme_light -> {
-                screenState.changeThemeMode(Theme.LIGHT)
-                this.recreate()
-                true
-            }
-            R.id.theme_auto -> {
-                screenState.changeThemeMode(Theme.AUTO)
-                this.recreate()
                 true
             }
             else -> true
