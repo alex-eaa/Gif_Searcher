@@ -20,7 +20,7 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/ThemeOverlay.MaterialComponents.Light"
             app:theme="@style/ThemeOverlay.MaterialComponents.Dark"
-            tools:menu="@menu/top_app_bar" />
+            tools:menu="@menu/top_app_bar_menu" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -51,8 +51,7 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity(),
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.top_app_bar, menu)
-        menu?.let { screenState.setIconsItemsMenu(it) }
+        menuInflater.inflate(R.menu.top_app_bar_menu, menu)
         return true
     }
 

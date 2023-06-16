@@ -1,35 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-    <item
-        android:id="@+id/collapse_categories"
-        android:icon="@drawable/ic_baseline_compress_24"
-        android:orderInCategory="1"
-        android:title="@string/item_menu_change_view"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/action_change_layout"
-        android:orderInCategory="2"
-        android:title="@string/item_menu_change_view"
-        android:visible="false"
-        app:showAsAction="ifRoom"
-        tools:icon="@drawable/ic_baseline_dashboard_24" />
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/favorites"
         android:icon="@drawable/ic_baseline_favorite_border_24"
-        android:orderInCategory="3"
+        android:orderInCategory="20"
         android:title="@string/item_menu_show_favorites"
         android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_theme_day_night"
-        android:orderInCategory="4"
+        android:orderInCategory="30"
         android:title="@string/item_menu_theme"
         app:showAsAction="never">
         <menu>

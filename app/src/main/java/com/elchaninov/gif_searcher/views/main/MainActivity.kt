@@ -119,6 +119,12 @@ class MainActivity : BaseActivity<MainViewModel>() {
         return super.onPrepareOptionsMenu(menu)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.collapse_categories_menu, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
         return when (item.itemId) {

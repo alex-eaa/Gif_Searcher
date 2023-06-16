@@ -92,7 +92,8 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        menu?.findItem(R.id.action_change_layout)?.isVisible = true
+        menuInflater.inflate(R.menu.change_layout_menu, menu)
+        menu?.let { screenState.setIconsItemsMenu(it) }
         return true
     }
 
