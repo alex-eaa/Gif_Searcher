@@ -1,10 +1,11 @@
 package com.elchaninov.gif_searcher.viewModel
 
 import androidx.lifecycle.viewModelScope
-import com.elchaninov.gif_searcher.data.FavoritesRepository
-import com.elchaninov.gif_searcher.data.GiphyGifsRepository
-import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategory
-import com.elchaninov.gif_searcher.model.TypedCategory
+import com.elchaninov.gif_searcher.model.data.LoadingState
+import com.elchaninov.gif_searcher.model.data.userdata.SubcategoryModel.Companion.asSubcategory
+import com.elchaninov.gif_searcher.model.data.userdata.TypedCategory
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
+import com.elchaninov.gif_searcher.model.datasource.GiphyGifsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers

@@ -1,7 +1,7 @@
 package com.elchaninov.gif_searcher.viewModel
 
 import androidx.lifecycle.ViewModel
-import com.elchaninov.gif_searcher.data.FavoritesRepository
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 

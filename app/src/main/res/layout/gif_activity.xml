@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.FullGifActivity">
+    tools:context=".views.fullGif.FullGifActivity">
 
     <FrameLayout
         android:id="@+id/layout_banner_holder"
@@ -18,7 +18,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.FullGifActivity">
+        tools:context=".views.fullGif.FullGifActivity">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/gif_view"

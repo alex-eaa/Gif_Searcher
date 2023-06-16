@@ -4,8 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elchaninov.gif_searcher.data.FavoritesRepository
-import com.elchaninov.gif_searcher.model.Gif
+import com.elchaninov.gif_searcher.model.data.LoadingState
+import com.elchaninov.gif_searcher.model.data.userdata.Gif
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.BufferedInputStream
 import java.io.File

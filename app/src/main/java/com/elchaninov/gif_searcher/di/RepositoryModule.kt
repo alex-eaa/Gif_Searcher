@@ -1,9 +1,9 @@
 package com.elchaninov.gif_searcher.di
 
-import com.elchaninov.gif_searcher.data.FavoritesRepository
-import com.elchaninov.gif_searcher.data.FavoritesRepositoryImpl
-import com.elchaninov.gif_searcher.data.GiphyGifsRepository
-import com.elchaninov.gif_searcher.data.GiphyGifsRepositoryImpl
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepositoryImpl
+import com.elchaninov.gif_searcher.model.datasource.GiphyGifsRepository
+import com.elchaninov.gif_searcher.model.datasource.GiphyGifsRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

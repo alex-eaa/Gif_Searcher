@@ -14,22 +14,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Gif_Searcher">
         <activity
-            android:name=".ui.FullGifActivity"
+            android:name=".views.fullGif.FullGifActivity"
             android:exported="true"
             android:theme="@style/Theme.Gif_Searcher.Fullscreen"/>
 
         <activity
-            android:name=".ui.gifs.GifsActivity"
+            android:name=".views.gifs.GifsActivity"
             android:exported="true">
         </activity>
 
         <activity
-            android:name=".ui.favorites.FavoritesActivity"
+            android:name=".views.favorites.FavoritesActivity"
             android:exported="true">
         </activity>
 
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".views.main.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
