@@ -21,12 +21,12 @@ import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifActivityBinding
 import com.elchaninov.gif_searcher.model.data.LoadingState
 import com.elchaninov.gif_searcher.model.data.userdata.Gif
-import com.elchaninov.gif_searcher.parcelable
+import com.elchaninov.gif_searcher.utils.hide
+import com.elchaninov.gif_searcher.utils.parcelable
+import com.elchaninov.gif_searcher.utils.show
+import com.elchaninov.gif_searcher.utils.showSnackbar
+import com.elchaninov.gif_searcher.utils.slideIn
 import com.elchaninov.gif_searcher.viewModel.FullGifViewModel
-import com.elchaninov.gif_searcher.views.hide
-import com.elchaninov.gif_searcher.views.show
-import com.elchaninov.gif_searcher.views.showSnackbar
-import com.elchaninov.gif_searcher.views.slideIn
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView

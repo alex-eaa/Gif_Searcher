@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher
+package com.elchaninov.gif_searcher.utils
 
 import android.content.Intent
 import android.os.Build

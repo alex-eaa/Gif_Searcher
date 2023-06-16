@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.views
+package com.elchaninov.gif_searcher.utils
 
 import android.content.Context
 import android.view.View

@@ -14,6 +14,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.enum.Theme
 import com.elchaninov.gif_searcher.model.data.userdata.Gif
+import com.elchaninov.gif_searcher.utils.hideKeyboard
 import com.elchaninov.gif_searcher.viewModel.BaseViewModel
 import com.elchaninov.gif_searcher.views.favorites.FavoritesActivity
 import com.elchaninov.gif_searcher.views.fullGif.FullGifActivity

@@ -10,11 +10,11 @@ import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.databinding.GifsListActivityBinding
 import com.elchaninov.gif_searcher.model.data.SearchQuery
+import com.elchaninov.gif_searcher.utils.hide
+import com.elchaninov.gif_searcher.utils.show
+import com.elchaninov.gif_searcher.utils.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.views.BaseActivity
-import com.elchaninov.gif_searcher.views.hide
-import com.elchaninov.gif_searcher.views.show
-import com.elchaninov.gif_searcher.views.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
