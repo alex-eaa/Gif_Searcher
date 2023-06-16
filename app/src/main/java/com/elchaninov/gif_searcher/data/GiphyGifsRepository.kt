@@ -7,16 +7,10 @@ import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.viewModel.SearchQuery
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
-import kotlinx.coroutines.flow.Flow
 
 interface GiphyGifsRepository {
     fun getGifs(query: String, offset: Int): Single<GiphyGifsResponseDto>
     fun getGifs(searchQuery: SearchQuery): Observable<PagingData<Gif>>
     fun getGifsTrending(offset: Int): Single<GiphyGifsResponseDto>
     suspend fun getCategories(): List<TypedCategory.Category>
-
-    suspend fun toggleGifFavorite(gif: Gif)
-    fun isFavoriteGifFlow(id: String): Flow<Boolean>
-    fun getFavoritesFlow(): Flow<List<Gif>>
-    fun isFavoritesNotEmpty(): Flow<Boolean>
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.rxjava3.cachedIn
+import com.elchaninov.gif_searcher.data.FavoritesRepository
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.Gif
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,8 +16,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class GifsViewModel @Inject constructor(
-    giphyGifsRepository: GiphyGifsRepository,
-) : BaseViewModel(giphyGifsRepository) {
+    private val giphyGifsRepository: GiphyGifsRepository,
+    favoritesRepository: FavoritesRepository,
+) : BaseViewModel(favoritesRepository) {
 
     private val disposable = CompositeDisposable()
     private var savedSearchQuery: SearchQuery = SearchQuery.Top

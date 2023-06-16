@@ -1,6 +1,7 @@
 package com.elchaninov.gif_searcher.viewModel
 
 import androidx.lifecycle.viewModelScope
+import com.elchaninov.gif_searcher.data.FavoritesRepository
 import com.elchaninov.gif_searcher.data.GiphyGifsRepository
 import com.elchaninov.gif_searcher.model.SubcategoryModel.Companion.asSubcategory
 import com.elchaninov.gif_searcher.model.TypedCategory
@@ -15,8 +16,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class CategoriesViewModel @Inject constructor(
-    giphyGifsRepository: GiphyGifsRepository,
-) : BaseViewModel(giphyGifsRepository) {
+    private val giphyGifsRepository: GiphyGifsRepository,
+    favoritesRepository: FavoritesRepository,
+) : BaseViewModel(favoritesRepository) {
 
     private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow

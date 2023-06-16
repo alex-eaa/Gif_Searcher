@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.elchaninov.gif_searcher.data.GiphyGifsRepository
+import com.elchaninov.gif_searcher.data.FavoritesRepository
 import com.elchaninov.gif_searcher.model.Gif
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.BufferedInputStream
@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class FullGifViewModel @Inject constructor(
-    private val giphyGifsRepository: GiphyGifsRepository,
+    private val favoritesRepository: FavoritesRepository,
 ) : ViewModel() {
 
     private var _fileLiveData: MutableLiveData<LoadingState<File>> =
@@ -37,7 +37,7 @@ class FullGifViewModel @Inject constructor(
     val isFavoriteGif = initFlow
         .filterNotNull()
         .flatMapLatest {
-            giphyGifsRepository.isFavoriteGifFlow(it.id)
+            favoritesRepository.isFavoriteGifFlow(it.id)
         }
 
     fun fileCaching(gif: Gif, file: File) {
@@ -60,7 +60,7 @@ class FullGifViewModel @Inject constructor(
 
     fun toggleGifFavorite(gif: Gif) {
         viewModelScope.launch {
-            giphyGifsRepository.toggleGifFavorite(gif)
+            favoritesRepository.toggleGifFavorite(gif)
         }
     }
 
