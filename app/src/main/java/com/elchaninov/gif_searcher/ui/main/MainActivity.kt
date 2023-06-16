@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.categories
+package com.elchaninov.gif_searcher.ui.main
 
 import android.os.Bundle
 import android.view.Menu
@@ -13,28 +13,28 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.BuildConfig
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.databinding.CategoriesActivityBinding
+import com.elchaninov.gif_searcher.databinding.MainActivityBinding
 import com.elchaninov.gif_searcher.model.TypedCategory
 import com.elchaninov.gif_searcher.ui.BaseActivity
 import com.elchaninov.gif_searcher.ui.hide
 import com.elchaninov.gif_searcher.ui.show
 import com.elchaninov.gif_searcher.ui.showSnackbar
-import com.elchaninov.gif_searcher.viewModel.CategoriesViewModel
 import com.elchaninov.gif_searcher.viewModel.LoadingState
+import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CategoriesActivity : BaseActivity<CategoriesViewModel>() {
+class MainActivity : BaseActivity<MainViewModel>() {
 
-    override val viewModel: CategoriesViewModel by viewModels()
-    private lateinit var binding: CategoriesActivityBinding
+    override val viewModel: MainViewModel by viewModels()
+    private lateinit var binding: MainActivityBinding
     private lateinit var categoriesAdapter: CategoriesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = CategoriesActivityBinding.inflate(layoutInflater)
+        binding = MainActivityBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         initSearchFab(binding.fabSearchContainer.fabSearch)

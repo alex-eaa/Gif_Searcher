@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.categories
+package com.elchaninov.gif_searcher.ui.main
 
 import androidx.recyclerview.widget.DiffUtil
 import com.elchaninov.gif_searcher.model.TypedCategory

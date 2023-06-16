@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class CategoriesViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
     favoritesRepository: FavoritesRepository,
 ) : BaseViewModel(favoritesRepository) {

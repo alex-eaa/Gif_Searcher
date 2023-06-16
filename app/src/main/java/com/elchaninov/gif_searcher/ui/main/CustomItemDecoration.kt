@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.ui.categories
+package com.elchaninov.gif_searcher.ui.main
 
 import android.graphics.Rect
 import android.view.View
