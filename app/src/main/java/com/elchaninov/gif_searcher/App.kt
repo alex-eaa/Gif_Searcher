@@ -2,7 +2,7 @@ package com.elchaninov.gif_searcher
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.elchaninov.gif_searcher.model.datasource.Settings
+import com.elchaninov.gif_searcher.model.datasource.AppSettings
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -10,10 +10,10 @@ import javax.inject.Inject
 class App : Application() {
 
     @Inject
-    lateinit var settings: Settings
+    lateinit var settings: AppSettings
 
     override fun onCreate() {
         super.onCreate()
-        settings.nightTheme?.let { AppCompatDelegate.setDefaultNightMode(it.value) }
+        AppCompatDelegate.setDefaultNightMode(settings.nightTheme.value)
     }
 }

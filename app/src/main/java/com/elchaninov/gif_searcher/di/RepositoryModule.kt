@@ -1,5 +1,7 @@
 package com.elchaninov.gif_searcher.di
 
+import com.elchaninov.gif_searcher.model.datasource.AppSettings
+import com.elchaninov.gif_searcher.model.datasource.AppSettingsImpl
 import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
 import com.elchaninov.gif_searcher.model.datasource.FavoritesRepositoryImpl
 import com.elchaninov.gif_searcher.model.datasource.GiphyGifsRepository
@@ -18,4 +20,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindFavoritesRepository(favoritesRepositoryImpl: FavoritesRepositoryImpl): FavoritesRepository
+
+    @Binds
+    abstract fun bindLocalSettings(localSettingsImpl: AppSettingsImpl): AppSettings
 }

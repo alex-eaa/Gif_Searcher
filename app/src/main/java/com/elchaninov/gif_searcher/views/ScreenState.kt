@@ -3,14 +3,13 @@ package com.elchaninov.gif_searcher.views
 import android.content.Context
 import android.content.res.Configuration
 import android.view.Menu
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
 import com.elchaninov.gif_searcher.enum.Layout
 import com.elchaninov.gif_searcher.enum.Theme
-import com.elchaninov.gif_searcher.model.datasource.Settings
+import com.elchaninov.gif_searcher.model.datasource.AppSettings
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -18,7 +17,7 @@ import javax.inject.Singleton
 @Singleton
 class ScreenState @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val settings: Settings
+    private val settings: AppSettings
 ) {
 
     fun changeThemeMode(theme: Theme) {
@@ -32,7 +31,7 @@ class ScreenState @Inject constructor(
         }
     }
 
-    fun getThemeMode(): Int = settings.nightTheme?.value ?: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    fun getThemeMode(): Int = settings.nightTheme.value
 
     fun setIconsItemsMenu(menu: Menu) {
         menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
