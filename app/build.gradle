@@ -22,8 +22,8 @@ android {
         applicationId "com.elchaninov.gif_searcher"
         minSdk 22
         targetSdk 33
-        versionCode 123
-        versionName "1.2.3"
+        versionCode 124
+        versionName "1.2.4"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,22 +35,22 @@ android {
 
     defaultConfig {
         buildConfigField("int", "DB_VERSION", "$dbVersion")
+        proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
     }
 
     buildTypes {
         debug {
             debuggable true
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources false
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
             resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-debug'])
         }
 
         release {
             debuggable false
-            minifyEnabled false
-            shrinkResources false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
             buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
             resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-release'])
         }
