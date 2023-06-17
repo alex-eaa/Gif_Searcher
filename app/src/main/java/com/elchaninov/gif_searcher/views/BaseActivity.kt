@@ -52,6 +52,7 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity(),
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.top_app_bar_menu, menu)
+        menu?.let { screenState.setThemeItemsMenu(it) }
         return true
     }
 

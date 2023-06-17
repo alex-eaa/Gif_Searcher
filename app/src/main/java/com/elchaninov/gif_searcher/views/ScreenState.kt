@@ -33,9 +33,11 @@ class ScreenState @Inject constructor(
 
     fun getThemeMode(): Int = settings.nightTheme.value
 
-    fun setIconsItemsMenu(menu: Menu) {
+    fun setIconsChangeLayoutItemsMenu(menu: Menu) {
         menu.findItem(R.id.action_change_layout)?.setIcon(getIconForChangeLayoutItemMenu())
+    }
 
+    fun setThemeItemsMenu(menu: Menu) {
         when (settings.nightTheme) {
             Theme.DARK -> menu.findItem(R.id.theme_dark).isChecked = true
             Theme.LIGHT -> menu.findItem(R.id.theme_light).isChecked = true
