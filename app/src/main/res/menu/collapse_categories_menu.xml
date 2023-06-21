@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/collapse_categories"
+        android:icon="@drawable/ic_baseline_compress_24"
+        android:orderInCategory="10"
+        android:title="@string/item_menu_change_view"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+</menu>

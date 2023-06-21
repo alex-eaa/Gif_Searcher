@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     android:orientation="vertical"
-    tools:context=".ui.FullGifActivity">
+    tools:context=".views.fullGif.FullGifActivity">
 
     <FrameLayout
         android:id="@+id/layout_banner_holder"
@@ -18,7 +18,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.FullGifActivity">
+        tools:context=".views.fullGif.FullGifActivity">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/gif_view"
@@ -59,7 +59,7 @@
             tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fab_search"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|bottom"

@@ -1,11 +1,15 @@
 package com.elchaninov.gif_searcher.viewModel
 
-import androidx.lifecycle.ViewModel
-import com.elchaninov.gif_searcher.data.GiphyGifsRepository
+import com.elchaninov.gif_searcher.model.data.userdata.Gif
+import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
 
+@HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    giphyGifsRepository: GiphyGifsRepository,
-) : ViewModel() {
-    val favoritesFlow = giphyGifsRepository.getFavoritesFlow()
+    favoritesRepository: FavoritesRepository,
+) : BaseViewModel(favoritesRepository) {
+
+    val favoritesFlow: Flow<List<Gif>> = favoritesRepository.getFavoritesFlow()
 }
