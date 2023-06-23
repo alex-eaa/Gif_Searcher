@@ -12,8 +12,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.enum.Theme
 import com.elchaninov.gif_searcher.model.data.userdata.Gif
+import com.elchaninov.gif_searcher.myEnum.Theme
 import com.elchaninov.gif_searcher.utils.hideKeyboard
 import com.elchaninov.gif_searcher.viewModel.BaseViewModel
 import com.elchaninov.gif_searcher.views.favorites.FavoritesActivity
@@ -39,6 +39,14 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity(),
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.isFavoritesNotEmptyFlow.collect {
                     invalidateOptionsMenu()
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.nightThemeFlow.collect {
+                    if (AppCompatDelegate.getDefaultNightMode() != it.value) recreate()
                 }
             }
         }
@@ -68,17 +76,14 @@ abstract class BaseActivity<T : BaseViewModel> : AppCompatActivity(),
             }
             R.id.theme_dark -> {
                 screenState.changeThemeMode(Theme.DARK)
-                this.recreate()
                 true
             }
             R.id.theme_light -> {
                 screenState.changeThemeMode(Theme.LIGHT)
-                this.recreate()
                 true
             }
             R.id.theme_auto -> {
                 screenState.changeThemeMode(Theme.AUTO)
-                this.recreate()
                 true
             }
             else -> true

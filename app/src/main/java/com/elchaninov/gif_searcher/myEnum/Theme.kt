@@ -1,4 +1,4 @@
-package com.elchaninov.gif_searcher.enum
+package com.elchaninov.gif_searcher.myEnum
 
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 import androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO

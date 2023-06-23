@@ -23,6 +23,7 @@ import com.elchaninov.gif_searcher.viewModel.MainViewModel
 import com.elchaninov.gif_searcher.views.BaseActivity
 import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -113,7 +114,10 @@ class MainActivity : BaseActivity<MainViewModel>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty
+        lifecycleScope.launch {
+            menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmptyFlow
+                .firstOrNull() ?: false
+        }
         menu?.findItem(R.id.collapse_categories)?.isVisible =
             viewModel.isShowCollapseItemMenuFlow.value
         return super.onPrepareOptionsMenu(menu)
@@ -158,6 +162,7 @@ class MainActivity : BaseActivity<MainViewModel>() {
                 }
             })
     }
+
     private fun showError() {
         binding.root.showSnackbar(
             text = getString(R.string.error_message_3),
