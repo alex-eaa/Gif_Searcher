@@ -6,10 +6,10 @@ plugins {
     id 'dagger.hilt.android.plugin'
 }
 
-def appPropertiesFile = rootProject.file("app.properties")
-def appProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+def localProperties = new Properties()
 try {
-    appProperties.load(new FileInputStream(appPropertiesFile))
+    localProperties.load(new FileInputStream(localPropertiesFile))
 } catch (e) {
 }
 
@@ -30,7 +30,7 @@ android {
 
     defaultConfig {
         buildConfigField("boolean", "ALLOW_AD", "true")
-        buildConfigField("String", "GIPHY_API_KEY", appProperties['GIPHY_API_KEY'])
+        buildConfigField("String", "GIPHY_API_KEY", localProperties['GIPHY_API_KEY'])
     }
 
     defaultConfig {
@@ -43,16 +43,16 @@ android {
             debuggable true
             minifyEnabled false
             shrinkResources false
-            buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-debug'])
-            resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-debug'])
+            buildConfigField("String", "BANNER_AD_UNIT_ID", localProperties['BANNER_AD_UNIT_ID-debug'])
+            resValue("string", "AD_APPLICATION_ID", localProperties['AD_APPLICATION_ID-debug'])
         }
 
         release {
             debuggable false
             minifyEnabled true
             shrinkResources true
-            buildConfigField("String", "BANNER_AD_UNIT_ID", appProperties['BANNER_AD_UNIT_ID-release'])
-            resValue("string", "AD_APPLICATION_ID", appProperties['AD_APPLICATION_ID-release'])
+            buildConfigField("String", "BANNER_AD_UNIT_ID", localProperties['BANNER_AD_UNIT_ID-release'])
+            resValue("string", "AD_APPLICATION_ID", localProperties['AD_APPLICATION_ID-release'])
         }
     }
     buildFeatures {
