@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.elchaninov.gif_searcher.model.data.LoadingState
 import com.elchaninov.gif_searcher.model.data.userdata.SubcategoryModel.Companion.asSubcategory
 import com.elchaninov.gif_searcher.model.data.userdata.TypedCategory
+import com.elchaninov.gif_searcher.model.datasource.AppSettings
 import com.elchaninov.gif_searcher.model.datasource.FavoritesRepository
 import com.elchaninov.gif_searcher.model.datasource.GiphyGifsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 class MainViewModel @Inject constructor(
     private val giphyGifsRepository: GiphyGifsRepository,
     favoritesRepository: FavoritesRepository,
-) : BaseViewModel(favoritesRepository) {
+    appSettings: AppSettings,
+) : BaseViewModel(favoritesRepository, appSettings) {
 
     private val _isShowCollapseItemMenuFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isShowCollapseItemMenuFlow: StateFlow<Boolean> = _isShowCollapseItemMenuFlow

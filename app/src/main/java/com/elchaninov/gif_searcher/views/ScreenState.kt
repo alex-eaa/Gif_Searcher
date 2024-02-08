@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.elchaninov.gif_searcher.R
-import com.elchaninov.gif_searcher.enum.Layout
-import com.elchaninov.gif_searcher.enum.Theme
 import com.elchaninov.gif_searcher.model.datasource.AppSettings
+import com.elchaninov.gif_searcher.myEnum.Layout
+import com.elchaninov.gif_searcher.myEnum.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton

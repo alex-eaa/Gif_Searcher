@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import com.elchaninov.gif_searcher.R
@@ -16,6 +17,8 @@ import com.elchaninov.gif_searcher.utils.showSnackbar
 import com.elchaninov.gif_searcher.viewModel.GifsViewModel
 import com.elchaninov.gif_searcher.views.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class GifsActivity : BaseActivity<GifsViewModel>() {
@@ -86,7 +89,9 @@ class GifsActivity : BaseActivity<GifsViewModel>() {
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
-        menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmpty
+        lifecycleScope.launch {
+            menu?.findItem(R.id.favorites)?.isVisible = viewModel.isFavoritesNotEmptyFlow.firstOrNull() ?: false
+        }
         return super.onPrepareOptionsMenu(menu)
     }
 

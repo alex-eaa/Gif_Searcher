@@ -1,64 +1,51 @@
 package com.elchaninov.gif_searcher.model.datasource
 
 import android.content.Context
-import android.content.SharedPreferences
-import com.elchaninov.gif_searcher.enum.Layout
-import com.elchaninov.gif_searcher.enum.Theme
+import com.elchaninov.gif_searcher.base.Preference
+import com.elchaninov.gif_searcher.myEnum.Layout
+import com.elchaninov.gif_searcher.myEnum.Theme
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Singleton
-class AppSettingsImpl @Inject constructor(@ApplicationContext context: Context) : AppSettings {
+class AppSettingsImpl @Inject constructor(@ApplicationContext appContext: Context) : AppSettings {
 
-    private val prefs: SharedPreferences =
-        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
-
-    override var layoutManager by prefs.layout(
-        defaultValue = Layout.STAGGERED
+    private val sPref = appContext.getSharedPreferences(
+        PREF_NAME, Context.MODE_PRIVATE
     )
 
-    override var nightTheme by prefs.theme(
-        defaultValue = Theme.AUTO
-    )
-
-    private fun SharedPreferences.theme(
-        defaultValue: Theme,
-        key: (KProperty<*>) -> String = KProperty<*>::name
-    ): ReadWriteProperty<Any, Theme> =
-        object : ReadWriteProperty<Any, Theme> {
-            override fun getValue(
-                thisRef: Any,
-                property: KProperty<*>
-            ) = Theme.fromName(getString(key(property), defaultValue.name)) ?: defaultValue
-
-            override fun setValue(
-                thisRef: Any,
-                property: KProperty<*>,
-                value: Theme
-            ) = edit().putString(key(property), value.name).apply()
+    override var layoutManager: Layout
+        get() = Preference.EnumPreference(sPref, KEY_LAYOUT, Layout::class.java, Layout.STAGGERED)
+            .get()
+        set(value) {
+            Preference
+                .EnumPreference(sPref, KEY_LAYOUT, Layout::class.java, Layout.STAGGERED)
+                .set(value)
         }
 
-    private fun SharedPreferences.layout(
-        defaultValue: Layout,
-        key: (KProperty<*>) -> String = KProperty<*>::name
-    ): ReadWriteProperty<Any, Layout> =
-        object : ReadWriteProperty<Any, Layout> {
-            override fun getValue(
-                thisRef: Any,
-                property: KProperty<*>
-            ) = Layout.fromName(getString(key(property), defaultValue.name)) ?: defaultValue
+    override var nightTheme: Theme
+        get() = Preference.EnumPreference(sPref, KEY_THEME, Theme::class.java, Theme.AUTO).get()
+        set(value) {
+            Preference
+                .EnumPreference(sPref, KEY_THEME, Theme::class.java, Theme.AUTO)
+                .set(value)
+        }
 
-            override fun setValue(
-                thisRef: Any,
-                property: KProperty<*>,
-                value: Layout
-            ) = edit().putString(key(property), value.name).apply()
+    override fun observeNightTheme(): Flow<Theme> = Preference
+        .EnumPreference(sPref, KEY_THEME, Theme::class.java, Theme.AUTO)
+        .getAsFlow()
+        .map {
+            it ?: Theme.AUTO
         }
 
     companion object {
-        const val PREF_NAME = "settings"
+        private const val PREF_NAME = "settings"
+        private const val KEY_LAYOUT = "KEY_LAYOUT_SETTINGS"
+        private const val KEY_THEME = "KEY_THEME_SETTINGS"
     }
 }
