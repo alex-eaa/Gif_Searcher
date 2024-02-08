@@ -4,7 +4,7 @@
     <string name="top">В тренде</string>
     <string name="search">Поиск</string>
     <string name="favorites">Избранное</string>
-    <string name="error">ОШИБКА ЗАГРУЗКИ</string>
+    <string name="error">ОШИБКА ЗАГРУЗКИ!</string>
 
     <!--    MESSAGES-->
     <string name="error_message_1">Не удалось загрузить список изображений</string>
