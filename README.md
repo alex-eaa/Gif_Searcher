@@ -6,7 +6,4 @@ https://play.google.com/store/apps/details?id=com.elchaninov.gif_searcher
 
 ------------
 
-|  ![Alt-текст](screnshoots/1.png)   | ![Alt-текст](2.png) | ![Alt-текст](3.png) |
-|:--------------------------------:|:--------------------:|:--------------------:
-| ![Alt-текст](screnshoots/4.png) | ![Alt-текст](5.png) | ![Alt-текст](6.png) |
-| :-----------------------------:  |:--------------------:|:--------------------:|
+| ![Alt-текст](screnshoots/1.png) | ![Alt-текст](2.png) | ![Alt-текст](3.png) | ![Alt-текст](screnshoots/4.png) |
